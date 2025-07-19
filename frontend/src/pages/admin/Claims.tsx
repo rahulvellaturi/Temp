@@ -7,8 +7,7 @@ import PageHeader from '@/components/common/PageHeader';
 import { Claim, ClaimStatus } from '@/types';
 import mockDataService from '@/services/mockDataService';
 
-// Mock data for claims
-const mockClaims: Claim[] = [
+// This component now uses mockDataService instead of inline mock data
   {
     id: 'CLM001',
     claimNumber: 'CLM001',
