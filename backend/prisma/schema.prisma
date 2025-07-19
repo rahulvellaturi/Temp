@@ -1,0 +1,287 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String    // Hashed password
+  firstName String
+  lastName  String
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  zipCode   String?
+  isActive  Boolean   @default(true)
+  role      UserRole  @default(CLIENT) // CLIENT or ADMIN
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  policies         Policy[]
+  claims           Claim[]
+  payments         Payment[]
+  documents        Document[]
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  mfa              MFA? // One-to-one relationship with MFA settings
+  adminActions     AuditLog[] @relation("AdminActions")
+  assignedClaims   Claim[] @relation("AssignedClaims")
+  billingStatements BillingStatement[]
+  changeRequests   PolicyChangeRequest[]
+
+  @@map("users")
+}
+
+model MFA {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  method      MfaMethod // SMS, Authenticator
+  secret      String?   // For authenticator apps
+  phoneNumber String?   // For SMS MFA
+  isEnabled   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("mfa_settings")
+}
+
+enum UserRole {
+  CLIENT
+  ADMIN
+  CLAIMS_ADJUSTER
+  BILLING_SPECIALIST
+  SUPER_ADMIN
+}
+
+enum MfaMethod {
+  SMS
+  AUTHENTICATOR
+}
+
+// Policy Management
+model Policy {
+  id               String           @id @default(uuid())
+  policyNumber     String           @unique
+  userId           String
+  user             User             @relation(fields: [userId], references: [id])
+  policyType       PolicyType
+  startDate        DateTime
+  endDate          DateTime
+  status           PolicyStatus     @default(ACTIVE)
+  premiumAmount    Float
+  deductible       Float
+  coverageDetails  Json             // JSONB for flexible coverage structure
+  insuredAssets    Json?            // JSONB for vehicles, properties, etc.
+  renewalDate      DateTime
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  claims           Claim[]
+  payments         Payment[]
+  documents        Document[]
+  changeRequests   PolicyChangeRequest[]
+  billingStatements BillingStatement[]
+
+  @@map("policies")
+}
+
+enum PolicyType {
+  AUTO
+  HOME
+  LIFE
+  HEALTH
+  OTHER
+}
+
+enum PolicyStatus {
+  ACTIVE
+  PENDING_RENEWAL
+  EXPIRED
+  CANCELLED
+}
+
+model PolicyChangeRequest {
+  id             String             @id @default(uuid())
+  policyId       String
+  policy         Policy             @relation(fields: [policyId], references: [id])
+  userId         String
+  user           User               @relation(fields: [userId], references: [id])
+  requestType    String             // e.g., "Add Vehicle", "Update Address"
+  requestDetails Json               // JSONB for specific changes
+  status         ChangeRequestStatus @default(PENDING)
+  adminNotes     String?
+  submittedAt    DateTime           @default(now())
+  processedAt    DateTime?
+  processedBy    String?            // Admin User ID
+
+  @@map("policy_change_requests")
+}
+
+enum ChangeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+// Claims Management
+model Claim {
+  id              String         @id @default(uuid())
+  claimNumber     String         @unique
+  policyId        String
+  policy          Policy         @relation(fields: [policyId], references: [id])
+  userId          String
+  user            User           @relation(fields: [userId], references: [id])
+  incidentDate    DateTime
+  incidentLocation String
+  description     String
+  status          ClaimStatus    @default(SUBMITTED)
+  assignedAdjusterId String?
+  assignedAdjuster User?          @relation("AssignedClaims", fields: [assignedAdjusterId], references: [id])
+  payoutAmount    Float?
+  submittedAt     DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  documents       Document[]
+  messages        Message[]
+  involvedParties InvolvedParty[]
+
+  @@map("claims")
+}
+
+enum ClaimStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ADJUSTER_ASSIGNED
+  APPROVED
+  REJECTED
+  PAID
+  CLOSED
+}
+
+model InvolvedParty {
+  id        String @id @default(uuid())
+  claimId   String
+  claim     Claim  @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  name      String
+  contact   String?
+  role      String? // e.g., "Other Driver", "Witness"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("involved_parties")
+}
+
+// Billing & Payments
+model Payment {
+  id          String         @id @default(uuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id])
+  policyId    String?        // Optional, if payment is not policy-specific
+  policy      Policy?        @relation(fields: [policyId], references: [id])
+  amount      Float
+  paymentDate DateTime       @default(now())
+  status      PaymentStatus  @default(PENDING)
+  method      String?        // e.g., "Credit Card", "Bank Transfer"
+  transactionId String?      @unique
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model BillingStatement {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  policyId    String?
+  policy      Policy?  @relation(fields: [policyId], references: [id])
+  statementDate DateTime @default(now())
+  dueDate     DateTime
+  amountDue   Float
+  isPaid      Boolean  @default(false)
+  documentUrl String?  // Link to PDF in DMS
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("billing_statements")
+}
+
+// Document Management
+model Document {
+  id          String     @id @default(uuid())
+  filename    String
+  fileType    String     // e.g., "application/pdf", "image/jpeg"
+  fileSize    Int        // in bytes
+  url         String     // Cloudinary URL
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  policyId    String?
+  policy      Policy?    @relation(fields: [policyId], references: [id])
+  claimId     String?
+  claim       Claim?     @relation(fields: [claimId], references: [id])
+  documentType DocumentType // e.g., POLICY_CONTRACT, BILLING_STATEMENT, CLAIM_SUPPORT
+  uploadedAt  DateTime   @default(now())
+  uploadedBy  String     // User ID (client or admin)
+
+  @@map("documents")
+}
+
+enum DocumentType {
+  POLICY_CONTRACT
+  DECLARATION_PAGE
+  ENDORSEMENT
+  BILLING_STATEMENT
+  CLAIM_SUPPORT
+  ID_CARD
+  OTHER
+}
+
+// Communication & Support
+model Message {
+  id          String   @id @default(uuid())
+  senderId    String   // User ID (client or admin)
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId  String?  // Optional, if message is part of a general thread
+  receiver    User?    @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  claimId     String?
+  claim       Claim?   @relation(fields: [claimId], references: [id])
+  content     String
+  timestamp   DateTime @default(now())
+  isRead      Boolean  @default(false)
+  isInternal  Boolean  @default(false) // True for admin-only notes
+
+  @@map("messages")
+}
+
+// Admin Specific
+model AuditLog {
+  id          String   @id @default(uuid())
+  adminUserId String   // ID of the admin who performed the action
+  adminUser   User     @relation("AdminActions", fields: [adminUserId], references: [id])
+  action      String   // e.g., "UPDATE_USER_PROFILE", "APPROVE_CLAIM"
+  targetType  String   // e.g., "User", "Policy", "Claim"
+  targetId    String   // ID of the affected record
+  details     Json?    // JSONB for before/after state
+  timestamp   DateTime @default(now())
+
+  @@map("audit_logs")
+}
