@@ -44,6 +44,15 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:watch": "react-scripts test --watchAll=false",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
+    "test:ci": "CI=true react-scripts test --coverage --watchAll=false --testResultsProcessor=jest-sonar-reporter",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
+    "test:integration": "jest --config=jest.integration.config.js",
+    "test:performance": "lighthouse-ci autorun",
+    "test:accessibility": "pa11y-ci --sitemap http://localhost:3000/sitemap.xml",
+    "test:all": "npm run test:ci && npm run test:integration && npm run test:e2e",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
@@ -53,7 +62,29 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "tailwindcss-animate": "^1.0.7",
-    "@types/node": "^20.9.0"
+    "@types/node": "^20.9.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/user-event": "^14.5.1",
+    "@testing-library/react-hooks": "^8.0.1",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-sonar-reporter": "^2.0.0",
+    "cypress": "^13.6.0",
+    "@cypress/react": "^8.0.0",
+    "cypress-axe": "^1.5.0",
+    "cypress-real-events": "^1.11.0",
+    "msw": "^2.0.8",
+    "@lighthouse-ci/cli": "^0.12.0",
+    "pa11y-ci": "^3.0.1",
+    "axe-core": "^4.8.2",
+    "@axe-core/react": "^4.8.2",
+    "jest-axe": "^8.0.0",
+    "supertest": "^6.3.3",
+    "@types/supertest": "^2.0.16",
+    "nock": "^13.4.0",
+    "factory-bot": "^1.0.0",
+    "faker": "^6.6.6",
+    "@faker-js/faker": "^8.3.1"
   },
   "eslintConfig": {
     "extends": [
@@ -73,5 +104,23 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:5000"
+  "proxy": "http://localhost:5000",
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/index.tsx",
+      "!src/reportWebVitals.ts",
+      "!src/**/*.stories.{js,jsx,ts,tsx}",
+      "!src/**/*.test.{js,jsx,ts,tsx}"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  }
 }
