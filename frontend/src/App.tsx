@@ -31,6 +31,7 @@ import AdminClaims from '@/pages/admin/Claims';
 // Components
 import ProtectedRoute from '@/components/ProtectedRoute';
 import NotificationProvider from '@/components/ui/NotificationProvider';
+import { Toaster } from '@/components/ui/toaster';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -198,6 +199,7 @@ function App() {
           </Routes>
           
           <NotificationProvider />
+          <Toaster />
         </div>
       </Router>
     </ErrorBoundary>
