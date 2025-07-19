@@ -348,11 +348,11 @@ const Profile: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
+              className={`view-toggle-button ${
                 activeTab === tab.id
-                  ? 'text-primary border-primary bg-primary/5'
-                  : 'text-neutral-600 border-transparent hover:text-neutral-900 hover:border-neutral-300'
-              }`}
+                  ? 'view-toggle-button-active'
+                  : 'view-toggle-button-inactive'
+              } flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors`}
             >
               {tab.icon}
               <span>{tab.label}</span>
@@ -511,10 +511,10 @@ const Profile: React.FC = () => {
                 <select
                   {...profileForm.register('state')}
                   disabled={!isEditing}
-                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    !isEditing ? 'bg-neutral-50 text-neutral-500' : ''
+                  className={`form-select-base ${
+                    !isEditing ? 'form-input-disabled' : 'form-select-default'
                   } ${
-                    profileForm.formState.errors.state ? 'border-red-500' : 'border-neutral-300'
+                    profileForm.formState.errors.state ? 'form-select-error' : ''
                   }`}
                 >
                   <option value="">Select State</option>

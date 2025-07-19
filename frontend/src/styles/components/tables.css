@@ -1,0 +1,393 @@
+/* Table and List Component Styles */
+
+/* Base Table Styles */
+.table-container {
+  @apply overflow-x-auto shadow-sm border border-neutral-200 rounded-lg;
+}
+
+.table {
+  @apply min-w-full divide-y divide-neutral-200;
+}
+
+.table-header {
+  @apply bg-neutral-50;
+}
+
+.table-header-row {
+  @apply divide-x divide-neutral-200;
+}
+
+.table-header-cell {
+  @apply px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider;
+}
+
+.table-header-cell-sortable {
+  @apply cursor-pointer hover:bg-neutral-100 transition-colors;
+}
+
+.table-body {
+  @apply bg-white divide-y divide-neutral-200;
+}
+
+.table-row {
+  @apply hover:bg-neutral-50 transition-colors;
+}
+
+.table-row-selected {
+  @apply bg-primary/5 hover:bg-primary/10;
+}
+
+.table-cell {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-neutral-900;
+}
+
+.table-cell-numeric {
+  @apply text-right font-mono;
+}
+
+.table-cell-center {
+  @apply text-center;
+}
+
+/* Table Actions */
+.table-actions {
+  @apply flex items-center space-x-2;
+}
+
+.table-action-button {
+  @apply p-2 text-neutral-400 hover:text-neutral-600 transition-colors;
+}
+
+.table-action-button-primary {
+  @apply text-primary hover:text-primary/80;
+}
+
+.table-action-button-danger {
+  @apply text-red-500 hover:text-red-700;
+}
+
+/* Table Status Indicators */
+.table-status-dot {
+  @apply w-2 h-2 rounded-full inline-block mr-2;
+}
+
+.table-status-dot-success {
+  @apply bg-green-500;
+}
+
+.table-status-dot-warning {
+  @apply bg-yellow-500;
+}
+
+.table-status-dot-error {
+  @apply bg-red-500;
+}
+
+.table-status-dot-info {
+  @apply bg-blue-500;
+}
+
+/* Table Empty State */
+.table-empty {
+  @apply text-center py-12;
+}
+
+.table-empty-icon {
+  @apply h-12 w-12 text-neutral-400 mx-auto mb-4;
+}
+
+.table-empty-title {
+  @apply text-lg font-medium text-neutral-900 mb-2;
+}
+
+.table-empty-description {
+  @apply text-neutral-600 mb-4;
+}
+
+/* Table Loading State */
+.table-loading {
+  @apply text-center py-12;
+}
+
+.table-loading-spinner {
+  @apply animate-spin h-8 w-8 text-primary mx-auto mb-4;
+}
+
+.table-loading-text {
+  @apply text-neutral-600;
+}
+
+/* Table Pagination */
+.table-pagination {
+  @apply bg-white px-6 py-3 border-t border-neutral-200 flex items-center justify-between;
+}
+
+.table-pagination-info {
+  @apply text-sm text-neutral-700;
+}
+
+.table-pagination-controls {
+  @apply flex items-center space-x-2;
+}
+
+.table-pagination-button {
+  @apply px-3 py-1 border border-neutral-300 rounded-md text-sm hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.table-pagination-button-active {
+  @apply bg-primary text-white border-primary hover:bg-primary/90;
+}
+
+/* Card List Styles */
+.card-list {
+  @apply space-y-4;
+}
+
+.card-list-item {
+  @apply bg-white border border-neutral-200 rounded-lg p-6 hover:shadow-md transition-shadow;
+}
+
+.card-list-item-selected {
+  @apply border-primary shadow-md;
+}
+
+.card-list-header {
+  @apply flex items-center justify-between mb-4;
+}
+
+.card-list-title {
+  @apply text-lg font-semibold text-neutral-900;
+}
+
+.card-list-subtitle {
+  @apply text-sm text-neutral-600;
+}
+
+.card-list-actions {
+  @apply flex items-center space-x-2;
+}
+
+.card-list-content {
+  @apply space-y-3;
+}
+
+.card-list-row {
+  @apply flex justify-between items-center;
+}
+
+.card-list-label {
+  @apply text-sm text-neutral-600;
+}
+
+.card-list-value {
+  @apply text-sm font-medium text-neutral-900;
+}
+
+/* Grid List Styles */
+.grid-list {
+  @apply grid gap-6;
+}
+
+.grid-list-1 {
+  @apply grid-cols-1;
+}
+
+.grid-list-2 {
+  @apply grid-cols-1 md:grid-cols-2;
+}
+
+.grid-list-3 {
+  @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.grid-list-4 {
+  @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+}
+
+.grid-list-item {
+  @apply bg-white border border-neutral-200 rounded-lg p-6 hover:shadow-md transition-shadow;
+}
+
+.grid-list-item-selected {
+  @apply border-primary shadow-md;
+}
+
+/* List View Toggle */
+.view-toggle {
+  @apply flex items-center space-x-2 bg-neutral-100 rounded-lg p-1;
+}
+
+.view-toggle-button {
+  @apply px-3 py-2 rounded-md text-sm font-medium transition-colors;
+}
+
+.view-toggle-button-active {
+  @apply bg-white text-primary shadow-sm;
+}
+
+.view-toggle-button-inactive {
+  @apply text-neutral-600 hover:text-neutral-900;
+}
+
+/* Search and Filter Bar */
+.search-filter-bar {
+  @apply flex flex-col sm:flex-row gap-4 mb-6;
+}
+
+.search-input-container {
+  @apply relative flex-1;
+}
+
+.search-input {
+  @apply w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary;
+}
+
+.search-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400;
+}
+
+.filter-dropdown {
+  @apply relative;
+}
+
+.filter-button {
+  @apply inline-flex items-center px-4 py-2 border border-neutral-300 rounded-md bg-white text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary;
+}
+
+.filter-menu {
+  @apply absolute right-0 mt-2 w-56 bg-white border border-neutral-200 rounded-md shadow-lg z-10;
+}
+
+.filter-menu-item {
+  @apply block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 cursor-pointer;
+}
+
+.filter-menu-item-active {
+  @apply bg-primary text-white hover:bg-primary/90;
+}
+
+/* Bulk Actions */
+.bulk-actions-bar {
+  @apply bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4 flex items-center justify-between;
+}
+
+.bulk-actions-info {
+  @apply text-sm text-primary font-medium;
+}
+
+.bulk-actions-buttons {
+  @apply flex items-center space-x-2;
+}
+
+.bulk-action-button {
+  @apply px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary/90 transition-colors;
+}
+
+.bulk-action-button-secondary {
+  @apply px-3 py-1 bg-white text-primary border border-primary rounded-md text-sm hover:bg-primary/5 transition-colors;
+}
+
+/* Sort Indicators */
+.sort-indicator {
+  @apply inline-flex items-center ml-2;
+}
+
+.sort-icon {
+  @apply h-4 w-4 text-neutral-400;
+}
+
+.sort-icon-active {
+  @apply text-primary;
+}
+
+/* Selection Controls */
+.selection-checkbox {
+  @apply h-4 w-4 text-primary focus:ring-primary border-neutral-300 rounded;
+}
+
+.selection-checkbox-header {
+  @apply h-4 w-4 text-primary focus:ring-primary border-neutral-300 rounded;
+}
+
+/* Status Pills */
+.status-pill {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.status-pill-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.status-pill-warning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.status-pill-error {
+  @apply bg-red-100 text-red-800;
+}
+
+.status-pill-info {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.status-pill-neutral {
+  @apply bg-neutral-100 text-neutral-800;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .table-container {
+    @apply -mx-4 shadow-none border-0 rounded-none;
+  }
+  
+  .table-header-cell,
+  .table-cell {
+    @apply px-4 py-3;
+  }
+  
+  .search-filter-bar {
+    @apply flex-col gap-3;
+  }
+  
+  .grid-list-2,
+  .grid-list-3,
+  .grid-list-4 {
+    @apply grid-cols-1;
+  }
+  
+  .table-pagination {
+    @apply flex-col space-y-3;
+  }
+  
+  .bulk-actions-bar {
+    @apply flex-col space-y-3;
+  }
+}
+
+/* Compact Table Variant */
+.table-compact .table-header-cell,
+.table-compact .table-cell {
+  @apply px-4 py-2;
+}
+
+.table-compact .table-cell {
+  @apply text-sm;
+}
+
+/* Striped Table Variant */
+.table-striped .table-row:nth-child(even) {
+  @apply bg-neutral-25;
+}
+
+/* Bordered Table Variant */
+.table-bordered .table {
+  @apply border border-neutral-200;
+}
+
+.table-bordered .table-cell {
+  @apply border-r border-neutral-200;
+}
+
+.table-bordered .table-cell:last-child {
+  @apply border-r-0;
+}

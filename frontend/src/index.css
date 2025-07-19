@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import component styles */
+@import './styles/components/index.css';
+
 @layer base {
   :root {
     --background: 0 0% 100%;

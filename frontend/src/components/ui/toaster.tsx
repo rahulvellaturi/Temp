@@ -62,67 +62,39 @@ const Toast: React.FC<{
     }
   };
 
-  const getColorClasses = () => {
-    switch (toast.type) {
-      case 'success':
-        return 'bg-white border-l-4 border-green-500 shadow-lg';
-      case 'error':
-        return 'bg-white border-l-4 border-red-500 shadow-lg';
-      case 'warning':
-        return 'bg-white border-l-4 border-yellow-500 shadow-lg';
-      case 'info':
-        return 'bg-white border-l-4 border-blue-500 shadow-lg';
-      default:
-        return 'bg-white border-l-4 border-gray-500 shadow-lg';
-    }
-  };
+
 
   return (
     <div
-      className={`
-        transform transition-all duration-300 ease-in-out mb-3 last:mb-0
-        ${isVisible && !isRemoving 
-          ? 'translate-x-0 opacity-100' 
-          : 'translate-x-full opacity-0'
-        }
-      `}
-      style={{
-        maxWidth: '420px',
-        minWidth: '300px',
-      }}
+      className={`toast-item ${
+        isVisible && !isRemoving 
+          ? 'toast-item-visible' 
+          : 'toast-item-exit'
+      }`}
     >
-      <div className={`
-        ${getColorClasses()}
-        rounded-lg overflow-hidden pointer-events-auto
-        ring-1 ring-black ring-opacity-5
-      `}>
-        <div className="p-4">
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
+      <div className={`toast-wrapper toast-${toast.type}`}>
+        <div className="toast-content">
+          <div className="toast-main">
+            <div className="toast-icon-container">
               {getIcon()}
             </div>
-            <div className="ml-3 w-0 flex-1 pt-0.5">
-              <p className="text-sm font-medium text-gray-900">
+            <div className="toast-body">
+              <p className="toast-title">
                 {toast.title}
               </p>
               {toast.message && (
-                <p className="mt-1 text-sm text-gray-500 leading-relaxed">
+                <p className="toast-message">
                   {toast.message}
                 </p>
               )}
             </div>
-            <div className="ml-4 flex-shrink-0 flex">
+            <div className="toast-close-container">
               <button
-                className="
-                  bg-white rounded-md inline-flex text-gray-400 
-                  hover:text-gray-500 focus:outline-none focus:ring-2 
-                  focus:ring-offset-2 focus:ring-indigo-500 
-                  transition-colors duration-200
-                "
+                className="toast-close-button"
                 onClick={handleRemove}
                 aria-label="Close notification"
               >
-                <X className="h-5 w-5" />
+                <X className="toast-close-icon" />
               </button>
             </div>
           </div>
@@ -130,17 +102,11 @@ const Toast: React.FC<{
         
         {/* Progress bar for timed toasts */}
         {toast.duration && toast.duration > 0 && (
-          <div className="h-1 bg-gray-100">
+          <div className="toast-progress-container">
             <div 
-              className={`
-                h-full transition-all ease-linear
-                ${toast.type === 'success' ? 'bg-green-500' : ''}
-                ${toast.type === 'error' ? 'bg-red-500' : ''}
-                ${toast.type === 'warning' ? 'bg-yellow-500' : ''}
-                ${toast.type === 'info' ? 'bg-blue-500' : ''}
-              `}
+              className={`toast-progress-bar toast-progress-${toast.type}`}
               style={{
-                animation: `shrink ${toast.duration}ms linear`,
+                animation: `toast-progress-shrink ${toast.duration}ms linear`,
                 transformOrigin: 'left',
               }}
             />
@@ -165,7 +131,7 @@ export function Toaster() {
     if (!toastContainer) {
       toastContainer = document.createElement('div');
       toastContainer.id = 'toast-container';
-      toastContainer.className = 'fixed top-4 right-4 z-50 max-h-screen overflow-hidden';
+      toastContainer.className = 'toast-container';
       toastContainer.style.pointerEvents = 'none';
       document.body.appendChild(toastContainer);
     }
@@ -207,20 +173,13 @@ export function Toaster() {
   }
 
   return createPortal(
-    <div className="space-y-2 pointer-events-none">
+    <div className="toast-list">
       {/* Clear all button when multiple toasts */}
       {toasts.length > 2 && (
-        <div className="flex justify-end mb-2">
+        <div className="toast-clear-all-container">
           <button
             onClick={clearAllToasts}
-            className="
-              pointer-events-auto px-3 py-1 text-xs font-medium 
-              text-gray-600 bg-white border border-gray-300 
-              rounded-md hover:bg-gray-50 hover:text-gray-700 
-              focus:outline-none focus:ring-2 focus:ring-offset-2 
-              focus:ring-indigo-500 transition-colors duration-200
-              shadow-sm
-            "
+            className="toast-clear-all-button"
           >
             Clear All ({toasts.length})
           </button>
@@ -228,7 +187,7 @@ export function Toaster() {
       )}
       
       {/* Toast list */}
-      <div className="space-y-2 max-h-96 overflow-y-auto">
+      <div className="toast-list-scrollable">
         {toasts.map((toast) => (
           <Toast
             key={toast.id}
@@ -360,49 +319,6 @@ export const useToast = () => {
   };
 };
 
-// CSS for animations (add to your global CSS or Tailwind config)
-const toastStyles = `
-  @keyframes shrink {
-    from {
-      transform: scaleX(1);
-    }
-    to {
-      transform: scaleX(0);
-    }
-  }
-  
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-`;
 
-// Inject styles if not already present
-if (typeof document !== 'undefined') {
-  const existingStyles = document.getElementById('toast-styles');
-  if (!existingStyles) {
-    const styleSheet = document.createElement('style');
-    styleSheet.id = 'toast-styles';
-    styleSheet.textContent = toastStyles;
-    document.head.appendChild(styleSheet);
-  }
-}
 
 export default Toaster;
