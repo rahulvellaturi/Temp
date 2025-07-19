@@ -1,0 +1,483 @@
+/* Claims Component Styles */
+
+/* Main Layout */
+.claims-container {
+  @apply space-y-6;
+}
+
+.claims-header {
+  @apply mb-6;
+}
+
+/* Quick Stats Cards */
+.claims-stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-4 gap-6;
+}
+
+.claims-stat-card {
+  @apply p-6;
+}
+
+.claims-stat-content {
+  @apply flex items-center justify-between;
+}
+
+.claims-stat-info {
+  @apply flex flex-col;
+}
+
+.claims-stat-label {
+  @apply text-sm font-medium text-neutral-600;
+}
+
+.claims-stat-value {
+  @apply text-2xl font-bold text-neutral-900;
+}
+
+.claims-stat-icon {
+  @apply h-8 w-8;
+}
+
+.claims-stat-icon-blue {
+  @apply text-blue-500;
+}
+
+.claims-stat-icon-yellow {
+  @apply text-yellow-500;
+}
+
+.claims-stat-icon-green {
+  @apply text-green-500;
+}
+
+/* Filter Section */
+.claims-filters {
+  @apply p-6;
+}
+
+.claims-filters-grid {
+  @apply grid grid-cols-1 md:grid-cols-4 gap-4;
+}
+
+.claims-filter-actions {
+  @apply flex items-end;
+}
+
+.claims-clear-filters {
+  @apply w-full;
+}
+
+/* Claims List */
+.claims-list {
+  @apply space-y-4;
+}
+
+.claims-list-item {
+  @apply p-6 hover:shadow-lg transition-shadow;
+}
+
+.claims-item-content {
+  @apply flex items-start justify-between;
+}
+
+.claims-item-main {
+  @apply flex items-start space-x-4;
+}
+
+.claims-item-icon-container {
+  @apply p-2 bg-primary/10 rounded-full text-primary;
+}
+
+.claims-item-details {
+  @apply flex-1;
+}
+
+.claims-item-header {
+  @apply flex items-center space-x-3 mb-2;
+}
+
+.claims-item-number {
+  @apply font-semibold text-neutral-900;
+}
+
+.claims-item-meta {
+  @apply text-sm text-neutral-600 mb-1;
+}
+
+.claims-item-description {
+  @apply text-sm text-neutral-700 mb-3 line-clamp-2;
+}
+
+.claims-item-info-row {
+  @apply flex items-center space-x-6 text-sm text-neutral-600;
+}
+
+.claims-item-info-item {
+  @apply flex items-center space-x-1;
+}
+
+.claims-item-location {
+  @apply truncate max-w-48;
+}
+
+.claims-item-actions {
+  @apply flex space-x-2;
+}
+
+/* Empty State */
+.claims-empty-state {
+  @apply p-12 text-center;
+}
+
+.claims-empty-icon {
+  @apply h-16 w-16 text-neutral-300 mx-auto mb-4;
+}
+
+.claims-empty-title {
+  @apply text-lg font-medium text-neutral-900 mb-2;
+}
+
+.claims-empty-description {
+  @apply text-neutral-600 mb-6;
+}
+
+/* Modal Styles */
+.claims-modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
+}
+
+.claims-modal-container {
+  @apply bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto;
+}
+
+.claims-modal-header {
+  @apply p-6 border-b;
+}
+
+.claims-modal-header-content {
+  @apply flex items-center justify-between;
+}
+
+.claims-modal-title-section {
+  @apply flex items-center space-x-3;
+}
+
+.claims-modal-title-icon {
+  @apply p-2 bg-primary/10 rounded-full text-primary;
+}
+
+.claims-modal-title {
+  @apply text-xl font-semibold text-neutral-900;
+}
+
+.claims-modal-subtitle {
+  @apply text-sm text-neutral-600;
+}
+
+.claims-modal-header-actions {
+  @apply flex items-center space-x-2;
+}
+
+.claims-modal-body {
+  @apply p-6;
+}
+
+.claims-modal-grid {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+}
+
+.claims-modal-main {
+  @apply lg:col-span-2 space-y-6;
+}
+
+.claims-modal-sidebar {
+  @apply space-y-6;
+}
+
+/* Claim Details Sections */
+.claims-details-section {
+  @apply mb-6;
+}
+
+.claims-details-title {
+  @apply text-lg font-medium text-neutral-900 mb-4;
+}
+
+.claims-details-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.claims-details-card {
+  @apply p-4 bg-neutral-50 rounded-lg;
+}
+
+.claims-details-label {
+  @apply text-sm text-neutral-600;
+}
+
+.claims-details-value {
+  @apply text-lg font-semibold text-neutral-900;
+}
+
+.claims-details-secondary {
+  @apply text-xs text-neutral-500;
+}
+
+.claims-details-location {
+  @apply text-sm font-medium text-neutral-900;
+}
+
+/* Description Section */
+.claims-description-container {
+  @apply p-4 border border-neutral-200 rounded-lg;
+}
+
+.claims-description-text {
+  @apply text-neutral-700;
+}
+
+/* Timeline Styles */
+.claims-timeline {
+  @apply space-y-4;
+}
+
+.claims-timeline-item {
+  @apply flex items-start space-x-3;
+}
+
+.claims-timeline-icon-container {
+  @apply p-2 rounded-full;
+}
+
+.claims-timeline-icon-completed {
+  @apply bg-green-100 text-green-600;
+}
+
+.claims-timeline-icon-pending {
+  @apply bg-yellow-100 text-yellow-600;
+}
+
+.claims-timeline-icon-default {
+  @apply bg-neutral-100 text-neutral-600;
+}
+
+.claims-timeline-icon {
+  @apply h-4 w-4;
+}
+
+.claims-timeline-content {
+  @apply flex-1;
+}
+
+.claims-timeline-header {
+  @apply flex items-center justify-between;
+}
+
+.claims-timeline-event {
+  @apply font-medium text-neutral-900;
+}
+
+.claims-timeline-date {
+  @apply text-sm text-neutral-500;
+}
+
+.claims-timeline-description {
+  @apply text-sm text-neutral-600 mt-1;
+}
+
+/* Documents Section */
+.claims-documents-list {
+  @apply space-y-3;
+}
+
+.claims-document-item {
+  @apply flex items-center justify-between p-3 border border-neutral-200 rounded-lg;
+}
+
+.claims-document-info {
+  @apply flex items-center space-x-3;
+}
+
+.claims-document-icon {
+  @apply h-5 w-5 text-neutral-500;
+}
+
+.claims-document-details {
+  @apply flex flex-col;
+}
+
+.claims-document-name {
+  @apply font-medium text-neutral-900;
+}
+
+.claims-document-meta {
+  @apply text-sm text-neutral-500;
+}
+
+/* Adjuster Info */
+.claims-adjuster-card {
+  @apply p-4 border border-neutral-200 rounded-lg;
+}
+
+.claims-adjuster-title {
+  @apply font-medium text-neutral-900 mb-3;
+}
+
+.claims-adjuster-info {
+  @apply space-y-2;
+}
+
+.claims-adjuster-name {
+  @apply font-medium text-neutral-900;
+}
+
+.claims-adjuster-contact {
+  @apply flex items-center space-x-2 text-sm text-neutral-600;
+}
+
+.claims-adjuster-contact-icon {
+  @apply h-4 w-4;
+}
+
+.claims-adjuster-actions {
+  @apply mt-4 space-y-2;
+}
+
+.claims-adjuster-button {
+  @apply w-full;
+}
+
+/* Actions Card */
+.claims-actions-card {
+  @apply p-4 border border-neutral-200 rounded-lg;
+}
+
+.claims-actions-title {
+  @apply font-medium text-neutral-900 mb-3;
+}
+
+.claims-actions-list {
+  @apply space-y-2;
+}
+
+.claims-action-button {
+  @apply w-full;
+}
+
+/* New Claim Form */
+.new-claim-modal-container {
+  @apply bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto;
+}
+
+.new-claim-modal-header {
+  @apply p-6 border-b;
+}
+
+.new-claim-modal-header-content {
+  @apply flex items-center justify-between;
+}
+
+.new-claim-modal-title {
+  @apply text-xl font-semibold text-neutral-900;
+}
+
+.new-claim-form {
+  @apply p-6 space-y-6;
+}
+
+.new-claim-form-actions {
+  @apply flex justify-end space-x-3 pt-4 border-t;
+}
+
+/* Form Field Overrides */
+.claims-form-select {
+  @apply w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary;
+}
+
+.claims-form-select-default {
+  @apply border-neutral-300;
+}
+
+.claims-form-select-error {
+  @apply border-red-500;
+}
+
+.claims-form-textarea {
+  @apply w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none;
+}
+
+.claims-form-textarea-default {
+  @apply border-neutral-300;
+}
+
+.claims-form-textarea-error {
+  @apply border-red-500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .claims-stats-grid {
+    @apply grid-cols-1;
+  }
+  
+  .claims-filters-grid {
+    @apply grid-cols-1;
+  }
+  
+  .claims-item-content {
+    @apply flex-col space-y-4;
+  }
+  
+  .claims-item-actions {
+    @apply w-full justify-end;
+  }
+  
+  .claims-modal-container {
+    @apply mx-4 my-8 max-h-full;
+  }
+  
+  .claims-modal-grid {
+    @apply grid-cols-1;
+  }
+  
+  .claims-details-grid {
+    @apply grid-cols-1;
+  }
+  
+  .new-claim-modal-container {
+    @apply mx-4 my-8 max-h-full;
+  }
+}
+
+@media (max-width: 640px) {
+  .claims-modal-header,
+  .claims-modal-body,
+  .new-claim-form {
+    @apply px-4;
+  }
+  
+  .claims-item-info-row {
+    @apply flex-col items-start space-y-2 space-x-0;
+  }
+  
+  .claims-timeline-header {
+    @apply flex-col items-start space-y-1;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .claims-modal-overlay {
+    @apply static bg-transparent;
+  }
+  
+  .claims-modal-container {
+    @apply shadow-none max-w-none;
+  }
+  
+  .claims-modal-header-actions,
+  .claims-adjuster-actions,
+  .claims-actions-list {
+    @apply hidden;
+  }
+}

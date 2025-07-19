@@ -7,6 +7,7 @@ import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
 import { FormField, FormInput } from '@/components/common/Form';
+import { getClaimsData, getAvailablePolicies, getClaimTypes } from '@/services/staticDataService';
 import { 
   FileText, 
   Plus, 
@@ -88,20 +89,9 @@ const Claims: React.FC = () => {
 
   const { execute: fetchClaims, loading } = useApi();
 
-  // Mock policies for claim filing
-  const availablePolicies = [
-    { id: '1', number: 'AUTO-2024-001', type: 'AUTO', description: 'Toyota Camry 2022' },
-    { id: '2', number: 'HOME-2024-002', type: 'HOME', description: '123 Main St Property' },
-    { id: '3', number: 'LIFE-2024-003', type: 'LIFE', description: 'Term Life Insurance' },
-    { id: '4', number: 'HEALTH-2024-004', type: 'HEALTH', description: 'Individual Health Plan' },
-  ];
-
-  const claimTypes = {
-    AUTO: ['Collision', 'Comprehensive', 'Liability', 'Uninsured Motorist', 'Personal Injury'],
-    HOME: ['Fire Damage', 'Water Damage', 'Theft', 'Storm Damage', 'Vandalism', 'Personal Property'],
-    LIFE: ['Death Benefit', 'Terminal Illness', 'Accidental Death'],
-    HEALTH: ['Medical Treatment', 'Prescription Drugs', 'Emergency Care', 'Preventive Care', 'Mental Health']
-  };
+  // Load data from static data service
+  const availablePolicies = getAvailablePolicies();
+  const claimTypes = getClaimTypes();
 
   const newClaimForm = useGenericForm({
     schema: claimSchemas.newClaim,
@@ -129,92 +119,9 @@ const Claims: React.FC = () => {
 
   const loadClaims = async () => {
     try {
-      // Mock claims data
-      const mockClaims: Claim[] = [
-        {
-          id: '1',
-          claimNumber: 'CLM-2024-001',
-          policyId: '1',
-          policyType: 'AUTO',
-          policyNumber: 'AUTO-2024-001',
-          type: 'Collision',
-          status: 'UNDER_REVIEW',
-          amount: 5000,
-          estimatedAmount: 5500,
-          submittedDate: '2024-01-15',
-          incidentDate: '2024-01-10',
-          description: 'Rear-end collision on Highway 101 during morning commute. Significant damage to rear bumper and trunk.',
-          location: 'Highway 101, San Francisco, CA',
-          adjusterName: 'Sarah Johnson',
-          adjusterPhone: '(555) 123-4567',
-          adjusterEmail: 'sarah.johnson@assureme.com',
-          documents: [
-            { id: '1', name: 'Police_Report.pdf', type: 'PDF', uploadDate: '2024-01-15', size: 245760 },
-            { id: '2', name: 'Damage_Photos.zip', type: 'ZIP', uploadDate: '2024-01-15', size: 2048000 },
-            { id: '3', name: 'Repair_Estimate.pdf', type: 'PDF', uploadDate: '2024-01-16', size: 156432 }
-          ],
-          timeline: [
-            { id: '1', date: '2024-01-15', event: 'Claim Submitted', description: 'Initial claim filed online', status: 'COMPLETED' },
-            { id: '2', date: '2024-01-16', event: 'Documents Received', description: 'Police report and photos uploaded', status: 'COMPLETED' },
-            { id: '3', date: '2024-01-17', event: 'Adjuster Assigned', description: 'Sarah Johnson assigned to case', status: 'COMPLETED' },
-            { id: '4', date: '2024-01-18', event: 'Vehicle Inspection', description: 'Scheduled for January 22, 2024', status: 'PENDING' }
-          ]
-        },
-        {
-          id: '2',
-          claimNumber: 'CLM-2024-002',
-          policyId: '2',
-          policyType: 'HOME',
-          policyNumber: 'HOME-2024-002',
-          type: 'Water Damage',
-          status: 'APPROVED',
-          amount: 12000,
-          estimatedAmount: 12500,
-          submittedDate: '2024-01-10',
-          incidentDate: '2024-01-08',
-          description: 'Pipe burst in basement causing extensive water damage to flooring and personal property.',
-          location: '123 Main St, Basement',
-          adjusterName: 'Mike Chen',
-          adjusterPhone: '(555) 987-6543',
-          adjusterEmail: 'mike.chen@assureme.com',
-          documents: [
-            { id: '4', name: 'Plumber_Report.pdf', type: 'PDF', uploadDate: '2024-01-10', size: 198432 },
-            { id: '5', name: 'Damage_Assessment.pdf', type: 'PDF', uploadDate: '2024-01-12', size: 345678 },
-            { id: '6', name: 'Receipts.zip', type: 'ZIP', uploadDate: '2024-01-14', size: 1024000 }
-          ],
-          timeline: [
-            { id: '5', date: '2024-01-10', event: 'Claim Submitted', description: 'Water damage claim filed', status: 'COMPLETED' },
-            { id: '6', date: '2024-01-11', event: 'Emergency Response', description: 'Water mitigation services approved', status: 'COMPLETED' },
-            { id: '7', date: '2024-01-12', event: 'Property Inspection', description: 'Adjuster completed site visit', status: 'COMPLETED' },
-            { id: '8', date: '2024-01-18', event: 'Claim Approved', description: 'Settlement approved for $12,000', status: 'COMPLETED' }
-          ]
-        },
-        {
-          id: '3',
-          claimNumber: 'CLM-2024-003',
-          policyId: '4',
-          policyType: 'HEALTH',
-          policyNumber: 'HEALTH-2024-004',
-          type: 'Emergency Care',
-          status: 'PAID',
-          amount: 2500,
-          submittedDate: '2024-01-05',
-          incidentDate: '2024-01-03',
-          description: 'Emergency room visit for chest pain and cardiac evaluation.',
-          location: 'City General Hospital, Emergency Department',
-          documents: [
-            { id: '7', name: 'Medical_Records.pdf', type: 'PDF', uploadDate: '2024-01-05', size: 567890 },
-            { id: '8', name: 'Hospital_Bill.pdf', type: 'PDF', uploadDate: '2024-01-06', size: 123456 }
-          ],
-          timeline: [
-            { id: '9', date: '2024-01-05', event: 'Claim Submitted', description: 'Medical claim filed', status: 'COMPLETED' },
-            { id: '10', date: '2024-01-06', event: 'Pre-Authorization', description: 'Treatment pre-authorized', status: 'COMPLETED' },
-            { id: '11', date: '2024-01-08', event: 'Claim Processed', description: 'Payment approved and issued', status: 'COMPLETED' }
-          ]
-        }
-      ];
-
-      setClaims(mockClaims);
+      // Load claims data from static data service
+      const claimsData = getClaimsData();
+      setClaims(claimsData);
     } catch (error) {
       console.error('Failed to load claims:', error);
     }
@@ -309,24 +216,24 @@ const Claims: React.FC = () => {
     if (!selectedClaim) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="p-6 border-b">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-primary/10 rounded-full text-primary">
+      <div className="claims-modal-overlay">
+        <div className="claims-modal-container">
+          <div className="claims-modal-header">
+            <div className="claims-modal-header-content">
+              <div className="claims-modal-title-section">
+                <div className="claims-modal-title-icon">
                   {getPolicyIcon(selectedClaim.policyType)}
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-neutral-900">
+                  <h2 className="claims-modal-title">
                     Claim {selectedClaim.claimNumber}
                   </h2>
-                  <p className="text-sm text-neutral-600">
+                  <p className="claims-modal-subtitle">
                     {selectedClaim.type} - {selectedClaim.policyNumber}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="claims-modal-header-actions">
                 <StatusBadge 
                   status={selectedClaim.status} 
                   variant={getStatusColor(selectedClaim.status) as any}
@@ -342,40 +249,40 @@ const Claims: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="claims-modal-body">
+            <div className="claims-modal-grid">
               {/* Main Content */}
-              <div className="lg:col-span-2 space-y-6">
+              <div className="claims-modal-main">
                 {/* Claim Overview */}
-                <div>
-                  <h3 className="text-lg font-medium text-neutral-900 mb-4">Claim Details</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-neutral-50 rounded-lg">
-                      <p className="text-sm text-neutral-600">Claim Amount</p>
-                      <p className="text-lg font-semibold text-neutral-900">
+                <div className="claims-details-section">
+                  <h3 className="claims-details-title">Claim Details</h3>
+                  <div className="claims-details-grid">
+                    <div className="claims-details-card">
+                      <p className="claims-details-label">Claim Amount</p>
+                      <p className="claims-details-value">
                         {formatCurrency(selectedClaim.amount)}
                       </p>
                       {selectedClaim.estimatedAmount && (
-                        <p className="text-xs text-neutral-500">
+                        <p className="claims-details-secondary">
                           Est: {formatCurrency(selectedClaim.estimatedAmount)}
                         </p>
                       )}
                     </div>
-                    <div className="p-4 bg-neutral-50 rounded-lg">
-                      <p className="text-sm text-neutral-600">Incident Date</p>
-                      <p className="text-lg font-semibold text-neutral-900">
+                    <div className="claims-details-card">
+                      <p className="claims-details-label">Incident Date</p>
+                      <p className="claims-details-value">
                         {formatDate(selectedClaim.incidentDate)}
                       </p>
                     </div>
-                    <div className="p-4 bg-neutral-50 rounded-lg">
-                      <p className="text-sm text-neutral-600">Submitted</p>
-                      <p className="text-lg font-semibold text-neutral-900">
+                    <div className="claims-details-card">
+                      <p className="claims-details-label">Submitted</p>
+                      <p className="claims-details-value">
                         {formatDate(selectedClaim.submittedDate)}
                       </p>
                     </div>
-                    <div className="p-4 bg-neutral-50 rounded-lg">
-                      <p className="text-sm text-neutral-600">Location</p>
-                      <p className="text-sm font-medium text-neutral-900">
+                    <div className="claims-details-card">
+                      <p className="claims-details-label">Location</p>
+                      <p className="claims-details-location">
                         {selectedClaim.location || 'Not specified'}
                       </p>
                     </div>
@@ -383,38 +290,38 @@ const Claims: React.FC = () => {
                 </div>
 
                 {/* Description */}
-                <div>
-                  <h3 className="text-lg font-medium text-neutral-900 mb-3">Description</h3>
-                  <div className="p-4 border border-neutral-200 rounded-lg">
-                    <p className="text-neutral-700">{selectedClaim.description}</p>
+                <div className="claims-details-section">
+                  <h3 className="claims-details-title">Description</h3>
+                  <div className="claims-description-container">
+                    <p className="claims-description-text">{selectedClaim.description}</p>
                   </div>
                 </div>
 
                 {/* Timeline */}
-                <div>
-                  <h3 className="text-lg font-medium text-neutral-900 mb-4">Claim Timeline</h3>
-                  <div className="space-y-4">
+                <div className="claims-details-section">
+                  <h3 className="claims-details-title">Claim Timeline</h3>
+                  <div className="claims-timeline">
                     {selectedClaim.timeline.map((event) => (
-                      <div key={event.id} className="flex items-start space-x-3">
-                        <div className={`p-2 rounded-full ${
-                          event.status === 'COMPLETED' ? 'bg-green-100 text-green-600' : 
-                          event.status === 'PENDING' ? 'bg-yellow-100 text-yellow-600' :
-                          'bg-neutral-100 text-neutral-600'
+                      <div key={event.id} className="claims-timeline-item">
+                        <div className={`claims-timeline-icon-container ${
+                          event.status === 'COMPLETED' ? 'claims-timeline-icon-completed' : 
+                          event.status === 'PENDING' ? 'claims-timeline-icon-pending' :
+                          'claims-timeline-icon-default'
                         }`}>
                           {event.status === 'COMPLETED' ? (
-                            <CheckCircle className="h-4 w-4" />
+                            <CheckCircle className="claims-timeline-icon" />
                           ) : event.status === 'PENDING' ? (
-                            <Clock className="h-4 w-4" />
+                            <Clock className="claims-timeline-icon" />
                           ) : (
-                            <AlertTriangle className="h-4 w-4" />
+                            <AlertTriangle className="claims-timeline-icon" />
                           )}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-medium text-neutral-900">{event.event}</h4>
-                            <span className="text-sm text-neutral-500">{formatDate(event.date)}</span>
+                        <div className="claims-timeline-content">
+                          <div className="claims-timeline-header">
+                            <h4 className="claims-timeline-event">{event.event}</h4>
+                            <span className="claims-timeline-date">{formatDate(event.date)}</span>
                           </div>
-                          <p className="text-sm text-neutral-600 mt-1">{event.description}</p>
+                          <p className="claims-timeline-description">{event.description}</p>
                         </div>
                       </div>
                     ))}
@@ -422,16 +329,16 @@ const Claims: React.FC = () => {
                 </div>
 
                 {/* Documents */}
-                <div>
-                  <h3 className="text-lg font-medium text-neutral-900 mb-4">Documents</h3>
-                  <div className="space-y-3">
+                <div className="claims-details-section">
+                  <h3 className="claims-details-title">Documents</h3>
+                  <div className="claims-documents-list">
                     {selectedClaim.documents.map((doc) => (
-                      <div key={doc.id} className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <FileText className="h-5 w-5 text-neutral-500" />
-                          <div>
-                            <p className="font-medium text-neutral-900">{doc.name}</p>
-                            <p className="text-sm text-neutral-500">
+                      <div key={doc.id} className="claims-document-item">
+                        <div className="claims-document-info">
+                          <FileText className="claims-document-icon" />
+                          <div className="claims-document-details">
+                            <p className="claims-document-name">{doc.name}</p>
+                            <p className="claims-document-meta">
                               {formatFileSize(doc.size)} • Uploaded {formatDate(doc.uploadDate)}
                             </p>
                           </div>
@@ -446,32 +353,32 @@ const Claims: React.FC = () => {
               </div>
 
               {/* Sidebar */}
-              <div className="space-y-6">
+              <div className="claims-modal-sidebar">
                 {/* Adjuster Info */}
                 {selectedClaim.adjusterName && (
-                  <div className="p-4 border border-neutral-200 rounded-lg">
-                    <h3 className="font-medium text-neutral-900 mb-3">Your Adjuster</h3>
-                    <div className="space-y-2">
-                      <p className="font-medium text-neutral-900">{selectedClaim.adjusterName}</p>
+                  <div className="claims-adjuster-card">
+                    <h3 className="claims-adjuster-title">Your Adjuster</h3>
+                    <div className="claims-adjuster-info">
+                      <p className="claims-adjuster-name">{selectedClaim.adjusterName}</p>
                       {selectedClaim.adjusterPhone && (
-                        <div className="flex items-center space-x-2 text-sm text-neutral-600">
-                          <Phone className="h-4 w-4" />
+                        <div className="claims-adjuster-contact">
+                          <Phone className="claims-adjuster-contact-icon" />
                           <span>{selectedClaim.adjusterPhone}</span>
                         </div>
                       )}
                       {selectedClaim.adjusterEmail && (
-                        <div className="flex items-center space-x-2 text-sm text-neutral-600">
-                          <Mail className="h-4 w-4" />
+                        <div className="claims-adjuster-contact">
+                          <Mail className="claims-adjuster-contact-icon" />
                           <span>{selectedClaim.adjusterEmail}</span>
                         </div>
                       )}
                     </div>
-                    <div className="mt-4 space-y-2">
-                      <Button variant="outline" size="sm" className="w-full">
+                    <div className="claims-adjuster-actions">
+                      <Button variant="outline" size="sm" className="claims-adjuster-button">
                         <Phone className="h-4 w-4 mr-2" />
                         Call Adjuster
                       </Button>
-                      <Button variant="outline" size="sm" className="w-full">
+                      <Button variant="outline" size="sm" className="claims-adjuster-button">
                         <MessageSquare className="h-4 w-4 mr-2" />
                         Send Message
                       </Button>
@@ -480,18 +387,18 @@ const Claims: React.FC = () => {
                 )}
 
                 {/* Actions */}
-                <div className="p-4 border border-neutral-200 rounded-lg">
-                  <h3 className="font-medium text-neutral-900 mb-3">Actions</h3>
-                  <div className="space-y-2">
-                    <Button variant="outline" size="sm" className="w-full">
+                <div className="claims-actions-card">
+                  <h3 className="claims-actions-title">Actions</h3>
+                  <div className="claims-actions-list">
+                    <Button variant="outline" size="sm" className="claims-action-button">
                       <Upload className="h-4 w-4 mr-2" />
                       Upload Document
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full">
+                    <Button variant="outline" size="sm" className="claims-action-button">
                       <MessageSquare className="h-4 w-4 mr-2" />
                       Add Comment
                     </Button>
-                    <Button variant="outline" size="sm" className="w-full">
+                    <Button variant="outline" size="sm" className="claims-action-button">
                       <FileText className="h-4 w-4 mr-2" />
                       Print Summary
                     </Button>
@@ -511,11 +418,11 @@ const Claims: React.FC = () => {
     const selectedPolicy = availablePolicies.find(p => p.id === watchPolicyId);
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="p-6 border-b">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-neutral-900">File New Claim</h2>
+      <div className="claims-modal-overlay">
+        <div className="new-claim-modal-container">
+          <div className="new-claim-modal-header">
+            <div className="new-claim-modal-header-content">
+              <h2 className="new-claim-modal-title">File New Claim</h2>
               <Button
                 variant="outline"
                 size="sm"
@@ -526,7 +433,7 @@ const Claims: React.FC = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(handleNewClaim)} className="p-6 space-y-6">
+          <form onSubmit={handleSubmit(handleNewClaim)} className="new-claim-form">
             {/* Policy Selection */}
             <FormField
               label="Select Policy"
@@ -535,8 +442,8 @@ const Claims: React.FC = () => {
             >
               <select
                 {...register('policyId')}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                  errors.policyId ? 'border-red-500' : 'border-neutral-300'
+                className={`claims-form-select ${
+                  errors.policyId ? 'claims-form-select-error' : 'claims-form-select-default'
                 }`}
               >
                 <option value="">Choose a policy...</option>
@@ -557,8 +464,8 @@ const Claims: React.FC = () => {
               >
                 <select
                   {...register('type')}
-                  className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.type ? 'border-red-500' : 'border-neutral-300'
+                  className={`claims-form-select ${
+                    errors.type ? 'claims-form-select-error' : 'claims-form-select-default'
                   }`}
                 >
                   <option value="">Select claim type...</option>
@@ -606,8 +513,8 @@ const Claims: React.FC = () => {
               <textarea
                 {...register('description')}
                 rows={4}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none ${
-                  errors.description ? 'border-red-500' : 'border-neutral-300'
+                className={`claims-form-textarea ${
+                  errors.description ? 'claims-form-textarea-error' : 'claims-form-textarea-default'
                 }`}
                 placeholder="Describe the incident in detail..."
               />
@@ -653,7 +560,7 @@ const Claims: React.FC = () => {
                   <textarea
                     {...register('witnesses')}
                     rows={3}
-                    className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
+                    className="claims-form-textarea claims-form-textarea-default"
                     placeholder="List any witnesses with their contact information..."
                   />
                 </FormField>
@@ -661,7 +568,7 @@ const Claims: React.FC = () => {
             )}
 
             {/* Submit Button */}
-            <div className="flex justify-end space-x-3 pt-4 border-t">
+            <div className="new-claim-form-actions">
               <Button
                 type="button"
                 variant="outline"
@@ -680,7 +587,7 @@ const Claims: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="claims-container">
       <PageHeader
         title="Claims Center"
         description="File new claims and track existing ones"
@@ -693,57 +600,57 @@ const Claims: React.FC = () => {
       />
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-neutral-600">Total Claims</p>
-              <p className="text-2xl font-bold text-neutral-900">{claims.length}</p>
+      <div className="claims-stats-grid">
+        <Card className="claims-stat-card">
+          <div className="claims-stat-content">
+            <div className="claims-stat-info">
+              <p className="claims-stat-label">Total Claims</p>
+              <p className="claims-stat-value">{claims.length}</p>
             </div>
-            <FileText className="h-8 w-8 text-blue-500" />
+            <FileText className="claims-stat-icon claims-stat-icon-blue" />
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-neutral-600">Under Review</p>
-              <p className="text-2xl font-bold text-neutral-900">
+        <Card className="claims-stat-card">
+          <div className="claims-stat-content">
+            <div className="claims-stat-info">
+              <p className="claims-stat-label">Under Review</p>
+              <p className="claims-stat-value">
                 {claims.filter(c => ['SUBMITTED', 'UNDER_REVIEW', 'INVESTIGATING'].includes(c.status)).length}
               </p>
             </div>
-            <Clock className="h-8 w-8 text-yellow-500" />
+            <Clock className="claims-stat-icon claims-stat-icon-yellow" />
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-neutral-600">Approved</p>
-              <p className="text-2xl font-bold text-neutral-900">
+        <Card className="claims-stat-card">
+          <div className="claims-stat-content">
+            <div className="claims-stat-info">
+              <p className="claims-stat-label">Approved</p>
+              <p className="claims-stat-value">
                 {claims.filter(c => ['APPROVED', 'PAID'].includes(c.status)).length}
               </p>
             </div>
-            <CheckCircle className="h-8 w-8 text-green-500" />
+            <CheckCircle className="claims-stat-icon claims-stat-icon-green" />
           </div>
         </Card>
 
-        <Card className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-neutral-600">Total Paid</p>
-              <p className="text-2xl font-bold text-neutral-900">
+        <Card className="claims-stat-card">
+          <div className="claims-stat-content">
+            <div className="claims-stat-info">
+              <p className="claims-stat-label">Total Paid</p>
+              <p className="claims-stat-value">
                 {formatCurrency(claims.filter(c => c.status === 'PAID').reduce((sum, c) => sum + c.amount, 0))}
               </p>
             </div>
-            <DollarSign className="h-8 w-8 text-green-500" />
+            <DollarSign className="claims-stat-icon claims-stat-icon-green" />
           </div>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <Card className="claims-filters">
+        <div className="claims-filters-grid">
           <FormField label="Search Claims">
             <FormInput
               placeholder="Search by claim number, type..."
@@ -759,7 +666,7 @@ const Claims: React.FC = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              className="form-select-base form-select-default"
             >
               <option value="ALL">All Statuses</option>
               <option value="SUBMITTED">Submitted</option>
@@ -776,7 +683,7 @@ const Claims: React.FC = () => {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+              className="form-select-base form-select-default"
             >
               <option value="ALL">All Types</option>
               <option value="AUTO">Auto</option>
@@ -786,7 +693,7 @@ const Claims: React.FC = () => {
             </select>
           </FormField>
 
-          <div className="flex items-end">
+          <div className="claims-filter-actions">
             <Button
               variant="outline"
               onClick={() => {
@@ -794,7 +701,7 @@ const Claims: React.FC = () => {
                 setStatusFilter('ALL');
                 setTypeFilter('ALL');
               }}
-              className="w-full"
+              className="claims-clear-filters"
             >
               <Filter className="h-4 w-4 mr-2" />
               Clear Filters
@@ -804,47 +711,47 @@ const Claims: React.FC = () => {
       </Card>
 
       {/* Claims List */}
-      <div className="space-y-4">
+      <div className="claims-list">
         {filteredClaims.map((claim) => (
-          <Card key={claim.id} className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-4">
-                <div className="p-2 bg-primary/10 rounded-full text-primary">
+          <Card key={claim.id} className="claims-list-item">
+            <div className="claims-item-content">
+              <div className="claims-item-main">
+                <div className="claims-item-icon-container">
                   {getPolicyIcon(claim.policyType)}
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="font-semibold text-neutral-900">{claim.claimNumber}</h3>
+                <div className="claims-item-details">
+                  <div className="claims-item-header">
+                    <h3 className="claims-item-number">{claim.claimNumber}</h3>
                     <StatusBadge 
                       status={claim.status} 
                       variant={getStatusColor(claim.status) as any}
                     />
                   </div>
-                  <p className="text-sm text-neutral-600 mb-1">
+                  <p className="claims-item-meta">
                     {claim.type} • {claim.policyNumber}
                   </p>
-                  <p className="text-sm text-neutral-700 mb-3 line-clamp-2">
+                  <p className="claims-item-description">
                     {claim.description}
                   </p>
-                  <div className="flex items-center space-x-6 text-sm text-neutral-600">
-                    <div className="flex items-center space-x-1">
+                  <div className="claims-item-info-row">
+                    <div className="claims-item-info-item">
                       <Calendar className="h-4 w-4" />
                       <span>Filed: {formatDate(claim.submittedDate)}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
+                    <div className="claims-item-info-item">
                       <DollarSign className="h-4 w-4" />
                       <span>{formatCurrency(claim.amount)}</span>
                     </div>
                     {claim.location && (
-                      <div className="flex items-center space-x-1">
+                      <div className="claims-item-info-item">
                         <MapPin className="h-4 w-4" />
-                        <span className="truncate max-w-48">{claim.location}</span>
+                        <span className="claims-item-location">{claim.location}</span>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="flex space-x-2">
+              <div className="claims-item-actions">
                 <Button
                   variant="outline"
                   size="sm"
@@ -860,10 +767,10 @@ const Claims: React.FC = () => {
       </div>
 
       {filteredClaims.length === 0 && (
-        <Card className="p-12 text-center">
-          <FileText className="h-16 w-16 text-neutral-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-neutral-900 mb-2">No claims found</h3>
-          <p className="text-neutral-600 mb-6">
+        <Card className="claims-empty-state">
+          <FileText className="claims-empty-icon" />
+          <h3 className="claims-empty-title">No claims found</h3>
+          <p className="claims-empty-description">
             {searchTerm || statusFilter !== 'ALL' || typeFilter !== 'ALL'
               ? 'Try adjusting your filters to see more claims.'
               : 'You haven\'t filed any claims yet. File a claim when you need to report an incident.'

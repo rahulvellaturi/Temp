@@ -195,5 +195,60 @@
         }
       ]
     }
-  ]
+  ],
+  "availablePolicies": [
+    {
+      "id": "1",
+      "number": "AUTO-2024-001",
+      "type": "AUTO",
+      "description": "Toyota Camry 2022"
+    },
+    {
+      "id": "2",
+      "number": "HOME-2024-002",
+      "type": "HOME",
+      "description": "123 Main St Property"
+    },
+    {
+      "id": "3",
+      "number": "LIFE-2024-003",
+      "type": "LIFE",
+      "description": "Term Life Insurance"
+    },
+    {
+      "id": "4",
+      "number": "HEALTH-2024-004",
+      "type": "HEALTH",
+      "description": "Individual Health Plan"
+    }
+  ],
+  "claimTypes": {
+    "AUTO": [
+      "Collision",
+      "Comprehensive", 
+      "Liability",
+      "Uninsured Motorist",
+      "Personal Injury"
+    ],
+    "HOME": [
+      "Fire Damage",
+      "Water Damage",
+      "Theft",
+      "Storm Damage",
+      "Vandalism",
+      "Personal Property"
+    ],
+    "LIFE": [
+      "Death Benefit",
+      "Terminal Illness",
+      "Accidental Death"
+    ],
+    "HEALTH": [
+      "Medical Treatment",
+      "Prescription Drugs",
+      "Emergency Care",
+      "Preventive Care",
+      "Mental Health"
+    ]
+  }
 }
