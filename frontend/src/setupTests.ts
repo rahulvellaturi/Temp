@@ -1,8 +1,21 @@
-import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-18';
+import 'jsdom-global/register';
+import 'whatwg-fetch';
+import '@testing-library/jest-dom';
 
-// Configure Enzyme
-configure({ adapter: new Adapter() });
+// Add missing polyfills for Node.js environment
+const { TextEncoder, TextDecoder } = require('util');
+
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// Additional polyfills
+if (typeof global.URL === 'undefined') {
+  global.URL = require('url').URL;
+}
+
+if (typeof global.URLSearchParams === 'undefined') {
+  global.URLSearchParams = require('url').URLSearchParams;
+}
 
 // Mock IntersectionObserver
 global.IntersectionObserver = jest.fn().mockImplementation(() => ({
