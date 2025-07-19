@@ -1,16 +1,8 @@
-// jest-dom adds custom jest matchers for asserting on DOM nodes.
-// allows you to do things like:
-// expect(element).toHaveTextContent(/react/i)
-// learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
-import { configure } from '@testing-library/react';
-import 'jest-axe/extend-expect';
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-18';
 
-// Configure testing library
-configure({ 
-  testIdAttribute: 'data-testid',
-  asyncUtilTimeout: 5000
-});
+// Configure Enzyme
+configure({ adapter: new Adapter() });
 
 // Mock IntersectionObserver
 global.IntersectionObserver = jest.fn().mockImplementation(() => ({
@@ -33,8 +25,8 @@ Object.defineProperty(window, 'matchMedia', {
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
@@ -70,7 +62,33 @@ Object.defineProperty(window, 'sessionStorage', {
 });
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({}),
+    ok: true,
+    status: 200,
+  } as Response)
+);
+
+// Mock react-router-dom
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({
+    pathname: '/test',
+    search: '',
+    hash: '',
+    state: null,
+  }),
+  useParams: () => ({}),
+}));
+
+// Mock Redux hooks
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+  useDispatch: () => jest.fn(),
+}));
 
 // Suppress console warnings in tests
 const originalWarn = console.warn;
