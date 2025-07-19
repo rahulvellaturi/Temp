@@ -387,6 +387,285 @@
           "status": "COMPLETED"
         }
       ]
+    },
+    {
+      "id": "4",
+      "claimNumber": "CLM-2024-004",
+      "policyId": "1",
+      "policyType": "AUTO",
+      "policyNumber": "AUTO-2024-001",
+      "clientId": "2",
+      "clientName": "Jane Smith",
+      "type": "Collision",
+      "status": "SUBMITTED",
+      "amount": 5500,
+      "payoutAmount": 5500,
+      "submittedDate": "2024-01-15",
+      "submittedAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z",
+      "incidentDate": "2024-01-14",
+      "description": "Rear-end collision on Highway 101",
+      "location": "Highway 101, San Francisco, CA",
+      "adjusterName": "Jane Adjuster",
+      "adjusterEmail": "jane.adjuster@assureme.com",
+      "documents": [
+        {
+          "id": "9",
+          "name": "claim-photos.pdf",
+          "type": "IMAGE",
+          "uploadDate": "2024-01-15",
+          "size": 2048000
+        },
+        {
+          "id": "10",
+          "name": "police-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-15",
+          "size": 1024000
+        },
+        {
+          "id": "11",
+          "name": "estimate.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-15",
+          "size": 512000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "12",
+          "date": "2024-01-15",
+          "event": "Claim Submitted",
+          "description": "Initial claim filed",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "claimNumber": "CLM-2024-005",
+      "policyId": "2",
+      "policyType": "HOME",
+      "policyNumber": "HOME-2024-002",
+      "clientId": "2",
+      "clientName": "Jane Smith",
+      "type": "Water Damage",
+      "status": "APPROVED",
+      "amount": 12500,
+      "payoutAmount": 12500,
+      "submittedDate": "2024-01-10",
+      "submittedAt": "2024-01-10T14:20:00Z",
+      "updatedAt": "2024-01-12T16:30:00Z",
+      "incidentDate": "2024-01-09",
+      "description": "Water damage from burst pipe in basement",
+      "location": "123 Main St, Basement, Springfield, IL",
+      "adjusterName": "Bob Claims",
+      "adjusterEmail": "bob.claims@assureme.com",
+      "documents": [
+        {
+          "id": "12",
+          "name": "water-damage-photos.pdf",
+          "type": "IMAGE",
+          "uploadDate": "2024-01-10",
+          "size": 3072000
+        },
+        {
+          "id": "13",
+          "name": "plumber-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-11",
+          "size": 1536000
+        },
+        {
+          "id": "14",
+          "name": "repair-estimate.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-12",
+          "size": 768000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "13",
+          "date": "2024-01-10",
+          "event": "Claim Submitted",
+          "description": "Water damage claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "14",
+          "date": "2024-01-12",
+          "event": "Claim Approved",
+          "description": "Settlement approved for $12,500",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "claimNumber": "CLM-2024-006",
+      "policyId": "4",
+      "policyType": "HEALTH",
+      "policyNumber": "HEALTH-2024-004",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "type": "Emergency Care",
+      "status": "UNDER_REVIEW",
+      "amount": 8750,
+      "payoutAmount": 0,
+      "submittedDate": "2024-01-12",
+      "submittedAt": "2024-01-12T09:45:00Z",
+      "updatedAt": "2024-01-14T11:20:00Z",
+      "incidentDate": "2024-01-11",
+      "description": "Emergency surgery - appendectomy",
+      "location": "City General Hospital, Emergency Room",
+      "adjusterName": "Jane Adjuster",
+      "adjusterEmail": "jane.adjuster@assureme.com",
+      "documents": [
+        {
+          "id": "15",
+          "name": "medical-records.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-12",
+          "size": 2048000
+        },
+        {
+          "id": "16",
+          "name": "hospital-bill.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-12",
+          "size": 512000
+        },
+        {
+          "id": "17",
+          "name": "doctor-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-13",
+          "size": 1024000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "15",
+          "date": "2024-01-12",
+          "event": "Claim Submitted",
+          "description": "Medical claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "16",
+          "date": "2024-01-14",
+          "event": "Under Review",
+          "description": "Medical review in progress",
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "claimNumber": "CLM-2024-007",
+      "policyId": "1",
+      "policyType": "AUTO",
+      "policyNumber": "AUTO-2024-001",
+      "clientId": "2",
+      "clientName": "Jane Smith",
+      "type": "Collision",
+      "status": "DENIED",
+      "amount": 0,
+      "payoutAmount": 0,
+      "submittedDate": "2024-01-08",
+      "submittedAt": "2024-01-08T11:15:00Z",
+      "updatedAt": "2024-01-10T14:45:00Z",
+      "incidentDate": "2024-01-07",
+      "description": "Minor fender bender in parking lot",
+      "location": "Walmart Parking Lot, 456 Commerce Blvd",
+      "adjusterName": "Tom Reviewer",
+      "adjusterEmail": "tom.reviewer@assureme.com",
+      "documents": [
+        {
+          "id": "18",
+          "name": "incident-photos.pdf",
+          "type": "IMAGE",
+          "uploadDate": "2024-01-08",
+          "size": 1536000
+        },
+        {
+          "id": "19",
+          "name": "witness-statement.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-08",
+          "size": 256000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "17",
+          "date": "2024-01-08",
+          "event": "Claim Submitted",
+          "description": "Minor collision claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "18",
+          "date": "2024-01-10",
+          "event": "Claim Denied",
+          "description": "Insufficient evidence of coverage",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "claimNumber": "CLM-2024-008",
+      "policyId": "3",
+      "policyType": "LIFE",
+      "policyNumber": "LIFE-2024-003",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "type": "Accidental Death",
+      "status": "SUBMITTED",
+      "amount": 50000,
+      "payoutAmount": 0,
+      "submittedDate": "2024-01-05",
+      "submittedAt": "2024-01-05T13:30:00Z",
+      "updatedAt": "2024-01-05T13:30:00Z",
+      "incidentDate": "2024-01-03",
+      "description": "Life insurance claim - accidental death",
+      "location": "Interstate 75, Mile Marker 142",
+      "adjusterName": "Bob Claims",
+      "adjusterEmail": "bob.claims@assureme.com",
+      "documents": [
+        {
+          "id": "20",
+          "name": "death-certificate.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-05",
+          "size": 512000
+        },
+        {
+          "id": "21",
+          "name": "police-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-05",
+          "size": 1024000
+        },
+        {
+          "id": "22",
+          "name": "medical-examiner-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-05",
+          "size": 2048000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "19",
+          "date": "2024-01-05",
+          "event": "Claim Submitted",
+          "description": "Life insurance claim filed",
+          "status": "COMPLETED"
+        }
+      ]
     }
   ],
   "payments": [

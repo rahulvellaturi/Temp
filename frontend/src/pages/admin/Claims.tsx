@@ -5,139 +5,26 @@ import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
 import PageHeader from '@/components/common/PageHeader';
 import { Claim, ClaimStatus } from '@/types';
-import mockDataService from '@/services/mockDataService';
-
-// This component now uses mockDataService instead of inline mock data
-  {
-    id: 'CLM001',
-    claimNumber: 'CLM001',
-    policyId: 'POL001',
-    userId: 'USR001',
-    status: 'SUBMITTED',
-    payoutAmount: 5500.00,
-    description: 'Rear-end collision on Highway 101',
-    submittedAt: '2024-01-15T10:30:00Z',
-    updatedAt: '2024-01-15T10:30:00Z',
-    incidentDate: '2024-01-14T16:45:00Z',
-    incidentLocation: 'Highway 101, San Francisco, CA',
-    assignedAdjusterId: 'ADJ001',
-    documents: [
-      { id: 'DOC001', name: 'claim-photos.pdf', type: 'IMAGE', size: 2048000, url: '#' },
-      { id: 'DOC002', name: 'police-report.pdf', type: 'DOCUMENT', size: 1024000, url: '#' },
-      { id: 'DOC003', name: 'estimate.pdf', type: 'DOCUMENT', size: 512000, url: '#' }
-    ],
-    policy: { policyNumber: 'AUTO-001', policyType: 'AUTO' },
-    user: { firstName: 'John', lastName: 'Smith', email: 'john.smith@email.com' },
-    assignedAdjuster: { firstName: 'Jane', lastName: 'Adjuster', email: 'jane.adjuster@assureme.com' }
-  },
-  {
-    id: 'CLM002',
-    claimNumber: 'CLM002',
-    policyId: 'POL002',
-    userId: 'USR002',
-    status: 'APPROVED',
-    payoutAmount: 12500.00,
-    description: 'Water damage from burst pipe in basement',
-    submittedAt: '2024-01-10T14:20:00Z',
-    updatedAt: '2024-01-12T16:30:00Z',
-    incidentDate: '2024-01-09T08:15:00Z',
-    incidentLocation: '123 Main St, Basement, Springfield, IL',
-    assignedAdjusterId: 'ADJ002',
-    documents: [
-      { id: 'DOC004', name: 'water-damage-photos.pdf', type: 'IMAGE', size: 3072000, url: '#' },
-      { id: 'DOC005', name: 'plumber-report.pdf', type: 'DOCUMENT', size: 1536000, url: '#' },
-      { id: 'DOC006', name: 'repair-estimate.pdf', type: 'DOCUMENT', size: 768000, url: '#' }
-    ],
-    policy: { policyNumber: 'HOME-002', policyType: 'HOME' },
-    user: { firstName: 'Sarah', lastName: 'Johnson', email: 'sarah.johnson@email.com' },
-    assignedAdjuster: { firstName: 'Bob', lastName: 'Claims', email: 'bob.claims@assureme.com' }
-  },
-  {
-    id: 'CLM003',
-    claimNumber: 'CLM003',
-    policyId: 'POL003',
-    userId: 'USR003',
-    status: 'UNDER_REVIEW',
-    payoutAmount: 8750.00,
-    description: 'Emergency surgery - appendectomy',
-    submittedAt: '2024-01-12T09:45:00Z',
-    updatedAt: '2024-01-14T11:20:00Z',
-    incidentDate: '2024-01-11T22:30:00Z',
-    incidentLocation: 'City General Hospital, Emergency Room',
-    assignedAdjusterId: 'ADJ001',
-    documents: [
-      { id: 'DOC007', name: 'medical-records.pdf', type: 'DOCUMENT', size: 2048000, url: '#' },
-      { id: 'DOC008', name: 'hospital-bill.pdf', type: 'DOCUMENT', size: 512000, url: '#' },
-      { id: 'DOC009', name: 'doctor-report.pdf', type: 'DOCUMENT', size: 1024000, url: '#' }
-    ],
-    policy: { policyNumber: 'HEALTH-003', policyType: 'HEALTH' },
-    user: { firstName: 'Michael', lastName: 'Brown', email: 'michael.brown@email.com' },
-    assignedAdjuster: { firstName: 'Jane', lastName: 'Adjuster', email: 'jane.adjuster@assureme.com' }
-  },
-  {
-    id: 'CLM004',
-    claimNumber: 'CLM004',
-    policyId: 'POL004',
-    userId: 'USR004',
-    status: 'REJECTED',
-    payoutAmount: 0,
-    description: 'Minor fender bender in parking lot',
-    submittedAt: '2024-01-08T11:15:00Z',
-    updatedAt: '2024-01-10T14:45:00Z',
-    incidentDate: '2024-01-07T17:20:00Z',
-    incidentLocation: 'Walmart Parking Lot, 456 Commerce Blvd',
-    assignedAdjusterId: 'ADJ003',
-    documents: [
-      { id: 'DOC010', name: 'incident-photos.pdf', type: 'IMAGE', size: 1536000, url: '#' },
-      { id: 'DOC011', name: 'witness-statement.pdf', type: 'DOCUMENT', size: 256000, url: '#' }
-    ],
-    policy: { policyNumber: 'AUTO-004', policyType: 'AUTO' },
-    user: { firstName: 'Emily', lastName: 'Davis', email: 'emily.davis@email.com' },
-    assignedAdjuster: { firstName: 'Tom', lastName: 'Reviewer', email: 'tom.reviewer@assureme.com' }
-  },
-  {
-    id: 'CLM005',
-    claimNumber: 'CLM005',
-    policyId: 'POL005',
-    userId: 'USR005',
-    status: 'SUBMITTED',
-    payoutAmount: 50000.00,
-    description: 'Life insurance claim - accidental death',
-    submittedAt: '2024-01-05T13:30:00Z',
-    updatedAt: '2024-01-05T13:30:00Z',
-    incidentDate: '2024-01-03T19:45:00Z',
-    incidentLocation: 'Interstate 75, Mile Marker 142',
-    assignedAdjusterId: 'ADJ002',
-    documents: [
-      { id: 'DOC012', name: 'death-certificate.pdf', type: 'DOCUMENT', size: 512000, url: '#' },
-      { id: 'DOC013', name: 'police-report.pdf', type: 'DOCUMENT', size: 1024000, url: '#' },
-      { id: 'DOC014', name: 'medical-examiner-report.pdf', type: 'DOCUMENT', size: 2048000, url: '#' }
-    ],
-    policy: { policyNumber: 'LIFE-005', policyType: 'LIFE' },
-    user: { firstName: 'Robert', lastName: 'Wilson', email: 'robert.wilson@email.com' },
-    assignedAdjuster: { firstName: 'Bob', lastName: 'Claims', email: 'bob.claims@assureme.com' }
-  }
-];
+import unifiedMockDataService from '@/services/unifiedMockDataService';
+import { useDataLoader } from '@/hooks/useDataLoader';
 
 const AdminClaims: React.FC = () => {
-  const [claims, setClaims] = useState<Claim[]>([]);
   const [filteredClaims, setFilteredClaims] = useState<Claim[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ClaimStatus | 'ALL'>('ALL');
   const [policyTypeFilter, setPolicyTypeFilter] = useState<string>('ALL');
   const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
   const [showClaimModal, setShowClaimModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+
+  // Load data using unified service
+  const { data: claims, loading: isLoading } = useDataLoader(
+    () => unifiedMockDataService.fetchClaimsAsync(),
+    { initialData: [] }
+  );
 
   useEffect(() => {
-    // Load claims from mock data service
-    const allClaims = mockDataService.getClaims();
-    setClaims(allClaims);
-    setFilteredClaims(allClaims);
-    
-    // Simulate loading
-    setTimeout(() => setIsLoading(false), 1000);
-  }, []);
+    setFilteredClaims(claims);
+  }, [claims]);
 
   useEffect(() => {
     let filtered = claims;

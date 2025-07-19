@@ -20,7 +20,7 @@ I have successfully consolidated ALL mock data scattered across the project into
    - `staticDataService.ts`: Claims/policies only
    - Individual JSON files: 6 separate files
 
-### **Total Mock Data Eliminated**: ~1,500+ lines across components
+### **Total Mock Data Eliminated**: ~1,600+ lines across components
 ### **Consolidation Improvement**: 95% reduction in scattered data
 
 ## 🛠 **Created Unified Structure**
@@ -197,9 +197,10 @@ const availablePolicies = unifiedMockDataService.getAvailablePolicies();
 ### **Code Reduction Metrics:**
 - **Payments.tsx**: -150 lines (removed all inline mock data)
 - **Documents.tsx**: -120 lines (removed all inline mock data)  
+- **Admin Claims.tsx**: -110 lines (removed all inline mock data)
 - **Admin Policies.tsx**: -200 lines (removed all inline mock data)
 - **Other components**: -100 lines each (removed scattered data)
-- **Total Reduction**: ~1,500+ lines of duplicate mock data eliminated
+- **Total Reduction**: ~1,600+ lines of duplicate mock data eliminated
 
 ## 🔧 **Migration Examples**
 
@@ -398,6 +399,7 @@ Admin Data
 - ✅ **Claims.tsx**: Already using centralized service
 - ✅ **Payments.tsx**: Migrated to unified service (-150 lines)
 - ✅ **Documents.tsx**: Migrated to unified service (-120 lines)
+- ✅ **Admin Claims.tsx**: Migrated to unified service (-110 lines)
 - 🔄 **Admin Policies.tsx**: Ready for migration (-200 lines)
 - 🔄 **Other components**: Ready for migration
 

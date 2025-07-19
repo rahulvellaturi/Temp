@@ -404,6 +404,139 @@
       "updatedAt": "2024-01-18T10:15:00Z",
       "createdBy": "1",
       "updatedBy": "adj-001"
+    },
+    {
+      "id": "2",
+      "claimNumber": "CLM-2024-002",
+      "policyId": "1",
+      "clientId": "2",
+      "type": "Collision",
+      "status": "SUBMITTED",
+      "priority": "MEDIUM",
+      "amount": 5500,
+      "estimatedAmount": 5500,
+      "payoutAmount": 5500,
+      "deductible": 500,
+      "submittedAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z",
+      "incidentDate": "2024-01-14T08:30:00Z",
+      "reportedDate": "2024-01-14T09:15:00Z",
+      "description": "Rear-end collision on Highway 101",
+      "location": {
+        "address": "Highway 101, San Francisco, CA",
+        "coordinates": {
+          "lat": 37.7749,
+          "lng": -122.4194
+        },
+        "weatherConditions": "Clear",
+        "roadConditions": "Dry"
+      },
+      "adjuster": {
+        "id": "adj-002",
+        "name": "Jane Adjuster",
+        "phone": "(555) 123-4567",
+        "email": "jane.adjuster@assureme.com",
+        "assignedAt": "2024-01-15T11:00:00Z"
+      },
+      "documents": [
+        {
+          "id": "doc-3",
+          "name": "claim-photos.pdf",
+          "type": "PHOTOS",
+          "uploadedAt": "2024-01-15T11:00:00Z",
+          "uploadedBy": "2",
+          "fileSize": 2048000,
+          "status": "VERIFIED"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "tl-3",
+          "timestamp": "2024-01-15T10:30:00Z",
+          "event": "CLAIM_SUBMITTED",
+          "description": "Rear-end collision claim filed",
+          "performedBy": "2",
+          "status": "COMPLETED"
+        }
+      ],
+      "fraudIndicators": [],
+      "settlementHistory": [],
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z",
+      "createdBy": "2",
+      "updatedBy": "adj-002"
+    },
+    {
+      "id": "3",
+      "claimNumber": "CLM-2024-003",
+      "policyId": "2",
+      "clientId": "2",
+      "type": "Water Damage",
+      "status": "APPROVED",
+      "priority": "HIGH",
+      "amount": 12500,
+      "estimatedAmount": 12500,
+      "payoutAmount": 12500,
+      "deductible": 1000,
+      "submittedAt": "2024-01-10T14:20:00Z",
+      "updatedAt": "2024-01-12T16:30:00Z",
+      "incidentDate": "2024-01-09T08:15:00Z",
+      "reportedDate": "2024-01-09T09:00:00Z",
+      "description": "Water damage from burst pipe in basement",
+      "location": {
+        "address": "123 Main St, Basement, Springfield, IL",
+        "weatherConditions": "Indoor",
+        "cause": "Pipe Burst"
+      },
+      "adjuster": {
+        "id": "adj-003",
+        "name": "Bob Claims",
+        "phone": "(555) 987-6543",
+        "email": "bob.claims@assureme.com",
+        "assignedAt": "2024-01-10T15:00:00Z"
+      },
+      "documents": [
+        {
+          "id": "doc-4",
+          "name": "water-damage-photos.pdf",
+          "type": "PHOTOS",
+          "uploadedAt": "2024-01-10T15:00:00Z",
+          "uploadedBy": "2",
+          "fileSize": 3072000,
+          "status": "VERIFIED"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "tl-4",
+          "timestamp": "2024-01-10T14:20:00Z",
+          "event": "CLAIM_SUBMITTED",
+          "description": "Water damage claim filed",
+          "performedBy": "2",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "tl-5",
+          "timestamp": "2024-01-12T16:30:00Z",
+          "event": "CLAIM_APPROVED",
+          "description": "Claim approved for full amount",
+          "performedBy": "adj-003",
+          "status": "COMPLETED"
+        }
+      ],
+      "fraudIndicators": [],
+      "settlementHistory": [
+        {
+          "date": "2024-01-12T16:30:00Z",
+          "amount": 12500,
+          "method": "DIRECT_DEPOSIT",
+          "status": "APPROVED"
+        }
+      ],
+      "createdAt": "2024-01-10T14:20:00Z",
+      "updatedAt": "2024-01-12T16:30:00Z",
+      "createdBy": "2",
+      "updatedBy": "adj-003"
     }
   ],
   "payments": [
