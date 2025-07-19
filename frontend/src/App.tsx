@@ -11,6 +11,8 @@ import AdminLayout from '@/components/layout/AdminLayout';
 // Auth Pages
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
 
 // Client Pages
 import ClientDashboard from '@/pages/client/Dashboard';
@@ -78,6 +80,26 @@ function App() {
                 isAuthenticated ? <Navigate to="/client" replace /> : (
                   <ErrorBoundary level="page">
                     <RegisterPage />
+                  </ErrorBoundary>
+                )
+              } 
+            />
+            <Route 
+              path="/forgot-password" 
+              element={
+                isAuthenticated ? <Navigate to="/client" replace /> : (
+                  <ErrorBoundary level="page">
+                    <ForgotPasswordPage />
+                  </ErrorBoundary>
+                )
+              } 
+            />
+            <Route 
+              path="/reset-password" 
+              element={
+                isAuthenticated ? <Navigate to="/client" replace /> : (
+                  <ErrorBoundary level="page">
+                    <ResetPasswordPage />
                   </ErrorBoundary>
                 )
               } 

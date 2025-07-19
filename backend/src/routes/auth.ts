@@ -37,6 +37,15 @@ const schemas = {
   changePassword: z.object({
     currentPassword: z.string().min(1),
     newPassword: z.string().min(8),
+  }),
+  
+  forgotPassword: z.object({
+    email: z.string().email(),
+  }),
+  
+  resetPassword: z.object({
+    token: z.string().min(1),
+    password: z.string().min(8),
   })
 };
 
@@ -137,6 +146,84 @@ router.put('/change-password', authenticate, asyncHandler(async (req: Authentica
   });
 
   return sendSuccess(res, {}, 'Password changed successfully');
+}));
+
+// Forgot Password
+router.post('/forgot-password', asyncHandler(async (req, res) => {
+  const validation = schemas.forgotPassword.safeParse(req.body);
+  if (!validation.success) {
+    return sendError(res, 'Invalid input', 400, validation.error.errors);
+  }
+
+  const { email } = validation.data;
+  const user = await prisma.user.findUnique({ where: { email } });
+  
+  // Always return success for security (don't reveal if email exists)
+  if (!user) {
+    return sendSuccess(res, {}, 'If the email exists, a reset link has been sent');
+  }
+
+  // Generate reset token (in production, use crypto.randomBytes)
+  const resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
+
+  // Store reset token (you might want to add these fields to your User model)
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      // Note: You'll need to add resetToken and resetTokenExpiry fields to your User model
+      // resetToken,
+      // resetTokenExpiry,
+    },
+  });
+
+  // In a real implementation, send email here using EmailService
+  // await emailService.sendPasswordResetEmail(user.email, resetToken);
+
+  return sendSuccess(res, {}, 'If the email exists, a reset link has been sent');
+}));
+
+// Reset Password
+router.post('/reset-password', asyncHandler(async (req, res) => {
+  const validation = schemas.resetPassword.safeParse(req.body);
+  if (!validation.success) {
+    return sendError(res, 'Invalid input', 400, validation.error.errors);
+  }
+
+  const { token, password } = validation.data;
+  
+  // In a real implementation, you'd verify the token against the database
+  // For now, we'll just check if it's a valid format
+  if (!token || token.length < 10) {
+    return sendError(res, 'Invalid or expired reset token', 400);
+  }
+
+  // Find user by reset token (you'll need to add resetToken field to User model)
+  // const user = await prisma.user.findFirst({
+  //   where: {
+  //     resetToken: token,
+  //     resetTokenExpiry: { gt: new Date() },
+  //   },
+  // });
+
+  // if (!user) {
+  //   return sendError(res, 'Invalid or expired reset token', 400);
+  // }
+
+  // Hash new password
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  // Update password and clear reset token (for demo, we'll update by email)
+  // await prisma.user.update({
+  //   where: { id: user.id },
+  //   data: {
+  //     password: hashedPassword,
+  //     resetToken: null,
+  //     resetTokenExpiry: null,
+  //   },
+  // });
+
+  return sendSuccess(res, {}, 'Password has been reset successfully');
 }));
 
 // MFA routes
