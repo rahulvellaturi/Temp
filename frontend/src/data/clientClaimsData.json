@@ -1,0 +1,254 @@
+{
+  "claims": [
+    {
+      "id": "1",
+      "claimNumber": "CLM-2024-001",
+      "policyId": "1",
+      "policyType": "AUTO",
+      "policyNumber": "AUTO-2024-001",
+      "type": "Collision",
+      "status": "UNDER_REVIEW",
+      "amount": 5000,
+      "estimatedAmount": 5500,
+      "submittedDate": "2024-01-15",
+      "incidentDate": "2024-01-10",
+      "description": "Rear-end collision on Highway 101 during morning commute. Significant damage to rear bumper and trunk.",
+      "location": "Highway 101, San Francisco, CA",
+      "adjusterName": "Sarah Johnson",
+      "adjusterPhone": "(555) 123-4567",
+      "adjusterEmail": "sarah.johnson@assureme.com",
+      "documents": [
+        {
+          "id": "1",
+          "name": "Police_Report.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-15",
+          "size": 245760
+        },
+        {
+          "id": "2",
+          "name": "Damage_Photos.zip",
+          "type": "ZIP",
+          "uploadDate": "2024-01-15",
+          "size": 2048000
+        },
+        {
+          "id": "3",
+          "name": "Repair_Estimate.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-16",
+          "size": 156432
+        }
+      ],
+      "timeline": [
+        {
+          "id": "1",
+          "date": "2024-01-15",
+          "event": "Claim Submitted",
+          "description": "Initial claim filed online",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "2",
+          "date": "2024-01-16",
+          "event": "Documents Received",
+          "description": "Police report and photos uploaded",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "3",
+          "date": "2024-01-17",
+          "event": "Adjuster Assigned",
+          "description": "Sarah Johnson assigned to case",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "4",
+          "date": "2024-01-18",
+          "event": "Vehicle Inspection",
+          "description": "Scheduled for January 22, 2024",
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "claimNumber": "CLM-2024-002",
+      "policyId": "2",
+      "policyType": "HOME",
+      "policyNumber": "HOME-2024-002",
+      "type": "Water Damage",
+      "status": "APPROVED",
+      "amount": 12000,
+      "estimatedAmount": 12500,
+      "submittedDate": "2024-01-10",
+      "incidentDate": "2024-01-08",
+      "description": "Pipe burst in basement causing extensive water damage to flooring and personal property.",
+      "location": "123 Main St, Basement",
+      "adjusterName": "Mike Chen",
+      "adjusterPhone": "(555) 987-6543",
+      "adjusterEmail": "mike.chen@assureme.com",
+      "documents": [
+        {
+          "id": "4",
+          "name": "Plumber_Report.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-10",
+          "size": 198432
+        },
+        {
+          "id": "5",
+          "name": "Damage_Assessment.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-12",
+          "size": 345678
+        },
+        {
+          "id": "6",
+          "name": "Receipts.zip",
+          "type": "ZIP",
+          "uploadDate": "2024-01-14",
+          "size": 1024000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "5",
+          "date": "2024-01-10",
+          "event": "Claim Submitted",
+          "description": "Water damage claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "6",
+          "date": "2024-01-11",
+          "event": "Emergency Response",
+          "description": "Water mitigation services approved",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "7",
+          "date": "2024-01-12",
+          "event": "Property Inspection",
+          "description": "Adjuster completed site visit",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "8",
+          "date": "2024-01-18",
+          "event": "Claim Approved",
+          "description": "Settlement approved for $12,000",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "claimNumber": "CLM-2024-003",
+      "policyId": "4",
+      "policyType": "HEALTH",
+      "policyNumber": "HEALTH-2024-004",
+      "type": "Emergency Care",
+      "status": "PAID",
+      "amount": 2500,
+      "submittedDate": "2024-01-05",
+      "incidentDate": "2024-01-03",
+      "description": "Emergency room visit for chest pain and cardiac evaluation.",
+      "location": "City General Hospital, Emergency Department",
+      "documents": [
+        {
+          "id": "7",
+          "name": "Medical_Records.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-05",
+          "size": 567890
+        },
+        {
+          "id": "8",
+          "name": "Hospital_Bill.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-06",
+          "size": 123456
+        }
+      ],
+      "timeline": [
+        {
+          "id": "9",
+          "date": "2024-01-05",
+          "event": "Claim Submitted",
+          "description": "Medical claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "10",
+          "date": "2024-01-06",
+          "event": "Pre-Authorization",
+          "description": "Treatment pre-authorized",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "11",
+          "date": "2024-01-08",
+          "event": "Claim Processed",
+          "description": "Payment approved and issued",
+          "status": "COMPLETED"
+        }
+      ]
+    }
+  ],
+  "availablePolicies": [
+    {
+      "id": "1",
+      "number": "AUTO-2024-001",
+      "type": "AUTO",
+      "description": "Toyota Camry 2022"
+    },
+    {
+      "id": "2",
+      "number": "HOME-2024-002",
+      "type": "HOME",
+      "description": "123 Main St Property"
+    },
+    {
+      "id": "3",
+      "number": "LIFE-2024-003",
+      "type": "LIFE",
+      "description": "Term Life Insurance"
+    },
+    {
+      "id": "4",
+      "number": "HEALTH-2024-004",
+      "type": "HEALTH",
+      "description": "Individual Health Plan"
+    }
+  ],
+  "claimTypes": {
+    "AUTO": [
+      "Collision",
+      "Comprehensive", 
+      "Liability",
+      "Uninsured Motorist",
+      "Personal Injury"
+    ],
+    "HOME": [
+      "Fire Damage",
+      "Water Damage",
+      "Theft",
+      "Storm Damage",
+      "Vandalism",
+      "Personal Property"
+    ],
+    "LIFE": [
+      "Death Benefit",
+      "Terminal Illness",
+      "Accidental Death"
+    ],
+    "HEALTH": [
+      "Medical Treatment",
+      "Prescription Drugs",
+      "Emergency Care",
+      "Preventive Care",
+      "Mental Health"
+    ]
+  }
+}

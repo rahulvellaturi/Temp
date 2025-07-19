@@ -1,0 +1,240 @@
+/* Component Styles Index */
+
+/* Import all component-specific styles */
+@import './dashboard.css';
+@import './forms.css';
+@import './tables.css';
+@import './modals.css';
+@import './toaster.css';
+@import './claims.css';
+
+/* Additional component utilities */
+
+/* Status Color Utilities */
+.status-success {
+  @apply text-green-600 bg-green-50 border-green-200;
+}
+
+.status-error {
+  @apply text-red-600 bg-red-50 border-red-200;
+}
+
+.status-warning {
+  @apply text-yellow-600 bg-yellow-50 border-yellow-200;
+}
+
+.status-info {
+  @apply text-blue-600 bg-blue-50 border-blue-200;
+}
+
+.status-neutral {
+  @apply text-neutral-600 bg-neutral-50 border-neutral-200;
+}
+
+/* Button Variants */
+.btn-primary {
+  @apply bg-primary text-white hover:bg-primary/90 focus:ring-primary;
+}
+
+.btn-secondary {
+  @apply bg-neutral-200 text-neutral-900 hover:bg-neutral-300 focus:ring-neutral-500;
+}
+
+.btn-success {
+  @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+}
+
+.btn-warning {
+  @apply bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500;
+}
+
+.btn-info {
+  @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+}
+
+.btn-outline {
+  @apply border border-current bg-transparent hover:bg-current hover:text-white;
+}
+
+.btn-ghost {
+  @apply bg-transparent hover:bg-neutral-100 text-neutral-700;
+}
+
+/* Card Variants */
+.card-elevated {
+  @apply shadow-lg hover:shadow-xl transition-shadow;
+}
+
+.card-bordered {
+  @apply border border-neutral-200;
+}
+
+.card-rounded {
+  @apply rounded-lg;
+}
+
+.card-compact {
+  @apply p-4;
+}
+
+.card-comfortable {
+  @apply p-6;
+}
+
+.card-spacious {
+  @apply p-8;
+}
+
+/* Text Utilities */
+.text-muted {
+  @apply text-neutral-600;
+}
+
+.text-subtle {
+  @apply text-neutral-500;
+}
+
+.text-emphasis {
+  @apply text-neutral-900 font-medium;
+}
+
+.text-brand {
+  @apply text-primary;
+}
+
+/* Spacing Utilities */
+.space-comfortable > * + * {
+  @apply mt-6;
+}
+
+.space-compact > * + * {
+  @apply mt-4;
+}
+
+.space-tight > * + * {
+  @apply mt-2;
+}
+
+/* Layout Utilities */
+.container-narrow {
+  @apply max-w-4xl mx-auto;
+}
+
+.container-wide {
+  @apply max-w-7xl mx-auto;
+}
+
+.container-full {
+  @apply max-w-full;
+}
+
+/* Interactive States */
+.interactive {
+  @apply cursor-pointer transition-colors hover:bg-neutral-50 focus:bg-neutral-100;
+}
+
+.interactive-primary {
+  @apply cursor-pointer transition-colors hover:bg-primary/5 focus:bg-primary/10;
+}
+
+.interactive-danger {
+  @apply cursor-pointer transition-colors hover:bg-red-50 focus:bg-red-100;
+}
+
+/* Loading States */
+.loading-overlay {
+  @apply absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center;
+}
+
+.loading-spinner {
+  @apply animate-spin h-6 w-6 text-primary;
+}
+
+.loading-dots::after {
+  content: '';
+  animation: loading-dots 1.4s infinite;
+}
+
+@keyframes loading-dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60% { content: '...'; }
+  80%, 100% { content: ''; }
+}
+
+/* Skeleton Loading */
+.skeleton {
+  @apply animate-pulse bg-neutral-200 rounded;
+}
+
+.skeleton-text {
+  @apply h-4 bg-neutral-200 rounded;
+}
+
+.skeleton-title {
+  @apply h-6 bg-neutral-200 rounded;
+}
+
+.skeleton-avatar {
+  @apply h-10 w-10 bg-neutral-200 rounded-full;
+}
+
+.skeleton-button {
+  @apply h-10 w-24 bg-neutral-200 rounded-md;
+}
+
+/* Focus States */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+.focus-ring-inset {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset;
+}
+
+/* Accessibility */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+.not-sr-only {
+  @apply static w-auto h-auto p-0 m-0 overflow-visible whitespace-normal;
+}
+
+/* Print Utilities */
+@media print {
+  .print-hidden {
+    @apply hidden;
+  }
+  
+  .print-visible {
+    @apply block;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .high-contrast-border {
+    @apply border-2 border-black;
+  }
+  
+  .high-contrast-text {
+    @apply text-black font-bold;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe-only {
+    @apply transition-none;
+  }
+  
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
+  }
+}

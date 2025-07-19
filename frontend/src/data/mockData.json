@@ -1,0 +1,755 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@email.com",
+      "phone": "(555) 123-4567",
+      "role": "CLIENT",
+      "isActive": true,
+      "createdAt": "2023-06-15T00:00:00Z",
+      "updatedAt": "2024-01-20T09:30:00Z",
+      "address": "123 Main St",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001",
+      "dateOfBirth": "1985-03-15",
+      "status": "ACTIVE",
+      "dateJoined": "2023-06-15",
+      "lastLogin": "2024-01-20T09:30:00Z",
+      "policiesCount": 3,
+      "claimsCount": 1,
+      "totalPremiums": 3600
+    },
+    {
+      "id": "2",
+      "firstName": "Sarah",
+      "lastName": "Johnson",
+      "email": "sarah.johnson@email.com",
+      "phone": "(555) 987-6543",
+      "role": "CLIENT",
+      "isActive": true,
+      "createdAt": "2023-08-22T00:00:00Z",
+      "updatedAt": "2024-01-19T14:15:00Z",
+      "address": "456 Oak Ave",
+      "city": "Los Angeles",
+      "state": "CA",
+      "zipCode": "90210",
+      "dateOfBirth": "1990-07-22",
+      "status": "ACTIVE",
+      "dateJoined": "2023-08-22",
+      "lastLogin": "2024-01-19T14:15:00Z",
+      "policiesCount": 2,
+      "claimsCount": 0,
+      "totalPremiums": 2400
+    },
+    {
+      "id": "3",
+      "firstName": "Michael",
+      "lastName": "Chen",
+      "email": "michael.chen@assureme.com",
+      "phone": "(555) 456-7890",
+      "role": "AGENT",
+      "isActive": true,
+      "createdAt": "2022-03-10T00:00:00Z",
+      "updatedAt": "2024-01-20T11:45:00Z",
+      "address": "789 Business Blvd",
+      "city": "Chicago",
+      "state": "IL",
+      "zipCode": "60601",
+      "dateOfBirth": "1982-11-08",
+      "status": "ACTIVE",
+      "dateJoined": "2022-03-10",
+      "lastLogin": "2024-01-20T11:45:00Z",
+      "policiesCount": 0,
+      "claimsCount": 0,
+      "totalPremiums": 0
+    },
+    {
+      "id": "4",
+      "firstName": "Emily",
+      "lastName": "Rodriguez",
+      "email": "emily.rodriguez@email.com",
+      "phone": "(555) 321-9876",
+      "role": "CLIENT",
+      "isActive": false,
+      "createdAt": "2023-01-05T00:00:00Z",
+      "updatedAt": "2023-12-15T16:20:00Z",
+      "address": "321 Pine St",
+      "city": "Miami",
+      "state": "FL",
+      "zipCode": "33101",
+      "dateOfBirth": "1988-09-12",
+      "status": "INACTIVE",
+      "dateJoined": "2023-01-05",
+      "lastLogin": "2023-12-15T16:20:00Z",
+      "policiesCount": 1,
+      "claimsCount": 2,
+      "totalPremiums": 1800
+    },
+    {
+      "id": "5",
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@assureme.com",
+      "phone": "(555) 000-0000",
+      "role": "SUPER_ADMIN",
+      "isActive": true,
+      "createdAt": "2022-01-01T00:00:00Z",
+      "updatedAt": "2024-01-20T08:00:00Z",
+      "address": "100 Corporate Plaza",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001",
+      "dateOfBirth": "1975-01-01",
+      "status": "ACTIVE",
+      "dateJoined": "2022-01-01",
+      "lastLogin": "2024-01-20T08:00:00Z",
+      "policiesCount": 0,
+      "claimsCount": 0,
+      "totalPremiums": 0
+    }
+  ],
+  "policies": [
+    {
+      "id": "1",
+      "policyNumber": "AUTO-2024-001",
+      "userId": "1",
+      "policyType": "AUTO",
+      "startDate": "2024-01-01T00:00:00Z",
+      "endDate": "2024-12-31T23:59:59Z",
+      "status": "ACTIVE",
+      "premiumAmount": 1200,
+      "deductible": 500,
+      "coverageDetails": {
+        "liability": 50000,
+        "collision": 25000,
+        "comprehensive": 25000
+      },
+      "renewalDate": "2024-12-31T00:00:00Z",
+      "createdAt": "2023-12-01T00:00:00Z",
+      "updatedAt": "2024-01-15T00:00:00Z",
+      "type": "Auto Insurance",
+      "premium": 1200,
+      "coverage": 50000,
+      "nextPayment": "2024-02-15",
+      "expiryDate": "2024-12-31",
+      "vehicles": [
+        {
+          "make": "Toyota",
+          "model": "Camry",
+          "year": 2022,
+          "vin": "1234567890ABCDEFG",
+          "licensePlate": "ABC123"
+        }
+      ],
+      "beneficiaries": []
+    },
+    {
+      "id": "2",
+      "policyNumber": "HOME-2024-002",
+      "userId": "1",
+      "policyType": "HOME",
+      "startDate": "2024-01-01T00:00:00Z",
+      "endDate": "2024-11-30T23:59:59Z",
+      "status": "ACTIVE",
+      "premiumAmount": 800,
+      "deductible": 1000,
+      "coverageDetails": {
+        "dwelling": 300000,
+        "personalProperty": 150000,
+        "liability": 100000
+      },
+      "renewalDate": "2024-11-30T00:00:00Z",
+      "createdAt": "2023-11-01T00:00:00Z",
+      "updatedAt": "2024-01-10T00:00:00Z",
+      "type": "Home Insurance",
+      "premium": 800,
+      "coverage": 300000,
+      "nextPayment": "2024-02-20",
+      "expiryDate": "2024-11-30",
+      "vehicles": [],
+      "beneficiaries": []
+    },
+    {
+      "id": "3",
+      "policyNumber": "LIFE-2024-003",
+      "userId": "1",
+      "policyType": "LIFE",
+      "startDate": "2024-03-01T00:00:00Z",
+      "endDate": "2025-02-28T23:59:59Z",
+      "status": "PENDING",
+      "premiumAmount": 2400,
+      "deductible": 0,
+      "coverageDetails": {
+        "deathBenefit": 500000,
+        "termLength": 20
+      },
+      "renewalDate": "2025-02-28T00:00:00Z",
+      "createdAt": "2024-01-15T00:00:00Z",
+      "updatedAt": "2024-01-20T00:00:00Z",
+      "type": "Life Insurance",
+      "premium": 2400,
+      "coverage": 500000,
+      "nextPayment": "2024-03-01",
+      "expiryDate": "2025-02-28",
+      "vehicles": [],
+      "beneficiaries": [
+        {
+          "name": "Jane Doe",
+          "relationship": "Spouse",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "policyNumber": "AUTO-2024-004",
+      "userId": "2",
+      "policyType": "AUTO",
+      "startDate": "2024-01-01T00:00:00Z",
+      "endDate": "2024-12-31T23:59:59Z",
+      "status": "ACTIVE",
+      "premiumAmount": 1400,
+      "deductible": 500,
+      "coverageDetails": {
+        "liability": 100000,
+        "collision": 50000,
+        "comprehensive": 50000
+      },
+      "renewalDate": "2024-12-31T00:00:00Z",
+      "createdAt": "2023-12-01T00:00:00Z",
+      "updatedAt": "2024-01-15T00:00:00Z",
+      "type": "Auto Insurance",
+      "premium": 1400,
+      "coverage": 100000,
+      "nextPayment": "2024-02-15",
+      "expiryDate": "2024-12-31",
+      "vehicles": [
+        {
+          "make": "Honda",
+          "model": "Civic",
+          "year": 2023,
+          "vin": "ABCDEFG1234567890",
+          "licensePlate": "XYZ789"
+        }
+      ],
+      "beneficiaries": []
+    },
+    {
+      "id": "5",
+      "policyNumber": "HOME-2024-005",
+      "userId": "2",
+      "policyType": "HOME",
+      "startDate": "2024-01-01T00:00:00Z",
+      "endDate": "2024-12-31T23:59:59Z",
+      "status": "ACTIVE",
+      "premiumAmount": 1000,
+      "deductible": 1500,
+      "coverageDetails": {
+        "dwelling": 400000,
+        "personalProperty": 200000,
+        "liability": 150000
+      },
+      "renewalDate": "2024-12-31T00:00:00Z",
+      "createdAt": "2023-12-01T00:00:00Z",
+      "updatedAt": "2024-01-15T00:00:00Z",
+      "type": "Home Insurance",
+      "premium": 1000,
+      "coverage": 400000,
+      "nextPayment": "2024-02-15",
+      "expiryDate": "2024-12-31",
+      "vehicles": [],
+      "beneficiaries": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "CLM001",
+      "claimNumber": "CLM001",
+      "policyId": "1",
+      "userId": "1",
+      "status": "SUBMITTED",
+      "payoutAmount": 5500.00,
+      "description": "Rear-end collision on Highway 101",
+      "submittedAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z",
+      "incidentDate": "2024-01-14T16:45:00Z",
+      "incidentLocation": "Highway 101, San Francisco, CA",
+      "assignedAdjusterId": "ADJ001",
+      "type": "Auto Accident",
+      "amount": 5500,
+      "submittedDate": "2024-01-15",
+      "timeline": [
+        {
+          "date": "2024-01-15T10:30:00Z",
+          "status": "SUBMITTED",
+          "description": "Claim submitted by policyholder",
+          "updatedBy": "System"
+        },
+        {
+          "date": "2024-01-15T14:20:00Z",
+          "status": "UNDER_REVIEW",
+          "description": "Claim assigned to adjuster for review",
+          "updatedBy": "Jane Adjuster"
+        }
+      ],
+      "documents": [
+        {
+          "id": "DOC001",
+          "name": "claim-photos.pdf",
+          "type": "IMAGE",
+          "size": 2048000,
+          "url": "#"
+        },
+        {
+          "id": "DOC002",
+          "name": "police-report.pdf",
+          "type": "DOCUMENT",
+          "size": 1024000,
+          "url": "#"
+        }
+      ],
+      "policy": {
+        "policyNumber": "AUTO-001",
+        "policyType": "AUTO"
+      },
+      "user": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@email.com"
+      },
+      "assignedAdjuster": {
+        "firstName": "Jane",
+        "lastName": "Adjuster",
+        "email": "jane.adjuster@assureme.com"
+      }
+    },
+    {
+      "id": "CLM002",
+      "claimNumber": "CLM002",
+      "policyId": "2",
+      "userId": "1",
+      "status": "APPROVED",
+      "payoutAmount": 12500.00,
+      "description": "Water damage from burst pipe in basement",
+      "submittedAt": "2024-01-10T14:20:00Z",
+      "updatedAt": "2024-01-12T16:30:00Z",
+      "incidentDate": "2024-01-09T08:15:00Z",
+      "incidentLocation": "123 Main St, Basement, Springfield, IL",
+      "assignedAdjusterId": "ADJ002",
+      "type": "Property Damage",
+      "amount": 12500,
+      "submittedDate": "2024-01-10",
+      "timeline": [
+        {
+          "date": "2024-01-10T14:20:00Z",
+          "status": "SUBMITTED",
+          "description": "Claim submitted by policyholder",
+          "updatedBy": "System"
+        },
+        {
+          "date": "2024-01-11T09:15:00Z",
+          "status": "UNDER_REVIEW",
+          "description": "Claim assigned to adjuster for review",
+          "updatedBy": "Mike Adjuster"
+        },
+        {
+          "date": "2024-01-12T16:30:00Z",
+          "status": "APPROVED",
+          "description": "Claim approved for payment",
+          "updatedBy": "Mike Adjuster"
+        }
+      ],
+      "documents": [
+        {
+          "id": "DOC004",
+          "name": "water-damage-photos.pdf",
+          "type": "IMAGE",
+          "size": 3072000,
+          "url": "#"
+        },
+        {
+          "id": "DOC005",
+          "name": "plumber-report.pdf",
+          "type": "DOCUMENT",
+          "size": 1536000,
+          "url": "#"
+        }
+      ],
+      "policy": {
+        "policyNumber": "HOME-002",
+        "policyType": "HOME"
+      },
+      "user": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@email.com"
+      },
+      "assignedAdjuster": {
+        "firstName": "Mike",
+        "lastName": "Adjuster",
+        "email": "mike.adjuster@assureme.com"
+      }
+    },
+    {
+      "id": "CLM003",
+      "claimNumber": "CLM003",
+      "policyId": "4",
+      "userId": "2",
+      "status": "UNDER_REVIEW",
+      "payoutAmount": 3200.00,
+      "description": "Windshield damage from road debris",
+      "submittedAt": "2024-01-18T11:45:00Z",
+      "updatedAt": "2024-01-19T09:20:00Z",
+      "incidentDate": "2024-01-17T15:30:00Z",
+      "incidentLocation": "Interstate 405, Los Angeles, CA",
+      "assignedAdjusterId": "ADJ001",
+      "type": "Auto Damage",
+      "amount": 3200,
+      "submittedDate": "2024-01-18",
+      "timeline": [
+        {
+          "date": "2024-01-18T11:45:00Z",
+          "status": "SUBMITTED",
+          "description": "Claim submitted by policyholder",
+          "updatedBy": "System"
+        },
+        {
+          "date": "2024-01-19T09:20:00Z",
+          "status": "UNDER_REVIEW",
+          "description": "Claim assigned to adjuster for review",
+          "updatedBy": "Jane Adjuster"
+        }
+      ],
+      "documents": [
+        {
+          "id": "DOC007",
+          "name": "windshield-damage.jpg",
+          "type": "IMAGE",
+          "size": 1024000,
+          "url": "#"
+        }
+      ],
+      "policy": {
+        "policyNumber": "AUTO-004",
+        "policyType": "AUTO"
+      },
+      "user": {
+        "firstName": "Sarah",
+        "lastName": "Johnson",
+        "email": "sarah.johnson@email.com"
+      },
+      "assignedAdjuster": {
+        "firstName": "Jane",
+        "lastName": "Adjuster",
+        "email": "jane.adjuster@assureme.com"
+      }
+    }
+  ],
+  "payments": [
+    {
+      "id": "PAY001",
+      "policyId": "1",
+      "userId": "1",
+      "amount": 100.00,
+      "status": "COMPLETED",
+      "paymentDate": "2024-01-15T00:00:00Z",
+      "dueDate": "2024-01-15T00:00:00Z",
+      "method": "CREDIT_CARD",
+      "description": "Monthly premium payment",
+      "transactionId": "TXN123456789",
+      "createdAt": "2024-01-15T09:30:00Z",
+      "updatedAt": "2024-01-15T09:32:00Z",
+      "type": "Premium",
+      "policyNumber": "AUTO-2024-001"
+    },
+    {
+      "id": "PAY002",
+      "policyId": "2",
+      "userId": "1",
+      "amount": 66.67,
+      "status": "COMPLETED",
+      "paymentDate": "2024-01-20T00:00:00Z",
+      "dueDate": "2024-01-20T00:00:00Z",
+      "method": "BANK_TRANSFER",
+      "description": "Monthly premium payment",
+      "transactionId": "TXN987654321",
+      "createdAt": "2024-01-20T10:15:00Z",
+      "updatedAt": "2024-01-20T10:17:00Z",
+      "type": "Premium",
+      "policyNumber": "HOME-2024-002"
+    },
+    {
+      "id": "PAY003",
+      "policyId": "1",
+      "userId": "1",
+      "amount": 100.00,
+      "status": "PENDING",
+      "paymentDate": null,
+      "dueDate": "2024-02-15T00:00:00Z",
+      "method": "CREDIT_CARD",
+      "description": "Monthly premium payment",
+      "transactionId": null,
+      "createdAt": "2024-01-20T00:00:00Z",
+      "updatedAt": "2024-01-20T00:00:00Z",
+      "type": "Premium",
+      "policyNumber": "AUTO-2024-001"
+    },
+    {
+      "id": "PAY004",
+      "policyId": "4",
+      "userId": "2",
+      "amount": 116.67,
+      "status": "COMPLETED",
+      "paymentDate": "2024-01-15T00:00:00Z",
+      "dueDate": "2024-01-15T00:00:00Z",
+      "method": "CREDIT_CARD",
+      "description": "Monthly premium payment",
+      "transactionId": "TXN456789123",
+      "createdAt": "2024-01-15T11:20:00Z",
+      "updatedAt": "2024-01-15T11:22:00Z",
+      "type": "Premium",
+      "policyNumber": "AUTO-2024-004"
+    },
+    {
+      "id": "PAY005",
+      "policyId": "5",
+      "userId": "2",
+      "amount": 83.33,
+      "status": "FAILED",
+      "paymentDate": null,
+      "dueDate": "2024-01-15T00:00:00Z",
+      "method": "BANK_TRANSFER",
+      "description": "Monthly premium payment",
+      "transactionId": null,
+      "createdAt": "2024-01-15T12:00:00Z",
+      "updatedAt": "2024-01-15T12:05:00Z",
+      "type": "Premium",
+      "policyNumber": "HOME-2024-005"
+    }
+  ],
+  "documents": [
+    {
+      "id": "DOC001",
+      "name": "Auto Insurance Policy - AUTO-2024-001.pdf",
+      "type": "POLICY_DOCUMENT",
+      "category": "Policies",
+      "size": 2048000,
+      "uploadDate": "2024-01-01T00:00:00Z",
+      "url": "#",
+      "description": "Complete auto insurance policy document",
+      "tags": ["auto", "policy", "2024"],
+      "isPublic": false,
+      "userId": "1",
+      "policyId": "1"
+    },
+    {
+      "id": "DOC002",
+      "name": "Home Insurance Policy - HOME-2024-002.pdf",
+      "type": "POLICY_DOCUMENT",
+      "category": "Policies",
+      "size": 3072000,
+      "uploadDate": "2024-01-01T00:00:00Z",
+      "url": "#",
+      "description": "Complete home insurance policy document",
+      "tags": ["home", "policy", "2024"],
+      "isPublic": false,
+      "userId": "1",
+      "policyId": "2"
+    },
+    {
+      "id": "DOC003",
+      "name": "Claim Photos - CLM001.zip",
+      "type": "CLAIM_SUPPORT",
+      "category": "Claims",
+      "size": 5120000,
+      "uploadDate": "2024-01-15T10:30:00Z",
+      "url": "#",
+      "description": "Photos of vehicle damage for claim CLM001",
+      "tags": ["claim", "photos", "auto"],
+      "isPublic": false,
+      "userId": "1",
+      "claimId": "CLM001"
+    },
+    {
+      "id": "DOC004",
+      "name": "Police Report - CLM001.pdf",
+      "type": "CLAIM_SUPPORT",
+      "category": "Claims",
+      "size": 1024000,
+      "uploadDate": "2024-01-15T11:00:00Z",
+      "url": "#",
+      "description": "Official police report for auto accident",
+      "tags": ["claim", "police", "report"],
+      "isPublic": false,
+      "userId": "1",
+      "claimId": "CLM001"
+    },
+    {
+      "id": "DOC005",
+      "name": "Water Damage Assessment - CLM002.pdf",
+      "type": "CLAIM_SUPPORT",
+      "category": "Claims",
+      "size": 2048000,
+      "uploadDate": "2024-01-10T15:00:00Z",
+      "url": "#",
+      "description": "Professional assessment of water damage",
+      "tags": ["claim", "water", "damage", "assessment"],
+      "isPublic": false,
+      "userId": "1",
+      "claimId": "CLM002"
+    },
+    {
+      "id": "DOC006",
+      "name": "Driver License - John Doe.jpg",
+      "type": "ID_CARD",
+      "category": "Personal",
+      "size": 512000,
+      "uploadDate": "2023-12-01T00:00:00Z",
+      "url": "#",
+      "description": "Valid driver's license",
+      "tags": ["id", "license", "personal"],
+      "isPublic": false,
+      "userId": "1"
+    },
+    {
+      "id": "DOC007",
+      "name": "Proof of Income - 2023.pdf",
+      "type": "OTHER",
+      "category": "Financial",
+      "size": 1536000,
+      "uploadDate": "2023-12-15T00:00:00Z",
+      "url": "#",
+      "description": "2023 tax return and income verification",
+      "tags": ["income", "tax", "2023", "financial"],
+      "isPublic": false,
+      "userId": "1"
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "PM001",
+      "userId": "1",
+      "type": "CREDIT_CARD",
+      "cardType": "Visa",
+      "lastFour": "4532",
+      "expiryMonth": 12,
+      "expiryYear": 2026,
+      "isDefault": true,
+      "nickname": "Primary Visa"
+    },
+    {
+      "id": "PM002",
+      "userId": "1",
+      "type": "BANK_ACCOUNT",
+      "bankName": "Chase Bank",
+      "accountType": "Checking",
+      "lastFour": "7890",
+      "isDefault": false,
+      "nickname": "Chase Checking"
+    },
+    {
+      "id": "PM003",
+      "userId": "2",
+      "type": "CREDIT_CARD",
+      "cardType": "Mastercard",
+      "lastFour": "8765",
+      "expiryMonth": 8,
+      "expiryYear": 2025,
+      "isDefault": true,
+      "nickname": "Primary Mastercard"
+    }
+  ],
+  "adminStats": {
+    "totalUsers": 1247,
+    "activeUsers": 1156,
+    "totalPolicies": 2843,
+    "activePolicies": 2651,
+    "totalClaims": 487,
+    "pendingClaims": 23,
+    "totalRevenue": 2847293,
+    "monthlyRevenue": 234560
+  },
+  "recentActivity": [
+    {
+      "id": "ACT001",
+      "type": "user_registration",
+      "description": "New user registered: Sarah Johnson",
+      "timestamp": "2024-01-20T14:30:00Z",
+      "userId": "2",
+      "severity": "info"
+    },
+    {
+      "id": "ACT002",
+      "type": "claim_submitted",
+      "description": "Claim submitted: CLM003 - Windshield damage",
+      "timestamp": "2024-01-18T11:45:00Z",
+      "userId": "2",
+      "claimId": "CLM003",
+      "severity": "info"
+    },
+    {
+      "id": "ACT003",
+      "type": "payment_completed",
+      "description": "Payment completed: $116.67 for AUTO-2024-004",
+      "timestamp": "2024-01-15T11:22:00Z",
+      "userId": "2",
+      "paymentId": "PAY004",
+      "severity": "success"
+    },
+    {
+      "id": "ACT004",
+      "type": "payment_failed",
+      "description": "Payment failed: $83.33 for HOME-2024-005",
+      "timestamp": "2024-01-15T12:05:00Z",
+      "userId": "2",
+      "paymentId": "PAY005",
+      "severity": "warning"
+    },
+    {
+      "id": "ACT005",
+      "type": "claim_approved",
+      "description": "Claim approved: CLM002 - Water damage ($12,500)",
+      "timestamp": "2024-01-12T16:30:00Z",
+      "userId": "1",
+      "claimId": "CLM002",
+      "severity": "success"
+    }
+  ],
+  "quickActions": [
+    {
+      "id": "QA001",
+      "title": "Review Pending Claims",
+      "description": "23 claims awaiting review",
+      "icon": "FileText",
+      "count": 23,
+      "action": "/admin/claims?status=pending"
+    },
+    {
+      "id": "QA002",
+      "title": "Process Payments",
+      "description": "15 payments to process",
+      "icon": "CreditCard",
+      "count": 15,
+      "action": "/admin/payments?status=pending"
+    },
+    {
+      "id": "QA003",
+      "title": "New User Applications",
+      "description": "8 applications pending",
+      "icon": "UserPlus",
+      "count": 8,
+      "action": "/admin/users?status=pending"
+    },
+    {
+      "id": "QA004",
+      "title": "Policy Renewals",
+      "description": "12 policies expiring soon",
+      "icon": "RefreshCw",
+      "count": 12,
+      "action": "/admin/policies?expiring=true"
+    }
+  ]
+}

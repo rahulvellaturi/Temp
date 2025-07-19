@@ -1,0 +1,148 @@
+{
+  "usStates": [
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", 
+    "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", 
+    "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", 
+    "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", 
+    "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", 
+    "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", 
+    "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
+  ],
+  "claimTypes": {
+    "AUTO": [
+      "Collision",
+      "Comprehensive", 
+      "Liability",
+      "Uninsured Motorist",
+      "Personal Injury"
+    ],
+    "HOME": [
+      "Fire Damage",
+      "Water Damage", 
+      "Theft",
+      "Storm Damage",
+      "Vandalism",
+      "Personal Property"
+    ],
+    "LIFE": [
+      "Death Benefit",
+      "Terminal Illness",
+      "Accidental Death"
+    ],
+    "HEALTH": [
+      "Medical Treatment",
+      "Prescription Drugs",
+      "Emergency Care", 
+      "Preventive Care",
+      "Mental Health"
+    ]
+  },
+  "documentCategories": [
+    {
+      "id": "POLICY",
+      "name": "Policy Documents",
+      "icon": "Shield",
+      "count": 0,
+      "description": "Insurance policy documents and certificates"
+    },
+    {
+      "id": "CLAIM", 
+      "name": "Claims",
+      "icon": "FileText",
+      "count": 0,
+      "description": "Claim forms and related documentation"
+    },
+    {
+      "id": "PAYMENT",
+      "name": "Billing & Payments", 
+      "icon": "FileSpreadsheet",
+      "count": 0,
+      "description": "Invoices, receipts, and payment records"
+    },
+    {
+      "id": "ID_CARD",
+      "name": "ID Cards",
+      "icon": "FileImage", 
+      "count": 0,
+      "description": "Digital insurance ID cards"
+    },
+    {
+      "id": "CERTIFICATE",
+      "name": "Certificates",
+      "icon": "Star",
+      "count": 0, 
+      "description": "Coverage certificates and endorsements"
+    },
+    {
+      "id": "OTHER",
+      "name": "Other Documents",
+      "icon": "Folder",
+      "count": 0,
+      "description": "Miscellaneous documents and files"
+    }
+  ],
+  "availablePolicies": [
+    {
+      "id": "1", 
+      "number": "AUTO-2024-001",
+      "type": "AUTO",
+      "description": "Toyota Camry 2022",
+      "balance": 1200
+    },
+    {
+      "id": "2",
+      "number": "HOME-2024-002", 
+      "type": "HOME",
+      "description": "123 Main St Property",
+      "balance": 800
+    },
+    {
+      "id": "3",
+      "number": "LIFE-2024-003",
+      "type": "LIFE", 
+      "description": "Term Life Insurance",
+      "balance": 2400
+    },
+    {
+      "id": "4",
+      "number": "HEALTH-2024-004",
+      "type": "HEALTH",
+      "description": "Individual Health Plan", 
+      "balance": 3600
+    }
+  ],
+  "availableClients": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "email": "john.doe@email.com"
+    },
+    {
+      "id": "2", 
+      "name": "Sarah Johnson",
+      "email": "sarah.johnson@email.com"
+    },
+    {
+      "id": "4",
+      "name": "Emily Davis",
+      "email": "emily.davis@email.com"
+    },
+    {
+      "id": "6",
+      "name": "Robert Wilson", 
+      "email": "robert.wilson@email.com"
+    }
+  ],
+  "availableAgents": [
+    {
+      "id": "3",
+      "name": "Michael Chen",
+      "email": "michael.chen@assureme.com"
+    },
+    {
+      "id": "7",
+      "name": "Lisa Anderson",
+      "email": "lisa.anderson@assureme.com"
+    }
+  ]
+}

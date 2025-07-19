@@ -1,0 +1,1094 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@email.com",
+      "phone": "(555) 123-4567",
+      "dateOfBirth": "1985-03-15",
+      "address": {
+        "street": "123 Main St",
+        "city": "San Francisco",
+        "state": "CA",
+        "zipCode": "94102"
+      },
+      "role": "CLIENT",
+      "status": "ACTIVE",
+      "dateJoined": "2023-01-15",
+      "lastLogin": "2024-01-20T10:30:00Z",
+      "policiesCount": 4,
+      "totalPremiums": 4400,
+      "totalClaims": 2,
+      "avatar": "/avatars/john-doe.jpg"
+    },
+    {
+      "id": "2",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "email": "jane.smith@email.com",
+      "phone": "(555) 987-6543",
+      "dateOfBirth": "1990-07-22",
+      "address": {
+        "street": "456 Oak Ave",
+        "city": "Los Angeles",
+        "state": "CA",
+        "zipCode": "90210"
+      },
+      "role": "CLIENT",
+      "status": "ACTIVE",
+      "dateJoined": "2023-06-10",
+      "lastLogin": "2024-01-19T14:20:00Z",
+      "policiesCount": 2,
+      "totalPremiums": 2000,
+      "totalClaims": 0,
+      "avatar": "/avatars/jane-smith.jpg"
+    },
+    {
+      "id": "3",
+      "firstName": "Michael",
+      "lastName": "Chen",
+      "email": "michael.chen@assureme.com",
+      "phone": "(555) 456-7890",
+      "role": "AGENT",
+      "status": "ACTIVE",
+      "dateJoined": "2022-03-01",
+      "lastLogin": "2024-01-20T09:15:00Z",
+      "clientsCount": 25,
+      "totalSales": 125000,
+      "avatar": "/avatars/michael-chen.jpg"
+    }
+  ],
+  "policies": [
+    {
+      "id": "1",
+      "policyNumber": "AUTO-2024-001",
+      "type": "AUTO",
+      "status": "ACTIVE",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "clientEmail": "john.doe@email.com",
+      "agentId": "3",
+      "agentName": "Michael Chen",
+      "premium": 1200,
+      "coverage": 100000,
+      "deductible": 500,
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "renewalDate": "2024-12-31",
+      "nextPayment": "2024-02-15",
+      "expiryDate": "2024-12-31",
+      "description": "Comprehensive auto insurance for Toyota Camry 2022",
+      "terms": {
+        "vehicleYear": 2022,
+        "vehicleMake": "Toyota",
+        "vehicleModel": "Camry",
+        "vin": "1HGBH41JXMN109186"
+      },
+      "createdDate": "2023-12-15",
+      "lastModified": "2024-01-15",
+      "claimsCount": 1,
+      "totalClaimsAmount": 5000
+    },
+    {
+      "id": "2",
+      "policyNumber": "HOME-2024-002",
+      "type": "HOME",
+      "status": "ACTIVE",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "clientEmail": "john.doe@email.com",
+      "agentId": "3",
+      "agentName": "Michael Chen",
+      "premium": 800,
+      "coverage": 250000,
+      "deductible": 1000,
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "renewalDate": "2024-12-31",
+      "nextPayment": "2024-02-20",
+      "expiryDate": "2024-12-31",
+      "description": "Homeowners insurance for single-family residence",
+      "terms": {
+        "propertyType": "Single Family",
+        "squareFootage": 2000,
+        "yearBuilt": 1995,
+        "address": "123 Main St, San Francisco, CA 94102"
+      },
+      "createdDate": "2023-12-20",
+      "lastModified": "2024-01-10",
+      "claimsCount": 1,
+      "totalClaimsAmount": 12000
+    },
+    {
+      "id": "3",
+      "policyNumber": "LIFE-2024-003",
+      "type": "LIFE",
+      "status": "ACTIVE",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "clientEmail": "john.doe@email.com",
+      "agentId": "3",
+      "agentName": "Michael Chen",
+      "premium": 2400,
+      "coverage": 500000,
+      "deductible": 0,
+      "startDate": "2024-01-01",
+      "endDate": "2044-01-01",
+      "renewalDate": "2025-01-01",
+      "nextPayment": "2024-03-01",
+      "expiryDate": "2044-01-01",
+      "description": "Term life insurance policy",
+      "terms": {
+        "termLength": 20,
+        "beneficiaries": ["Jane Doe", "John Doe Jr."],
+        "medicalExamRequired": true
+      },
+      "createdDate": "2023-11-30",
+      "lastModified": "2023-11-30",
+      "claimsCount": 0,
+      "totalClaimsAmount": 0
+    },
+    {
+      "id": "4",
+      "policyNumber": "HEALTH-2024-004",
+      "type": "HEALTH",
+      "status": "ACTIVE",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "clientEmail": "john.doe@email.com",
+      "premium": 3600,
+      "coverage": 1000000,
+      "deductible": 2500,
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "renewalDate": "2024-12-31",
+      "nextPayment": "2024-02-01",
+      "expiryDate": "2024-12-31",
+      "description": "Individual health insurance plan",
+      "terms": {
+        "planType": "PPO",
+        "networkSize": "Large",
+        "prescriptionCoverage": true
+      },
+      "createdDate": "2023-12-01",
+      "lastModified": "2024-01-01",
+      "claimsCount": 1,
+      "totalClaimsAmount": 2500
+    }
+  ],
+  "claims": [
+    {
+      "id": "1",
+      "claimNumber": "CLM-2024-001",
+      "policyId": "1",
+      "policyType": "AUTO",
+      "policyNumber": "AUTO-2024-001",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "type": "Collision",
+      "status": "UNDER_REVIEW",
+      "amount": 5000,
+      "estimatedAmount": 5500,
+      "payoutAmount": 0,
+      "submittedDate": "2024-01-15",
+      "submittedAt": "2024-01-15T14:30:00Z",
+      "updatedAt": "2024-01-18T10:15:00Z",
+      "incidentDate": "2024-01-10",
+      "description": "Rear-end collision on Highway 101 during morning commute. Significant damage to rear bumper and trunk.",
+      "location": "Highway 101, San Francisco, CA",
+      "adjusterName": "Sarah Johnson",
+      "adjusterPhone": "(555) 123-4567",
+      "adjusterEmail": "sarah.johnson@assureme.com",
+      "documents": [
+        {
+          "id": "1",
+          "name": "Police_Report.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-15",
+          "size": 245760
+        },
+        {
+          "id": "2",
+          "name": "Damage_Photos.zip",
+          "type": "ZIP",
+          "uploadDate": "2024-01-15",
+          "size": 2048000
+        },
+        {
+          "id": "3",
+          "name": "Repair_Estimate.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-16",
+          "size": 156432
+        }
+      ],
+      "timeline": [
+        {
+          "id": "1",
+          "date": "2024-01-15",
+          "event": "Claim Submitted",
+          "description": "Initial claim filed online",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "2",
+          "date": "2024-01-16",
+          "event": "Documents Received",
+          "description": "Police report and photos uploaded",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "3",
+          "date": "2024-01-17",
+          "event": "Adjuster Assigned",
+          "description": "Sarah Johnson assigned to case",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "4",
+          "date": "2024-01-18",
+          "event": "Vehicle Inspection",
+          "description": "Scheduled for January 22, 2024",
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "claimNumber": "CLM-2024-002",
+      "policyId": "2",
+      "policyType": "HOME",
+      "policyNumber": "HOME-2024-002",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "type": "Water Damage",
+      "status": "APPROVED",
+      "amount": 12000,
+      "estimatedAmount": 12500,
+      "payoutAmount": 12000,
+      "submittedDate": "2024-01-10",
+      "submittedAt": "2024-01-10T09:45:00Z",
+      "updatedAt": "2024-01-18T16:20:00Z",
+      "incidentDate": "2024-01-08",
+      "description": "Pipe burst in basement causing extensive water damage to flooring and personal property.",
+      "location": "123 Main St, Basement",
+      "adjusterName": "Mike Chen",
+      "adjusterPhone": "(555) 987-6543",
+      "adjusterEmail": "mike.chen@assureme.com",
+      "documents": [
+        {
+          "id": "4",
+          "name": "Plumber_Report.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-10",
+          "size": 198432
+        },
+        {
+          "id": "5",
+          "name": "Damage_Assessment.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-12",
+          "size": 345678
+        },
+        {
+          "id": "6",
+          "name": "Receipts.zip",
+          "type": "ZIP",
+          "uploadDate": "2024-01-14",
+          "size": 1024000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "5",
+          "date": "2024-01-10",
+          "event": "Claim Submitted",
+          "description": "Water damage claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "6",
+          "date": "2024-01-11",
+          "event": "Emergency Response",
+          "description": "Water mitigation services approved",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "7",
+          "date": "2024-01-12",
+          "event": "Property Inspection",
+          "description": "Adjuster completed site visit",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "8",
+          "date": "2024-01-18",
+          "event": "Claim Approved",
+          "description": "Settlement approved for $12,000",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "claimNumber": "CLM-2024-003",
+      "policyId": "4",
+      "policyType": "HEALTH",
+      "policyNumber": "HEALTH-2024-004",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "type": "Emergency Care",
+      "status": "PAID",
+      "amount": 2500,
+      "payoutAmount": 2500,
+      "submittedDate": "2024-01-05",
+      "submittedAt": "2024-01-05T11:20:00Z",
+      "updatedAt": "2024-01-08T13:45:00Z",
+      "incidentDate": "2024-01-03",
+      "description": "Emergency room visit for chest pain and cardiac evaluation.",
+      "location": "City General Hospital, Emergency Department",
+      "documents": [
+        {
+          "id": "7",
+          "name": "Medical_Records.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-05",
+          "size": 567890
+        },
+        {
+          "id": "8",
+          "name": "Hospital_Bill.pdf",
+          "type": "PDF",
+          "uploadDate": "2024-01-06",
+          "size": 123456
+        }
+      ],
+      "timeline": [
+        {
+          "id": "9",
+          "date": "2024-01-05",
+          "event": "Claim Submitted",
+          "description": "Medical claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "10",
+          "date": "2024-01-06",
+          "event": "Pre-Authorization",
+          "description": "Treatment pre-authorized",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "11",
+          "date": "2024-01-08",
+          "event": "Claim Processed",
+          "description": "Payment approved and issued",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "claimNumber": "CLM-2024-004",
+      "policyId": "1",
+      "policyType": "AUTO",
+      "policyNumber": "AUTO-2024-001",
+      "clientId": "2",
+      "clientName": "Jane Smith",
+      "type": "Collision",
+      "status": "SUBMITTED",
+      "amount": 5500,
+      "payoutAmount": 5500,
+      "submittedDate": "2024-01-15",
+      "submittedAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z",
+      "incidentDate": "2024-01-14",
+      "description": "Rear-end collision on Highway 101",
+      "location": "Highway 101, San Francisco, CA",
+      "adjusterName": "Jane Adjuster",
+      "adjusterEmail": "jane.adjuster@assureme.com",
+      "documents": [
+        {
+          "id": "9",
+          "name": "claim-photos.pdf",
+          "type": "IMAGE",
+          "uploadDate": "2024-01-15",
+          "size": 2048000
+        },
+        {
+          "id": "10",
+          "name": "police-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-15",
+          "size": 1024000
+        },
+        {
+          "id": "11",
+          "name": "estimate.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-15",
+          "size": 512000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "12",
+          "date": "2024-01-15",
+          "event": "Claim Submitted",
+          "description": "Initial claim filed",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "claimNumber": "CLM-2024-005",
+      "policyId": "2",
+      "policyType": "HOME",
+      "policyNumber": "HOME-2024-002",
+      "clientId": "2",
+      "clientName": "Jane Smith",
+      "type": "Water Damage",
+      "status": "APPROVED",
+      "amount": 12500,
+      "payoutAmount": 12500,
+      "submittedDate": "2024-01-10",
+      "submittedAt": "2024-01-10T14:20:00Z",
+      "updatedAt": "2024-01-12T16:30:00Z",
+      "incidentDate": "2024-01-09",
+      "description": "Water damage from burst pipe in basement",
+      "location": "123 Main St, Basement, Springfield, IL",
+      "adjusterName": "Bob Claims",
+      "adjusterEmail": "bob.claims@assureme.com",
+      "documents": [
+        {
+          "id": "12",
+          "name": "water-damage-photos.pdf",
+          "type": "IMAGE",
+          "uploadDate": "2024-01-10",
+          "size": 3072000
+        },
+        {
+          "id": "13",
+          "name": "plumber-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-11",
+          "size": 1536000
+        },
+        {
+          "id": "14",
+          "name": "repair-estimate.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-12",
+          "size": 768000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "13",
+          "date": "2024-01-10",
+          "event": "Claim Submitted",
+          "description": "Water damage claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "14",
+          "date": "2024-01-12",
+          "event": "Claim Approved",
+          "description": "Settlement approved for $12,500",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "claimNumber": "CLM-2024-006",
+      "policyId": "4",
+      "policyType": "HEALTH",
+      "policyNumber": "HEALTH-2024-004",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "type": "Emergency Care",
+      "status": "UNDER_REVIEW",
+      "amount": 8750,
+      "payoutAmount": 0,
+      "submittedDate": "2024-01-12",
+      "submittedAt": "2024-01-12T09:45:00Z",
+      "updatedAt": "2024-01-14T11:20:00Z",
+      "incidentDate": "2024-01-11",
+      "description": "Emergency surgery - appendectomy",
+      "location": "City General Hospital, Emergency Room",
+      "adjusterName": "Jane Adjuster",
+      "adjusterEmail": "jane.adjuster@assureme.com",
+      "documents": [
+        {
+          "id": "15",
+          "name": "medical-records.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-12",
+          "size": 2048000
+        },
+        {
+          "id": "16",
+          "name": "hospital-bill.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-12",
+          "size": 512000
+        },
+        {
+          "id": "17",
+          "name": "doctor-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-13",
+          "size": 1024000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "15",
+          "date": "2024-01-12",
+          "event": "Claim Submitted",
+          "description": "Medical claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "16",
+          "date": "2024-01-14",
+          "event": "Under Review",
+          "description": "Medical review in progress",
+          "status": "PENDING"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "claimNumber": "CLM-2024-007",
+      "policyId": "1",
+      "policyType": "AUTO",
+      "policyNumber": "AUTO-2024-001",
+      "clientId": "2",
+      "clientName": "Jane Smith",
+      "type": "Collision",
+      "status": "DENIED",
+      "amount": 0,
+      "payoutAmount": 0,
+      "submittedDate": "2024-01-08",
+      "submittedAt": "2024-01-08T11:15:00Z",
+      "updatedAt": "2024-01-10T14:45:00Z",
+      "incidentDate": "2024-01-07",
+      "description": "Minor fender bender in parking lot",
+      "location": "Walmart Parking Lot, 456 Commerce Blvd",
+      "adjusterName": "Tom Reviewer",
+      "adjusterEmail": "tom.reviewer@assureme.com",
+      "documents": [
+        {
+          "id": "18",
+          "name": "incident-photos.pdf",
+          "type": "IMAGE",
+          "uploadDate": "2024-01-08",
+          "size": 1536000
+        },
+        {
+          "id": "19",
+          "name": "witness-statement.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-08",
+          "size": 256000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "17",
+          "date": "2024-01-08",
+          "event": "Claim Submitted",
+          "description": "Minor collision claim filed",
+          "status": "COMPLETED"
+        },
+        {
+          "id": "18",
+          "date": "2024-01-10",
+          "event": "Claim Denied",
+          "description": "Insufficient evidence of coverage",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "id": "8",
+      "claimNumber": "CLM-2024-008",
+      "policyId": "3",
+      "policyType": "LIFE",
+      "policyNumber": "LIFE-2024-003",
+      "clientId": "1",
+      "clientName": "John Doe",
+      "type": "Accidental Death",
+      "status": "SUBMITTED",
+      "amount": 50000,
+      "payoutAmount": 0,
+      "submittedDate": "2024-01-05",
+      "submittedAt": "2024-01-05T13:30:00Z",
+      "updatedAt": "2024-01-05T13:30:00Z",
+      "incidentDate": "2024-01-03",
+      "description": "Life insurance claim - accidental death",
+      "location": "Interstate 75, Mile Marker 142",
+      "adjusterName": "Bob Claims",
+      "adjusterEmail": "bob.claims@assureme.com",
+      "documents": [
+        {
+          "id": "20",
+          "name": "death-certificate.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-05",
+          "size": 512000
+        },
+        {
+          "id": "21",
+          "name": "police-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-05",
+          "size": 1024000
+        },
+        {
+          "id": "22",
+          "name": "medical-examiner-report.pdf",
+          "type": "DOCUMENT",
+          "uploadDate": "2024-01-05",
+          "size": 2048000
+        }
+      ],
+      "timeline": [
+        {
+          "id": "19",
+          "date": "2024-01-05",
+          "event": "Claim Submitted",
+          "description": "Life insurance claim filed",
+          "status": "COMPLETED"
+        }
+      ]
+    }
+  ],
+  "payments": [
+    {
+      "id": "1",
+      "paymentNumber": "PAY-2024-001",
+      "policyId": "1",
+      "policyNumber": "AUTO-2024-001",
+      "policyType": "Auto Insurance",
+      "clientId": "1",
+      "amount": 1200,
+      "dueDate": "2024-02-15",
+      "paidDate": "2024-02-14",
+      "status": "COMPLETED",
+      "paymentMethod": "Credit Card",
+      "description": "Monthly premium payment",
+      "invoiceNumber": "INV-2024-001",
+      "lastFourDigits": "4567",
+      "transactionId": "TXN-ABC123456",
+      "isAutoPayEnabled": true,
+      "createdAt": "2024-02-14T10:30:00Z",
+      "updatedAt": "2024-02-14T10:30:00Z"
+    },
+    {
+      "id": "2",
+      "paymentNumber": "PAY-2024-002",
+      "policyId": "2",
+      "policyNumber": "HOME-2024-002",
+      "policyType": "Home Insurance",
+      "clientId": "1",
+      "amount": 800,
+      "dueDate": "2024-02-20",
+      "status": "PENDING",
+      "paymentMethod": "Bank Transfer",
+      "description": "Quarterly premium payment",
+      "invoiceNumber": "INV-2024-002",
+      "isAutoPayEnabled": false,
+      "createdAt": "2024-01-20T14:15:00Z",
+      "updatedAt": "2024-01-20T14:15:00Z"
+    },
+    {
+      "id": "3",
+      "paymentNumber": "PAY-2024-003",
+      "policyId": "1",
+      "policyNumber": "AUTO-2024-001",
+      "policyType": "Auto Insurance",
+      "clientId": "1",
+      "amount": 1200,
+      "dueDate": "2024-01-15",
+      "paidDate": "2024-01-16",
+      "status": "COMPLETED",
+      "paymentMethod": "Credit Card",
+      "description": "Monthly premium payment",
+      "invoiceNumber": "INV-2024-003",
+      "lastFourDigits": "4567",
+      "transactionId": "TXN-DEF789012",
+      "isAutoPayEnabled": true,
+      "createdAt": "2024-01-16T09:45:00Z",
+      "updatedAt": "2024-01-16T09:45:00Z"
+    },
+    {
+      "id": "4",
+      "paymentNumber": "PAY-2024-004",
+      "policyId": "4",
+      "policyNumber": "HEALTH-2024-004",
+      "policyType": "Health Insurance",
+      "clientId": "1",
+      "amount": 900,
+      "dueDate": "2024-01-10",
+      "status": "FAILED",
+      "paymentMethod": "Credit Card",
+      "description": "Monthly premium payment",
+      "invoiceNumber": "INV-2024-004",
+      "lastFourDigits": "1234",
+      "failureReason": "Insufficient funds",
+      "isAutoPayEnabled": true,
+      "createdAt": "2024-01-10T12:00:00Z",
+      "updatedAt": "2024-01-10T12:00:00Z"
+    },
+    {
+      "id": "5",
+      "paymentNumber": "PAY-2024-005",
+      "policyId": "3",
+      "policyNumber": "LIFE-2024-003",
+      "policyType": "Life Insurance",
+      "clientId": "1",
+      "amount": 200,
+      "dueDate": "2024-03-01",
+      "status": "PENDING",
+      "paymentMethod": "Auto Pay",
+      "description": "Monthly premium payment",
+      "invoiceNumber": "INV-2024-005",
+      "isAutoPayEnabled": true,
+      "createdAt": "2024-02-01T08:00:00Z",
+      "updatedAt": "2024-02-01T08:00:00Z"
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "1",
+      "userId": "1",
+      "type": "CREDIT_CARD",
+      "cardType": "Visa",
+      "lastFour": "4567",
+      "expiryMonth": 12,
+      "expiryYear": 2027,
+      "isDefault": true,
+      "nickname": "Primary Visa",
+      "isExpired": false,
+      "createdAt": "2023-12-15T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "type": "CREDIT_CARD",
+      "cardType": "MasterCard",
+      "lastFour": "8901",
+      "expiryMonth": 8,
+      "expiryYear": 2026,
+      "isDefault": false,
+      "nickname": "Backup Card",
+      "isExpired": false,
+      "createdAt": "2024-01-10T14:30:00Z"
+    },
+    {
+      "id": "3",
+      "userId": "1",
+      "type": "BANK_ACCOUNT",
+      "bankName": "Chase Bank",
+      "accountType": "Checking",
+      "lastFour": "3456",
+      "isDefault": false,
+      "nickname": "Main Checking",
+      "createdAt": "2023-11-20T09:15:00Z"
+    }
+  ],
+  "documents": [
+    {
+      "id": "1",
+      "name": "Auto Insurance Policy - 2024",
+      "type": "POLICY",
+      "category": "Auto Insurance",
+      "fileType": "PDF",
+      "fileSize": 2048576,
+      "uploadDate": "2024-01-01",
+      "lastModified": "2024-01-15",
+      "policyId": "1",
+      "policyNumber": "AUTO-2024-001",
+      "userId": "1",
+      "isConfidential": true,
+      "isFavorite": true,
+      "description": "Complete auto insurance policy documentation for Toyota Camry 2022",
+      "tags": ["auto", "policy", "2024", "toyota"],
+      "downloadUrl": "/documents/auto-policy-2024.pdf",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "2",
+      "name": "Home Insurance Certificate",
+      "type": "CERTIFICATE",
+      "category": "Home Insurance",
+      "fileType": "PDF",
+      "fileSize": 512000,
+      "uploadDate": "2024-01-15",
+      "lastModified": "2024-01-15",
+      "policyId": "2",
+      "policyNumber": "HOME-2024-002",
+      "userId": "1",
+      "isConfidential": false,
+      "isFavorite": false,
+      "description": "Certificate of insurance for home property",
+      "tags": ["home", "certificate", "property"],
+      "downloadUrl": "/documents/home-certificate.pdf",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "3",
+      "name": "Auto Insurance ID Card",
+      "type": "ID_CARD",
+      "category": "Auto Insurance",
+      "fileType": "PNG",
+      "fileSize": 245760,
+      "uploadDate": "2024-01-01",
+      "lastModified": "2024-01-01",
+      "policyId": "1",
+      "policyNumber": "AUTO-2024-001",
+      "userId": "1",
+      "isConfidential": false,
+      "isFavorite": true,
+      "description": "Digital insurance ID card for vehicle",
+      "tags": ["auto", "id-card", "digital"],
+      "downloadUrl": "/documents/auto-id-card.png",
+      "thumbnailUrl": "/documents/thumbnails/auto-id-card-thumb.png",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "4",
+      "name": "Claim Documentation - Water Damage",
+      "type": "CLAIM",
+      "category": "Home Insurance",
+      "fileType": "ZIP",
+      "fileSize": 10485760,
+      "uploadDate": "2024-01-10",
+      "lastModified": "2024-01-18",
+      "claimId": "2",
+      "claimNumber": "CLM-2024-002",
+      "userId": "1",
+      "isConfidential": true,
+      "isFavorite": false,
+      "description": "Complete documentation package for water damage claim",
+      "tags": ["claim", "water-damage", "home", "photos"],
+      "downloadUrl": "/documents/claim-water-damage-docs.zip",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "5",
+      "name": "Life Insurance Application",
+      "type": "APPLICATION",
+      "category": "Life Insurance",
+      "fileType": "PDF",
+      "fileSize": 1048576,
+      "uploadDate": "2023-11-30",
+      "lastModified": "2023-11-30",
+      "policyId": "3",
+      "policyNumber": "LIFE-2024-003",
+      "userId": "1",
+      "isConfidential": true,
+      "isFavorite": false,
+      "description": "Original life insurance application with medical exam results",
+      "tags": ["life", "application", "medical"],
+      "downloadUrl": "/documents/life-insurance-application.pdf",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "6",
+      "name": "Health Insurance Card",
+      "type": "ID_CARD",
+      "category": "Health Insurance",
+      "fileType": "PNG",
+      "fileSize": 204800,
+      "uploadDate": "2024-01-01",
+      "lastModified": "2024-01-01",
+      "policyId": "4",
+      "policyNumber": "HEALTH-2024-004",
+      "userId": "1",
+      "isConfidential": false,
+      "isFavorite": true,
+      "description": "Digital health insurance ID card",
+      "tags": ["health", "id-card", "digital"],
+      "downloadUrl": "/documents/health-id-card.png",
+      "thumbnailUrl": "/documents/thumbnails/health-id-card-thumb.png",
+      "status": "ACTIVE"
+    }
+  ],
+  "availablePolicies": [
+    {
+      "id": "1",
+      "number": "AUTO-2024-001",
+      "type": "AUTO",
+      "description": "Toyota Camry 2022",
+      "balance": 1200
+    },
+    {
+      "id": "2",
+      "number": "HOME-2024-002",
+      "type": "HOME",
+      "description": "123 Main St Property",
+      "balance": 800
+    },
+    {
+      "id": "3",
+      "number": "LIFE-2024-003",
+      "type": "LIFE",
+      "description": "Term Life Insurance",
+      "balance": 2400
+    },
+    {
+      "id": "4",
+      "number": "HEALTH-2024-004",
+      "type": "HEALTH",
+      "description": "Individual Health Plan",
+      "balance": 3600
+    }
+  ],
+  "claimTypes": {
+    "AUTO": [
+      "Collision",
+      "Comprehensive",
+      "Liability",
+      "Uninsured Motorist",
+      "Personal Injury"
+    ],
+    "HOME": [
+      "Fire Damage",
+      "Water Damage",
+      "Theft",
+      "Storm Damage",
+      "Vandalism",
+      "Personal Property"
+    ],
+    "LIFE": [
+      "Death Benefit",
+      "Terminal Illness",
+      "Accidental Death"
+    ],
+    "HEALTH": [
+      "Medical Treatment",
+      "Prescription Drugs",
+      "Emergency Care",
+      "Preventive Care",
+      "Mental Health"
+    ]
+  },
+  "adminStats": {
+    "totalUsers": 1250,
+    "activeUsers": 1180,
+    "totalPolicies": 2890,
+    "activePolicies": 2650,
+    "totalClaims": 450,
+    "pendingClaims": 85,
+    "totalRevenue": 2850000,
+    "monthlyRevenue": 285000,
+    "avgPolicyValue": 1850,
+    "claimApprovalRate": 89.5,
+    "customerSatisfaction": 4.6
+  },
+  "recentActivity": [
+    {
+      "id": "1",
+      "type": "CLAIM_SUBMITTED",
+      "description": "New auto claim submitted by John Doe",
+      "timestamp": "2024-01-20T14:30:00Z",
+      "userId": "1",
+      "claimId": "1",
+      "severity": "info",
+      "amount": 5000
+    },
+    {
+      "id": "2",
+      "type": "PAYMENT_COMPLETED",
+      "description": "Premium payment processed for HOME-2024-002",
+      "timestamp": "2024-01-20T12:15:00Z",
+      "userId": "1",
+      "paymentId": "1",
+      "severity": "success",
+      "amount": 800
+    },
+    {
+      "id": "3",
+      "type": "POLICY_RENEWED",
+      "description": "Auto policy renewed for Jane Smith",
+      "timestamp": "2024-01-20T10:45:00Z",
+      "userId": "2",
+      "severity": "success",
+      "amount": 1400
+    },
+    {
+      "id": "4",
+      "type": "CLAIM_APPROVED",
+      "description": "Water damage claim approved for $12,000",
+      "timestamp": "2024-01-19T16:20:00Z",
+      "userId": "1",
+      "claimId": "2",
+      "severity": "success",
+      "amount": 12000
+    },
+    {
+      "id": "5",
+      "type": "PAYMENT_FAILED",
+      "description": "Payment failed for HEALTH-2024-004 - insufficient funds",
+      "timestamp": "2024-01-19T08:30:00Z",
+      "userId": "1",
+      "paymentId": "4",
+      "severity": "error",
+      "amount": 900
+    }
+  ],
+  "quickActions": [
+    {
+      "id": "1",
+      "title": "Review Pending Claims",
+      "description": "85 claims awaiting review",
+      "icon": "FileText",
+      "color": "yellow",
+      "count": 85,
+      "url": "/admin/claims?status=pending"
+    },
+    {
+      "id": "2",
+      "title": "Process Payments",
+      "description": "12 payments need attention",
+      "icon": "CreditCard",
+      "color": "green",
+      "count": 12,
+      "url": "/admin/payments?status=pending"
+    },
+    {
+      "id": "3",
+      "title": "New User Registrations",
+      "description": "8 new registrations today",
+      "icon": "Users",
+      "color": "blue",
+      "count": 8,
+      "url": "/admin/users?filter=new"
+    },
+    {
+      "id": "4",
+      "title": "Policy Renewals",
+      "description": "25 policies expiring soon",
+      "icon": "Calendar",
+      "color": "orange",
+      "count": 25,
+      "url": "/admin/policies?filter=expiring"
+    }
+  ],
+  "dashboardStats": {
+    "totalPolicies": 4,
+    "activeClaims": 2,
+    "upcomingPayments": 3,
+    "totalCoverage": 851000,
+    "nextPaymentAmount": 800,
+    "nextPaymentDate": "2024-02-20",
+    "recentClaimsCount": 3,
+    "documentsCount": 6
+  }
+}
