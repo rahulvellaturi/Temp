@@ -5,6 +5,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
+import mockDataService from '@/services/mockDataService';
 import { 
   Shield, 
   FileText, 
@@ -74,89 +75,15 @@ const Dashboard: React.FC = () => {
 
   const loadDashboardData = async () => {
     try {
-      // Simulate API calls with mock data
-      const mockData = {
-        policies: [
-          {
-            id: '1',
-            type: 'Auto Insurance',
-            policyNumber: 'AUTO-2024-001',
-            status: 'ACTIVE' as const,
-            premium: 1200,
-            coverage: 50000,
-            nextPayment: '2024-02-15',
-            expiryDate: '2024-12-31'
-          },
-          {
-            id: '2',
-            type: 'Home Insurance',
-            policyNumber: 'HOME-2024-002',
-            status: 'ACTIVE' as const,
-            premium: 800,
-            coverage: 300000,
-            nextPayment: '2024-02-20',
-            expiryDate: '2024-11-30'
-          },
-          {
-            id: '3',
-            type: 'Life Insurance',
-            policyNumber: 'LIFE-2024-003',
-            status: 'PENDING' as const,
-            premium: 2400,
-            coverage: 500000,
-            nextPayment: '2024-03-01',
-            expiryDate: '2025-02-28'
-          }
-        ],
-        claims: [
-          {
-            id: '1',
-            policyId: '1',
-            claimNumber: 'CLM-2024-001',
-            type: 'Auto Accident',
-            amount: 5000,
-            status: 'UNDER_REVIEW' as const,
-            submittedDate: '2024-01-15',
-            description: 'Rear-end collision on Highway 101'
-          },
-          {
-            id: '2',
-            policyId: '2',
-            claimNumber: 'CLM-2024-002',
-            type: 'Water Damage',
-            amount: 12000,
-            status: 'APPROVED' as const,
-            submittedDate: '2024-01-10',
-            description: 'Pipe burst in basement causing water damage'
-          }
-        ],
-        payments: [
-          {
-            id: '1',
-            amount: 1200,
-            status: 'PENDING' as const,
-            dueDate: '2024-02-15',
-            policyType: 'Auto Insurance',
-            method: 'Auto Pay'
-          },
-          {
-            id: '2',
-            amount: 800,
-            status: 'COMPLETED' as const,
-            dueDate: '2024-01-20',
-            policyType: 'Home Insurance',
-            method: 'Credit Card'
-          }
-        ]
-      };
+      // Load data from mock data service
+      const userId = user?.id || '1'; // Default to user ID 1 for demo
+      const dashboardData = mockDataService.getDashboardData(userId);
 
       setDashboardData({
-        ...mockData,
-        stats: {
-          totalPolicies: mockData.policies.length,
-          activeClaims: mockData.claims.filter(c => ['SUBMITTED', 'UNDER_REVIEW'].includes(c.status)).length,
-          pendingPayments: mockData.payments.filter(p => p.status === 'PENDING').length,
-          totalCoverage: mockData.policies.reduce((sum, p) => sum + p.coverage, 0),
+        policies: dashboardData.policies,
+        claims: dashboardData.claims,
+        payments: dashboardData.payments,
+        stats: dashboardData.stats,
         }
       });
     } catch (error) {

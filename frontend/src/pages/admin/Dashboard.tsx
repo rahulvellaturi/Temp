@@ -5,6 +5,7 @@ import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
+import mockDataService from '@/services/mockDataService';
 import { 
   Users, 
   Shield, 
@@ -89,24 +90,14 @@ const AdminDashboard: React.FC = () => {
     try {
       setLoading(true);
       
-      // Mock admin stats data
-      const mockStats: AdminStats = {
-        totalUsers: 2847,
-        activeUsers: 2156,
-        totalPolicies: 4392,
-        activePolicies: 3847,
-        totalClaims: 892,
-        pendingClaims: 124,
-        totalRevenue: 12847293,
-        monthlyRevenue: 1284729,
-        userGrowth: 12.5,
-        policyGrowth: 8.3,
-        claimResolutionRate: 94.2,
-        averageClaimTime: 5.8,
-      };
-
-      // Mock recent activity data
-      const mockActivity: RecentActivity[] = [
+      // Load data from mock data service
+      const adminStats = mockDataService.getAdminStats();
+      const recentActivity = mockDataService.getRecentActivity();
+      const quickActions = mockDataService.getQuickActions();
+      
+      setStats(adminStats);
+      setRecentActivity(recentActivity);
+      setQuickActions(quickActions);
         {
           id: '1',
           type: 'USER_REGISTERED',

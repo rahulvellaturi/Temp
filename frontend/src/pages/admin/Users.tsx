@@ -7,6 +7,7 @@ import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
 import { FormField, FormInput } from '@/components/common/Form';
+import mockDataService from '@/services/mockDataService';
 import { 
   Users as UsersIcon, 
   Plus, 
@@ -131,8 +132,10 @@ const AdminUsers: React.FC = () => {
     try {
       setLoading(true);
       
-      // Mock users data
-      const mockUsers: User[] = [
+      // Load users from mock data service
+      const allUsers = mockDataService.getUsers();
+      setUsers(allUsers);
+      setFilteredUsers(allUsers);
         {
           id: '1',
           firstName: 'John',
@@ -241,9 +244,6 @@ const AdminUsers: React.FC = () => {
           claimsCount: 3,
           totalPremiums: 2800,
         },
-      ];
-
-      setUsers(mockUsers);
     } catch (error) {
       console.error('Failed to load users:', error);
     } finally {

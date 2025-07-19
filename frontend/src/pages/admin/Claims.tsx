@@ -5,6 +5,7 @@ import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
 import PageHeader from '@/components/common/PageHeader';
 import { Claim, ClaimStatus } from '@/types';
+import mockDataService from '@/services/mockDataService';
 
 // Mock data for claims
 const mockClaims: Claim[] = [
@@ -120,8 +121,8 @@ const mockClaims: Claim[] = [
 ];
 
 const AdminClaims: React.FC = () => {
-  const [claims, setClaims] = useState<Claim[]>(mockClaims);
-  const [filteredClaims, setFilteredClaims] = useState<Claim[]>(mockClaims);
+  const [claims, setClaims] = useState<Claim[]>([]);
+  const [filteredClaims, setFilteredClaims] = useState<Claim[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ClaimStatus | 'ALL'>('ALL');
   const [policyTypeFilter, setPolicyTypeFilter] = useState<string>('ALL');
@@ -130,6 +131,11 @@ const AdminClaims: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Load claims from mock data service
+    const allClaims = mockDataService.getClaims();
+    setClaims(allClaims);
+    setFilteredClaims(allClaims);
+    
     // Simulate loading
     setTimeout(() => setIsLoading(false), 1000);
   }, []);

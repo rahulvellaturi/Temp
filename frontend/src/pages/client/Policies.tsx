@@ -6,6 +6,7 @@ import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
 import { FormField, FormInput } from '@/components/common/Form';
+import mockDataService from '@/services/mockDataService';
 import { 
   Shield, 
   Search, 
@@ -72,8 +73,12 @@ const Policies: React.FC = () => {
 
   const loadPolicies = async () => {
     try {
-      // Mock data for demonstration
-      const mockPolicies: Policy[] = [
+      // Load policies from mock data service
+      const userId = user?.id || '1'; // Default to user ID 1 for demo
+      const userPolicies = mockDataService.getPoliciesByUserId(userId);
+      
+      setPolicies(userPolicies);
+      setFilteredPolicies(userPolicies);
         {
           id: '1',
           type: 'AUTO',
@@ -162,9 +167,6 @@ const Policies: React.FC = () => {
             }
           ]
         }
-      ];
-
-      setPolicies(mockPolicies);
     } catch (error) {
       console.error('Failed to load policies:', error);
     }
