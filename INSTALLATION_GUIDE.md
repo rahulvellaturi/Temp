@@ -9,6 +9,7 @@ AssureMe is a full-stack insurance client management system with:
 - **Backend**: Node.js + Express + TypeScript + Prisma
 - **Database**: PostgreSQL (Local or Cloud)
 - **Authentication**: JWT + MFA/2FA support
+- **State Management**: Redux Toolkit with Redux Persist
 - **File Storage**: Cloudinary (Optional)
 
 ## 📋 Prerequisites
@@ -343,20 +344,25 @@ assureme-insurance/
 │   │   │   │   ├── ClientLayout.tsx  # Client portal layout
 │   │   │   │   └── AdminLayout.tsx   # Admin portal layout
 │   │   │   └── ui/           # UI components
+│   │   │       └── NotificationProvider.tsx # Redux notifications
 │   │   ├── pages/            # Page components
 │   │   │   ├── auth/         # Authentication pages
 │   │   │   ├── client/       # Client portal pages
 │   │   │   └── admin/        # Admin portal pages
 │   │   ├── hooks/            # Custom React hooks
-│   │   │   └── useApi.ts     # API hooks
-│   │   ├── store/            # State management (Zustand)
-│   │   │   └── authStore.ts  # Authentication store
+│   │   │   ├── useApi.ts     # API hooks with Redux
+│   │   │   └── useAppDispatch.ts # Typed Redux hooks
+│   │   ├── store/            # Redux store and slices
+│   │   │   ├── index.ts      # Store configuration
+│   │   │   └── slices/       # Redux slices
+│   │   │       ├── authSlice.ts  # Authentication state
+│   │   │       └── uiSlice.ts    # UI state management
 │   │   ├── lib/              # Utility libraries
 │   │   │   ├── api.ts        # API client
 │   │   │   └── utils.ts      # Utility functions
 │   │   ├── types/            # TypeScript type definitions
 │   │   │   └── index.ts      # Type definitions
-│   │   └── index.tsx         # React entry point
+│   │   └── index.tsx         # React entry point with Redux Provider
 │   ├── public/              # Static assets
 │   │   └── index.html       # HTML template
 │   ├── .env                 # Environment variables
@@ -403,9 +409,9 @@ router.post('/', async (req, res) => {
 export default router;
 ```
 
-#### Frontend - Adding New Components
+#### Frontend - Adding New Components with Redux
 1. Create component in appropriate `frontend/src/components/` subdirectory
-2. Use existing reusable components (Button, Card, PageHeader)
+2. Use Redux hooks for state management
 3. Follow TypeScript typing conventions
 4. Use Tailwind CSS for styling
 
@@ -413,18 +419,31 @@ Example:
 ```typescript
 // frontend/src/components/common/ExampleComponent.tsx
 import React from 'react';
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
+import { addNotification } from '@/store/slices/uiSlice';
 import Button from './Button';
 import Card from './Card';
 
 interface ExampleProps {
   title: string;
-  onAction: () => void;
 }
 
-const ExampleComponent: React.FC<ExampleProps> = ({ title, onAction }) => {
+const ExampleComponent: React.FC<ExampleProps> = ({ title }) => {
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
+
+  const handleAction = () => {
+    dispatch(addNotification({
+      type: 'success',
+      title: 'Action completed',
+      message: `Hello ${user?.firstName}!`,
+      duration: 5000,
+    }));
+  };
+
   return (
     <Card title={title}>
-      <Button onClick={onAction}>
+      <Button onClick={handleAction}>
         Take Action
       </Button>
     </Card>
@@ -432,6 +451,72 @@ const ExampleComponent: React.FC<ExampleProps> = ({ title, onAction }) => {
 };
 
 export default ExampleComponent;
+```
+
+#### Adding New Redux Slices
+1. Create slice file in `frontend/src/store/slices/`
+2. Define state interface and initial state
+3. Add reducers and async thunks
+4. Export actions and reducer
+5. Add to store configuration
+
+Example:
+```typescript
+// frontend/src/store/slices/exampleSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { api } from '@/lib/api';
+
+export const fetchExampleData = createAsyncThunk(
+  'example/fetchData',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/example');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch data');
+    }
+  }
+);
+
+interface ExampleState {
+  data: any[];
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: ExampleState = {
+  data: [],
+  loading: false,
+  error: null,
+};
+
+const exampleSlice = createSlice({
+  name: 'example',
+  initialState,
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchExampleData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchExampleData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchExampleData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+export const { clearError } = exampleSlice.actions;
+export default exampleSlice.reducer;
 ```
 
 ### Modifying Database Schema
@@ -509,13 +594,22 @@ rm -rf build/
 npm run build
 ```
 
-#### 6. Environment Variables Not Loading
+#### 6. Redux State Issues
+```bash
+# Clear Redux persist cache (in browser dev tools)
+localStorage.removeItem('persist:root')
+
+# Or clear all localStorage
+localStorage.clear()
+```
+
+#### 7. Environment Variables Not Loading
 - Ensure `.env` files exist in correct directories
 - Restart development servers after changing environment variables
 - Check for typos in variable names
 - Ensure no spaces around `=` in `.env` files
 
-#### 7. CORS Issues
+#### 8. CORS Issues
 If frontend can't connect to backend:
 - Verify `REACT_APP_API_URL` in frontend `.env`
 - Check backend CORS configuration
@@ -528,7 +622,8 @@ If frontend can't connect to backend:
    - Backend: Terminal where `npm run dev` is running
 2. **Database Issues**: Use `npx prisma studio` to inspect database
 3. **API Issues**: Check `http://localhost:5000/api-docs` for API documentation
-4. **GitHub Issues**: Create an issue with error details and steps to reproduce
+4. **Redux DevTools**: Install Redux DevTools browser extension for state debugging
+5. **GitHub Issues**: Create an issue with error details and steps to reproduce
 
 ## 🚀 Deployment Options
 
@@ -564,6 +659,7 @@ Detailed deployment instructions: See [DEPLOYMENT.md](DEPLOYMENT.md)
 - **Frontend Logs**: Browser developer console
 - **Database**: Prisma Studio for data inspection
 - **API Testing**: Use API documentation at `/api-docs`
+- **Redux State**: Redux DevTools browser extension
 
 ### Production Monitoring
 - **Render**: Built-in logs and metrics
@@ -599,6 +695,7 @@ Detailed deployment instructions: See [DEPLOYMENT.md](DEPLOYMENT.md)
 - ✅ Implement rate limiting on API endpoints
 - ✅ Use parameterized queries (Prisma handles this)
 - ✅ Enable CORS only for trusted origins
+- ✅ Store sensitive data in Redux persist blacklist
 
 ### Production Security Checklist
 - [ ] Change all default passwords and secrets
@@ -609,11 +706,14 @@ Detailed deployment instructions: See [DEPLOYMENT.md](DEPLOYMENT.md)
 - [ ] Regular security updates
 - [ ] Backup and disaster recovery plan
 - [ ] SSL/TLS certificates properly configured
+- [ ] Configure Redux persist to exclude sensitive data
 
 ## 📚 Additional Resources
 
 ### Documentation
 - [React Documentation](https://react.dev/)
+- [Redux Toolkit Documentation](https://redux-toolkit.js.org/)
+- [React-Redux Documentation](https://react-redux.js.org/)
 - [Node.js Documentation](https://nodejs.org/docs/)
 - [Express.js Documentation](https://expressjs.com/)
 - [Prisma Documentation](https://prisma.io/docs/)
@@ -628,6 +728,7 @@ Detailed deployment instructions: See [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ### Learning Resources
 - [React Tutorial](https://react.dev/learn)
+- [Redux Essentials](https://redux.js.org/tutorials/essentials/part-1-overview-concepts)
 - [Node.js Tutorial](https://nodejs.dev/learn)
 - [PostgreSQL Tutorial](https://postgresqltutorial.com/)
 - [TypeScript Handbook](https://typescriptlang.org/docs/handbook/intro.html)
@@ -650,6 +751,7 @@ Detailed deployment instructions: See [DEPLOYMENT.md](DEPLOYMENT.md)
 - Write meaningful commit messages
 - Add JSDoc comments for complex functions
 - Test your changes thoroughly
+- Use Redux best practices (normalized state, immutable updates)
 
 ## 📞 Support
 
@@ -669,26 +771,29 @@ Detailed deployment instructions: See [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ## 🎉 Congratulations!
 
-You now have a complete insurance client management system running locally. The application includes:
+You now have a complete insurance client management system running locally with Redux state management. The application includes:
 
 - ✅ **Full-stack architecture** with React frontend and Node.js backend
+- ✅ **Redux state management** with Redux Toolkit and persistence
 - ✅ **Authentication system** with JWT and MFA support
 - ✅ **Database integration** with PostgreSQL and Prisma ORM
 - ✅ **Client portal** for policy and claims management
 - ✅ **Admin portal** for user and system administration
 - ✅ **Responsive design** with Tailwind CSS
 - ✅ **Type safety** with TypeScript throughout
+- ✅ **Notification system** with Redux-powered notifications
 - ✅ **Production-ready** deployment options
 - ✅ **Comprehensive documentation** and setup guides
 
 ### Next Steps
 1. **Explore the application** using the default login credentials
 2. **Customize the UI** to match your brand requirements
-3. **Add new features** using the established patterns
-4. **Deploy to production** using the free deployment guide
-5. **Scale and enhance** as your requirements grow
+3. **Add new Redux slices** for additional state management needs
+4. **Implement real-time features** with Redux and WebSocket integration
+5. **Deploy to production** using the free deployment guide
+6. **Scale and enhance** as your requirements grow
 
-**Happy coding and welcome to AssureMe! 🚀**
+**Happy coding and welcome to AssureMe with Redux! 🚀**
 
 ---
 

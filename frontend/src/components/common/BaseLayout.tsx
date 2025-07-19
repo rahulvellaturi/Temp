@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
+import { logout } from '@/store/slices/authSlice';
 
 interface BaseLayoutProps {
   title: string;
@@ -15,11 +16,12 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
   navigation, 
   actions 
 }) => {
-  const { user, logout } = useAuthStore();
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
     navigate('/login');
   };
 

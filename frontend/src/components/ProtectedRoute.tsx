@@ -1,29 +1,37 @@
+import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
-import { UserRole } from '@/types';
+import { useAppSelector } from '@/hooks/useAppDispatch';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles: UserRole[];
+  requiredRole?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const { user, isAuthenticated, isLoading } = useAuthStore();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
+  children, 
+  requiredRole 
+}) => {
+  const { user, isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
 
+  // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
       </div>
     );
   }
 
+  // Redirect to login if not authenticated
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />;
+  // Check role-based access if required
+  if (requiredRole && user.role !== requiredRole) {
+    // Redirect to appropriate dashboard based on user role
+    const redirectPath = user.role === 'CLIENT' ? '/client' : '/admin';
+    return <Navigate to={redirectPath} replace />;
   }
 
   return <>{children}</>;
