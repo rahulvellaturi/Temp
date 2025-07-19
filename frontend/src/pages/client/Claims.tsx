@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/hooks/useAppDispatch';
-import { useApi } from '@/hooks/useApi';
 import { useGenericForm } from '@/hooks/useGenericForm';
+import { useDataLoader } from '@/hooks/useDataLoader';
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
+import StatsCard, { StatsGrid } from '@/components/common/StatsCard';
+import Modal, { FormModal } from '@/components/common/Modal';
 import { FormField, FormInput } from '@/components/common/Form';
 import { getClaimsData, getAvailablePolicies, getClaimTypes } from '@/services/staticDataService';
+import { formatCurrency, formatDate, formatFileSize } from '@/lib/formatters';
+import { getStatusColor, getPolicyIcon } from '@/lib/statusUtils';
 import { 
   FileText, 
   Plus, 
@@ -78,7 +82,6 @@ interface NewClaimData {
 
 const Claims: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
-  const [claims, setClaims] = useState<Claim[]>([]);
   const [filteredClaims, setFilteredClaims] = useState<Claim[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -87,7 +90,11 @@ const Claims: React.FC = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [showNewClaimForm, setShowNewClaimForm] = useState(false);
 
-  const { execute: fetchClaims, loading } = useApi();
+  // Load data using reusable hook
+  const { data: claims, loading, setData: setClaims } = useDataLoader(
+    async () => getClaimsData(),
+    { initialData: [] }
+  );
 
   // Load data from static data service
   const availablePolicies = getAvailablePolicies();
@@ -110,22 +117,8 @@ const Claims: React.FC = () => {
   });
 
   useEffect(() => {
-    loadClaims();
-  }, []);
-
-  useEffect(() => {
     filterClaims();
   }, [claims, searchTerm, statusFilter, typeFilter]);
-
-  const loadClaims = async () => {
-    try {
-      // Load claims data from static data service
-      const claimsData = getClaimsData();
-      setClaims(claimsData);
-    } catch (error) {
-      console.error('Failed to load claims:', error);
-    }
-  };
 
   const filterClaims = () => {
     let filtered = [...claims];
@@ -149,51 +142,7 @@ const Claims: React.FC = () => {
     setFilteredClaims(filtered);
   };
 
-  const getStatusColor = (status: string) => {
-    const colors = {
-      SUBMITTED: 'info',
-      UNDER_REVIEW: 'warning',
-      INVESTIGATING: 'warning',
-      APPROVED: 'success',
-      DENIED: 'error',
-      PAID: 'success',
-      CLOSED: 'default'
-    };
-    return colors[status as keyof typeof colors] || 'default';
-  };
 
-  const getPolicyIcon = (type: string) => {
-    const icons = {
-      AUTO: <Car className="h-4 w-4" />,
-      HOME: <Home className="h-4 w-4" />,
-      LIFE: <Heart className="h-4 w-4" />,
-      HEALTH: <Activity className="h-4 w-4" />
-    };
-    return icons[type as keyof typeof icons] || <FileText className="h-4 w-4" />;
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
 
   const handleViewDetails = (claim: Claim) => {
     setSelectedClaim(claim);
@@ -216,38 +165,16 @@ const Claims: React.FC = () => {
     if (!selectedClaim) return null;
 
     return (
-      <div className="claims-modal-overlay">
-        <div className="claims-modal-container">
-          <div className="claims-modal-header">
-            <div className="claims-modal-header-content">
-              <div className="claims-modal-title-section">
-                <div className="claims-modal-title-icon">
-                  {getPolicyIcon(selectedClaim.policyType)}
-                </div>
-                <div>
-                  <h2 className="claims-modal-title">
-                    Claim {selectedClaim.claimNumber}
-                  </h2>
-                  <p className="claims-modal-subtitle">
-                    {selectedClaim.type} - {selectedClaim.policyNumber}
-                  </p>
-                </div>
-              </div>
-              <div className="claims-modal-header-actions">
-                <StatusBadge 
-                  status={selectedClaim.status} 
-                  variant={getStatusColor(selectedClaim.status) as any}
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowDetails(false)}
-                >
-                  Close
-                </Button>
-              </div>
-            </div>
-          </div>
+      <Modal
+        isOpen={showDetails}
+        onClose={() => setShowDetails(false)}
+        title={`Claim ${selectedClaim.claimNumber}`}
+        subtitle={`${selectedClaim.type} - ${selectedClaim.policyNumber}`}
+        icon={getPolicyIcon(selectedClaim.policyType)}
+        size="2xl"
+        headerClassName="pb-4"
+        bodyClassName="p-0"
+      >
 
           <div className="claims-modal-body">
             <div className="claims-modal-grid">
@@ -406,9 +333,8 @@ const Claims: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
         </div>
-      </div>
+      </Modal>
     );
   };
 
@@ -418,22 +344,15 @@ const Claims: React.FC = () => {
     const selectedPolicy = availablePolicies.find(p => p.id === watchPolicyId);
 
     return (
-      <div className="claims-modal-overlay">
-        <div className="new-claim-modal-container">
-          <div className="new-claim-modal-header">
-            <div className="new-claim-modal-header-content">
-              <h2 className="new-claim-modal-title">File New Claim</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowNewClaimForm(false)}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit(handleNewClaim)} className="new-claim-form">
+      <FormModal
+        isOpen={showNewClaimForm}
+        onClose={() => setShowNewClaimForm(false)}
+        title="File New Claim"
+        onSubmit={handleSubmit(handleNewClaim)}
+        submitText="Submit Claim"
+        isLoading={loading}
+        size="lg"
+      >
             {/* Policy Selection */}
             <FormField
               label="Select Policy"
@@ -566,23 +485,7 @@ const Claims: React.FC = () => {
                 </FormField>
               </>
             )}
-
-            {/* Submit Button */}
-            <div className="new-claim-form-actions">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowNewClaimForm(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" loading={loading}>
-                Submit Claim
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
+        </FormModal>
     );
   };
 
@@ -600,53 +503,36 @@ const Claims: React.FC = () => {
       />
 
       {/* Quick Stats */}
-      <div className="claims-stats-grid">
-        <Card className="claims-stat-card">
-          <div className="claims-stat-content">
-            <div className="claims-stat-info">
-              <p className="claims-stat-label">Total Claims</p>
-              <p className="claims-stat-value">{claims.length}</p>
-            </div>
-            <FileText className="claims-stat-icon claims-stat-icon-blue" />
-          </div>
-        </Card>
-
-        <Card className="claims-stat-card">
-          <div className="claims-stat-content">
-            <div className="claims-stat-info">
-              <p className="claims-stat-label">Under Review</p>
-              <p className="claims-stat-value">
-                {claims.filter(c => ['SUBMITTED', 'UNDER_REVIEW', 'INVESTIGATING'].includes(c.status)).length}
-              </p>
-            </div>
-            <Clock className="claims-stat-icon claims-stat-icon-yellow" />
-          </div>
-        </Card>
-
-        <Card className="claims-stat-card">
-          <div className="claims-stat-content">
-            <div className="claims-stat-info">
-              <p className="claims-stat-label">Approved</p>
-              <p className="claims-stat-value">
-                {claims.filter(c => ['APPROVED', 'PAID'].includes(c.status)).length}
-              </p>
-            </div>
-            <CheckCircle className="claims-stat-icon claims-stat-icon-green" />
-          </div>
-        </Card>
-
-        <Card className="claims-stat-card">
-          <div className="claims-stat-content">
-            <div className="claims-stat-info">
-              <p className="claims-stat-label">Total Paid</p>
-              <p className="claims-stat-value">
-                {formatCurrency(claims.filter(c => c.status === 'PAID').reduce((sum, c) => sum + c.amount, 0))}
-              </p>
-            </div>
-            <DollarSign className="claims-stat-icon claims-stat-icon-green" />
-          </div>
-        </Card>
-      </div>
+      <StatsGrid cols={4}>
+        <StatsCard
+          title="Total Claims"
+          value={claims.length}
+          format="number"
+          icon={FileText}
+          iconColor="blue"
+        />
+        <StatsCard
+          title="Under Review"
+          value={claims.filter(c => ['SUBMITTED', 'UNDER_REVIEW', 'INVESTIGATING'].includes(c.status)).length}
+          format="number"
+          icon={Clock}
+          iconColor="yellow"
+        />
+        <StatsCard
+          title="Approved"
+          value={claims.filter(c => ['APPROVED', 'PAID'].includes(c.status)).length}
+          format="number"
+          icon={CheckCircle}
+          iconColor="green"
+        />
+        <StatsCard
+          title="Total Paid"
+          value={claims.filter(c => c.status === 'PAID').reduce((sum, c) => sum + c.amount, 0)}
+          format="currency"
+          icon={DollarSign}
+          iconColor="green"
+        />
+      </StatsGrid>
 
       {/* Filters */}
       <Card className="claims-filters">
