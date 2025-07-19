@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/hooks/useAppDispatch';
-import { useApi } from '@/hooks/useApi';
 import { useGenericForm } from '@/hooks/useGenericForm';
+import { useDataLoader } from '@/hooks/useDataLoader';
+import unifiedMockDataService from '@/services/unifiedMockDataService';
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
@@ -73,7 +74,6 @@ interface NewPaymentData {
 
 const Payments: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
-  const [payments, setPayments] = useState<Payment[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [filteredPayments, setFilteredPayments] = useState<Payment[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -83,15 +83,14 @@ const Payments: React.FC = () => {
   const [showMakePayment, setShowMakePayment] = useState(false);
   const [showAddPaymentMethod, setShowAddPaymentMethod] = useState(false);
 
-  const { execute: fetchPayments, loading } = useApi();
+  // Load data using unified service
+  const { data: payments, loading, setData: setPayments } = useDataLoader(
+    () => unifiedMockDataService.fetchPaymentsAsync(),
+    { initialData: [] }
+  );
 
   // Available policies for payment
-  const availablePolicies = [
-    { id: '1', number: 'AUTO-2024-001', type: 'Auto Insurance', balance: 1200 },
-    { id: '2', number: 'HOME-2024-002', type: 'Home Insurance', balance: 800 },
-    { id: '3', number: 'LIFE-2024-003', type: 'Life Insurance', balance: 2400 },
-    { id: '4', number: 'HEALTH-2024-004', type: 'Health Insurance', balance: 3600 },
-  ];
+  const availablePolicies = unifiedMockDataService.getAvailablePolicies();
 
   const paymentForm = useGenericForm({
     schema: paymentSchemas.makePayment,
@@ -121,7 +120,6 @@ const Payments: React.FC = () => {
   });
 
   useEffect(() => {
-    loadPayments();
     loadPaymentMethods();
   }, []);
 
@@ -129,131 +127,10 @@ const Payments: React.FC = () => {
     filterPayments();
   }, [payments, searchTerm, statusFilter]);
 
-  const loadPayments = async () => {
-    try {
-      // Mock payments data
-      const mockPayments: Payment[] = [
-        {
-          id: '1',
-          paymentNumber: 'PAY-2024-001',
-          policyId: '1',
-          policyNumber: 'AUTO-2024-001',
-          policyType: 'Auto Insurance',
-          amount: 1200,
-          dueDate: '2024-02-15',
-          paidDate: '2024-02-14',
-          status: 'COMPLETED',
-          paymentMethod: 'Credit Card',
-          description: 'Monthly premium payment',
-          invoiceNumber: 'INV-2024-001',
-          lastFourDigits: '4567',
-          transactionId: 'TXN-ABC123456',
-          isAutoPayEnabled: true
-        },
-        {
-          id: '2',
-          paymentNumber: 'PAY-2024-002',
-          policyId: '2',
-          policyNumber: 'HOME-2024-002',
-          policyType: 'Home Insurance',
-          amount: 800,
-          dueDate: '2024-02-20',
-          status: 'PENDING',
-          paymentMethod: 'Bank Transfer',
-          description: 'Quarterly premium payment',
-          invoiceNumber: 'INV-2024-002',
-          isAutoPayEnabled: false
-        },
-        {
-          id: '3',
-          paymentNumber: 'PAY-2024-003',
-          policyId: '1',
-          policyNumber: 'AUTO-2024-001',
-          policyType: 'Auto Insurance',
-          amount: 1200,
-          dueDate: '2024-01-15',
-          paidDate: '2024-01-16',
-          status: 'COMPLETED',
-          paymentMethod: 'Credit Card',
-          description: 'Monthly premium payment',
-          invoiceNumber: 'INV-2024-003',
-          lastFourDigits: '4567',
-          transactionId: 'TXN-DEF789012',
-          isAutoPayEnabled: true
-        },
-        {
-          id: '4',
-          paymentNumber: 'PAY-2024-004',
-          policyId: '4',
-          policyNumber: 'HEALTH-2024-004',
-          policyType: 'Health Insurance',
-          amount: 900,
-          dueDate: '2024-01-10',
-          status: 'FAILED',
-          paymentMethod: 'Credit Card',
-          description: 'Monthly premium payment',
-          invoiceNumber: 'INV-2024-004',
-          lastFourDigits: '1234',
-          failureReason: 'Insufficient funds',
-          isAutoPayEnabled: true
-        },
-        {
-          id: '5',
-          paymentNumber: 'PAY-2024-005',
-          policyId: '3',
-          policyNumber: 'LIFE-2024-003',
-          policyType: 'Life Insurance',
-          amount: 200,
-          dueDate: '2024-03-01',
-          status: 'PENDING',
-          paymentMethod: 'Auto Pay',
-          description: 'Monthly premium payment',
-          invoiceNumber: 'INV-2024-005',
-          isAutoPayEnabled: true
-        }
-      ];
-
-      setPayments(mockPayments);
-    } catch (error) {
-      console.error('Failed to load payments:', error);
-    }
-  };
-
   const loadPaymentMethods = async () => {
     try {
-      // Mock payment methods
-      const mockMethods: PaymentMethod[] = [
-        {
-          id: '1',
-          type: 'CREDIT_CARD',
-          lastFour: '4567',
-          expiryMonth: 12,
-          expiryYear: 2027,
-          cardBrand: 'Visa',
-          isDefault: true,
-          nickname: 'Primary Visa'
-        },
-        {
-          id: '2',
-          type: 'CREDIT_CARD',
-          lastFour: '1234',
-          expiryMonth: 8,
-          expiryYear: 2026,
-          cardBrand: 'Mastercard',
-          isDefault: false,
-          nickname: 'Backup Card'
-        },
-        {
-          id: '3',
-          type: 'BANK_ACCOUNT',
-          lastFour: '7890',
-          bankName: 'Chase Bank',
-          isDefault: false,
-          nickname: 'Checking Account'
-        }
-      ];
-
-      setPaymentMethods(mockMethods);
+      const methods = unifiedMockDataService.getPaymentMethodsByUserId(user?.id || '1');
+      setPaymentMethods(methods);
     } catch (error) {
       console.error('Failed to load payment methods:', error);
     }

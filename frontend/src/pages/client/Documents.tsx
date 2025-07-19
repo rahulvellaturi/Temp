@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/hooks/useAppDispatch';
-import { useApi } from '@/hooks/useApi';
+import { useDataLoader } from '@/hooks/useDataLoader';
+import unifiedMockDataService from '@/services/unifiedMockDataService';
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
@@ -69,7 +70,11 @@ const Documents: React.FC = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const { execute: fetchDocuments, loading } = useApi();
+  // Load data using unified service
+  const { data: documents, loading, setData: setDocuments } = useDataLoader(
+    () => unifiedMockDataService.fetchDocumentsAsync(),
+    { initialData: [] }
+  );
 
   const documentCategories: DocumentCategory[] = [
     {
