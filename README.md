@@ -1,286 +1,351 @@
-# AssureMe - Insurance Client Website
+# AssureMe Insurance Client Portal
 
-A comprehensive insurance client website with both client and admin portals, built with modern web technologies and designed for zero-cost deployment using free tiers of cloud services.
+A comprehensive insurance client management system with client and admin portals, built with React and Node.js.
 
-## 🏗️ Architecture
-
-This is a full-stack web application with:
-
-- **Frontend**: React + TypeScript + Tailwind CSS + Shadcn/UI
-- **Backend**: Node.js + Express + TypeScript + Prisma
-- **Database**: PostgreSQL
-- **Authentication**: JWT + Passport.js + MFA support
-- **File Storage**: Cloudinary (Free Tier)
-- **Deployment**: Vercel (Frontend) + Render.com (Backend)
-
-## 🚀 Features
-
-### Client Portal
-- **Dashboard**: Overview of policies, claims, and payments
-- **Policy Management**: View policies, submit change requests
-- **Claims Center**: File claims, track status, communicate with adjusters
-- **Billing & Payments**: View statements, make payments, manage payment methods
-- **Document Center**: Access and download policy documents
-- **Secure Messaging**: Communicate with insurance staff
-- **Profile Management**: Update personal information, manage MFA
-
-### Admin Portal
-- **User Management**: Manage client accounts and staff
-- **Policy Administration**: Process change requests, manage policies
-- **Claims Management**: Assign adjusters, update claim status
-- **Billing Operations**: Process payments, manage billing
-- **Document Management**: Upload and organize documents
-- **Communication Hub**: Manage client communications
-- **Audit Logging**: Track all administrative actions
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **React 18** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-- **Shadcn/UI** - Component library built on Radix UI
-- **React Hook Form** - Form management
-- **Zod** - Schema validation
-- **Zustand** - State management
-- **React Router** - Client-side routing
-- **Axios** - HTTP client
-- **Date-fns** - Date utilities
-- **Framer Motion** - Animations
-- **Lucide React** - Icons
-
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **TypeScript** - Type safety
-- **Prisma** - Database ORM
-- **PostgreSQL** - Database
-- **Passport.js** - Authentication middleware
-- **JWT** - Token-based authentication
-- **Bcrypt** - Password hashing
-- **Multer** - File uploads
-- **Cloudinary** - Image/document storage
-- **Zod** - Schema validation
-- **Swagger** - API documentation
-- **Nodemailer** - Email notifications
-- **Speakeasy** - MFA/2FA support
-
-## 📦 Project Structure
-
-```
-assureme-insurance-platform/
-├── frontend/                 # React frontend application
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   │   ├── ui/         # Shadcn/UI components
-│   │   │   ├── layout/     # Layout components
-│   │   │   └── forms/      # Form components
-│   │   ├── pages/          # Page components
-│   │   │   ├── auth/       # Authentication pages
-│   │   │   ├── client/     # Client portal pages
-│   │   │   └── admin/      # Admin portal pages
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── store/          # Zustand stores
-│   │   ├── lib/            # Utility libraries
-│   │   ├── types/          # TypeScript type definitions
-│   │   └── utils/          # Helper functions
-│   ├── public/             # Static assets
-│   └── package.json
-├── backend/                 # Node.js backend application
-│   ├── src/
-│   │   ├── routes/         # API route handlers
-│   │   ├── middleware/     # Express middleware
-│   │   ├── controllers/    # Business logic controllers
-│   │   ├── services/       # Business services
-│   │   ├── config/         # Configuration files
-│   │   └── utils/          # Utility functions
-│   ├── prisma/             # Database schema and migrations
-│   │   ├── schema.prisma   # Prisma schema
-│   │   └── seed.ts         # Database seeding
-│   └── package.json
-├── package.json            # Root package.json (workspace)
-└── README.md
-```
-
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
-- npm or yarn
-- PostgreSQL database
-- Cloudinary account (free tier)
+- **Node.js** (v18 or higher)
+- **npm** (v8 or higher)
+- **PostgreSQL** (v13 or higher) or use free cloud database
+- **Git**
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd assureme-insurance-platform
+   git clone <your-repo-url>
+   cd assureme-insurance
    ```
 
-2. **Install dependencies**
+2. **Install Backend Dependencies**
    ```bash
-   npm run install:all
+   cd backend
+   npm install
    ```
 
-3. **Set up environment variables**
+3. **Install Frontend Dependencies**
+   ```bash
+   cd ../frontend
+   npm install
+   ```
 
-   Backend (.env):
+### Database Setup
+
+#### Option 1: Local PostgreSQL
+1. Install PostgreSQL locally
+2. Create a database named `assureme`
+3. Update `.env` file with your database URL
+
+#### Option 2: Free Cloud Database (Recommended)
+Use one of these free services:
+- **Supabase** (Recommended): https://supabase.com
+- **Neon**: https://neon.tech
+- **ElephantSQL**: https://elephantsql.com
+
+### Environment Configuration
+
+1. **Backend Environment**
    ```bash
    cd backend
    cp .env.example .env
-   # Edit .env with your database and service credentials
+   ```
+   
+   Update `.env` with your values:
+   ```env
+   # Database
+   DATABASE_URL="postgresql://username:password@localhost:5432/assureme"
+   
+   # JWT
+   JWT_SECRET="your-super-secret-jwt-key-here"
+   JWT_EXPIRES_IN="24h"
+   
+   # MFA
+   MFA_SERVICE_NAME="AssureMe"
+   MFA_ISSUER="AssureMe Insurance"
+   
+   # Email (Optional - for production)
+   EMAIL_HOST="smtp.gmail.com"
+   EMAIL_PORT="587"
+   EMAIL_USER="your-email@gmail.com"
+   EMAIL_PASS="your-app-password"
+   
+   # Cloudinary (Optional - for file uploads)
+   CLOUDINARY_CLOUD_NAME="your-cloud-name"
+   CLOUDINARY_API_KEY="your-api-key"
+   CLOUDINARY_API_SECRET="your-api-secret"
+   
+   # Server
+   PORT=5000
+   NODE_ENV="development"
    ```
 
-   Frontend (.env.local):
+2. **Frontend Environment** (Optional)
    ```bash
    cd frontend
-   echo "VITE_API_URL=http://localhost:5000/api" > .env.local
+   echo "REACT_APP_API_URL=http://localhost:5000/api" > .env
    ```
 
-4. **Set up the database**
+### Database Migration & Seeding
+
+1. **Generate Prisma Client**
    ```bash
    cd backend
-   npx prisma migrate dev
+   npx prisma generate
+   ```
+
+2. **Run Database Migrations**
+   ```bash
+   npx prisma db push
+   ```
+
+3. **Seed Database with Sample Data**
+   ```bash
    npx prisma db seed
    ```
 
-5. **Start the development servers**
+### Running the Application
+
+#### Development Mode
+
+1. **Start Backend Server**
    ```bash
-   # From the root directory
+   cd backend
    npm run dev
    ```
+   Backend will run on http://localhost:5000
 
-   This will start:
-   - Backend server on http://localhost:5000
-   - Frontend dev server on http://localhost:3000
+2. **Start Frontend (New Terminal)**
+   ```bash
+   cd frontend
+   npm start
+   ```
+   Frontend will run on http://localhost:3000
 
-## 🔐 Default Users
+#### Production Build
 
-After seeding the database, you can log in with these accounts:
+1. **Build Frontend**
+   ```bash
+   cd frontend
+   npm run build
+   ```
 
-- **Admin**: `admin@assureme.com` / `admin123`
-- **Claims Adjuster**: `adjuster@assureme.com` / `adjuster123`
-- **Client 1**: `john.doe@example.com` / `client123`
-- **Client 2**: `jane.smith@example.com` / `client123`
+2. **Start Backend**
+   ```bash
+   cd backend
+   npm start
+   ```
 
-## 📖 API Documentation
+## 🔐 Default Login Credentials
 
-Once the backend is running, visit http://localhost:5000/api-docs to view the interactive Swagger API documentation.
+After seeding, you can login with:
 
-## 🎨 Design System
+**Client Account:**
+- Email: `john.doe@email.com`
+- Password: `password123`
 
-The application follows a comprehensive design system with:
+**Admin Account:**
+- Email: `admin@assureme.com`
+- Password: `admin123`
 
-- **Colors**: Primary (#007BFF), Secondary (#28A745), Error (#DC3545)
-- **Typography**: Montserrat (headings), Inter (body)
-- **Spacing**: 4px base unit system
-- **Components**: Consistent Shadcn/UI components
-- **Responsive**: Mobile-first design approach
+## 📋 Available Scripts
 
-## 🚀 Deployment
-
-### Frontend (Vercel)
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-### Backend (Render.com)
-1. Connect your GitHub repository to Render
-2. Create a PostgreSQL database service
-3. Create a web service for the backend
-4. Set environment variables in Render dashboard
-
-### Database (Supabase Alternative)
-For a simpler setup, you can use Supabase as a managed PostgreSQL provider:
-1. Create a Supabase project
-2. Use the connection string in your backend
-3. Run migrations via the Supabase dashboard or CLI
-
-## 🧪 Testing
-
+### Backend Scripts
 ```bash
-# Run frontend tests
-cd frontend
-npm run test
-
-# Run backend tests
-cd backend
-npm run test
-
-# Run linting
-npm run lint
+npm run dev          # Start development server with hot reload
+npm start           # Start production server
+npm run build       # Build TypeScript
+npm run lint        # Run ESLint
+npm run test        # Run tests
 ```
 
-## 📝 Available Scripts
+### Frontend Scripts
+```bash
+npm start           # Start development server
+npm run build       # Build for production
+npm test           # Run tests
+npm run eject      # Eject from Create React App (irreversible)
+```
 
-### Root Level
-- `npm run dev` - Start both frontend and backend in development mode
-- `npm run build` - Build both frontend and backend for production
-- `npm run install:all` - Install dependencies for all packages
+## 🌐 Deployment
+
+### Free Deployment Options
+
+#### Backend Deployment
+1. **Render.com** (Recommended)
+   - Connect your GitHub repo
+   - Set build command: `npm install && npm run build`
+   - Set start command: `npm start`
+   - Add environment variables
+
+2. **Railway.app**
+   - Connect GitHub repo
+   - Railway auto-detects Node.js
+   - Add environment variables
+
+3. **Supabase Edge Functions** (Advanced)
+   - For serverless deployment
+
+#### Frontend Deployment
+1. **Vercel** (Recommended)
+   - Connect GitHub repo
+   - Auto-deploys on push
+   - Set build command: `npm run build`
+
+2. **Netlify**
+   - Drag and drop `build` folder
+   - Or connect GitHub repo
+
+#### Database
+1. **Supabase** (Recommended)
+   - Free PostgreSQL database
+   - Built-in auth and real-time features
+
+2. **Neon**
+   - Serverless PostgreSQL
+   - Generous free tier
+
+## 🛠 Technology Stack
 
 ### Frontend
-- `npm run dev` - Start Vite development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+- **React 18** - UI Framework
+- **TypeScript** - Type Safety
+- **Tailwind CSS** - Styling
+- **React Router** - Navigation
+- **Zustand** - State Management
+- **React Hook Form** - Form Handling
+- **Zod** - Validation
+- **Axios** - HTTP Client
 
 ### Backend
-- `npm run dev` - Start development server with nodemon
-- `npm run build` - Compile TypeScript
-- `npm run start` - Start production server
-- `npm run db:migrate` - Run database migrations
-- `npm run db:seed` - Seed database with sample data
-- `npm run db:studio` - Open Prisma Studio
+- **Node.js** - Runtime
+- **Express.js** - Web Framework
+- **TypeScript** - Type Safety
+- **Prisma** - Database ORM
+- **PostgreSQL** - Database
+- **JWT** - Authentication
+- **Passport.js** - Auth Middleware
+- **Bcrypt** - Password Hashing
+- **Speakeasy** - MFA/2FA
 
-## 🔒 Security Features
+## 📁 Project Structure
 
-- JWT-based authentication with refresh tokens
-- Multi-factor authentication (MFA) support
-- Role-based access control (RBAC)
-- Password hashing with bcrypt
-- Rate limiting on API endpoints
-- CORS protection
-- Helmet.js security headers
-- Input validation with Zod schemas
-- SQL injection prevention via Prisma ORM
+```
+assureme-insurance/
+├── backend/
+│   ├── src/
+│   │   ├── routes/          # API routes
+│   │   ├── middleware/      # Express middleware
+│   │   ├── config/          # Configuration files
+│   │   ├── utils/           # Utility functions
+│   │   └── server.ts        # Main server file
+│   ├── prisma/
+│   │   ├── schema.prisma    # Database schema
+│   │   └── seed.ts          # Database seeding
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/      # Reusable components
+│   │   ├── pages/           # Page components
+│   │   ├── hooks/           # Custom hooks
+│   │   ├── store/           # State management
+│   │   ├── lib/             # Utilities
+│   │   └── types/           # TypeScript types
+│   ├── public/
+│   └── package.json
+└── README.md
+```
 
-## 📊 Monitoring & Logging
+## 🔧 Key Features
 
-- Request/response logging
-- Error tracking and reporting
-- Audit logging for admin actions
-- Performance monitoring
-- Health check endpoints
+### Client Portal
+- **Dashboard** - Overview of policies and claims
+- **Policy Management** - View and request changes
+- **Claims** - File and track claims
+- **Payments** - View bills and payment history
+- **Documents** - Upload and manage documents
+- **Profile** - Update personal information
+- **MFA/2FA** - Enhanced security
 
-## 🤝 Contributing
+### Admin Portal
+- **User Management** - Manage client accounts
+- **Policy Administration** - Create and manage policies
+- **Claims Processing** - Review and process claims
+- **Analytics** - Business insights and reports
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Security Features
+- **JWT Authentication**
+- **Multi-Factor Authentication (MFA)**
+- **Role-Based Access Control (RBAC)**
+- **Password Hashing**
+- **Input Validation**
+- **Rate Limiting**
+- **CORS Protection**
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Error**
+   ```bash
+   # Check if PostgreSQL is running
+   sudo service postgresql status
+   
+   # Or check your cloud database connection
+   npx prisma db pull
+   ```
+
+2. **Port Already in Use**
+   ```bash
+   # Kill process on port 5000
+   lsof -ti:5000 | xargs kill -9
+   
+   # Or change PORT in .env file
+   ```
+
+3. **Prisma Client Issues**
+   ```bash
+   # Regenerate Prisma client
+   npx prisma generate
+   
+   # Reset database (warning: deletes data)
+   npx prisma db reset
+   ```
+
+4. **Frontend Build Issues**
+   ```bash
+   # Clear node_modules and reinstall
+   rm -rf node_modules package-lock.json
+   npm install
+   ```
+
+### Getting Help
+
+- Check the [Issues](your-repo-url/issues) page
+- Review API documentation at `http://localhost:5000/api-docs`
+- Check browser console for frontend errors
+- Check backend logs for server errors
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🤝 Contributing
 
-For support, please contact the development team or create an issue in the GitHub repository.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-## 🚧 Roadmap
+## 📞 Support
 
-- [ ] Mobile app development (React Native)
-- [ ] Advanced analytics dashboard
-- [ ] Integration with external insurance APIs
-- [ ] Automated underwriting workflows
-- [ ] Real-time notifications via WebSocket
-- [ ] Advanced document OCR processing
-- [ ] Multi-language support
+For support and questions:
+- Email: support@assureme.com
+- Documentation: [Link to docs]
+- Issues: [GitHub Issues](your-repo-url/issues)
 
 ---
 
-**Built with ❤️ by the AssureMe Development Team**
+**Built with ❤️ for modern insurance management**
