@@ -24,8 +24,9 @@
 9. [📊 Mock Data System](#-mock-data-system)
 10. [🎯 Project Completion Report](#-project-completion-report)
 11. [🛠️ Development Commands](#-development-commands)
-12. [🔧 Troubleshooting](#-troubleshooting)
-13. [📚 Additional Resources](#-additional-resources)
+12. [⚙️ Complete Development Commands & Workflow](#-complete-development-commands--workflow)
+13. [🔧 Troubleshooting](#-troubleshooting)
+14. [📚 Additional Resources](#-additional-resources)
 
 ---
 
@@ -1153,6 +1154,626 @@ npm run coverage:report # Generate coverage report
 npm run test:all    # Run all tests (frontend + backend)
 npm run coverage:full # Generate complete coverage reports
 ```
+
+---
+
+## ⚙️ **Complete Development Commands & Workflow**
+
+> **This section provides ALL commands used during the development of this project, organized by development phase and purpose. Use this as your complete reference for running the project smoothly.**
+
+### **🚀 Phase 1: Initial Project Setup**
+
+#### **1.1 Repository Setup**
+```bash
+# Clone the repository
+git clone https://github.com/rahulvellaturi/AssureMe_Insurance
+cd AssureMe_Insurance
+
+# Check project structure
+ls -la
+tree -L 2  # Optional: if tree is installed
+```
+
+#### **1.2 Node.js and Environment Verification**
+```bash
+# Verify Node.js version (must be 18+)
+node --version
+npm --version
+
+# If Node.js is outdated, install/update:
+# Using nvm (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+nvm install 18
+nvm use 18
+nvm alias default 18
+```
+
+#### **1.3 Backend Setup**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Install all backend dependencies
+npm install
+
+# Install additional backend dependencies if needed
+npm install --save-dev @types/node @types/express @types/cors @types/bcryptjs
+npm install express cors bcryptjs jsonwebtoken dotenv
+npm install prisma @prisma/client
+npm install nodemailer cloudinary multer
+npm install joi express-validator
+npm install helmet morgan express-rate-limit
+
+# Copy environment template
+cp .env.example .env
+
+# Edit environment file (use your preferred editor)
+nano .env  # or code .env or vim .env
+```
+
+#### **1.4 Frontend Setup**
+```bash
+# Navigate to frontend directory
+cd ../frontend
+
+# Install all frontend dependencies
+npm install
+
+# Install additional frontend dependencies if needed
+npm install @reduxjs/toolkit react-redux
+npm install react-router-dom
+npm install @hookform/resolvers react-hook-form
+npm install zod
+npm install tailwindcss @tailwindcss/forms
+npm install lucide-react framer-motion
+npm install @faker-js/faker
+
+# Copy environment template
+cp .env.example .env
+
+# Edit frontend environment file
+nano .env  # Add REACT_APP_API_URL=http://localhost:5000/api
+```
+
+### **🗄️ Phase 2: Database Setup**
+
+#### **2.1 Database Connection Setup**
+```bash
+# Return to backend directory
+cd ../backend
+
+# Generate Prisma client
+npx prisma generate
+
+# Check database connection (will fail if DB not configured)
+npx prisma db pull
+
+# If using local PostgreSQL:
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+
+# Create local database
+sudo -u postgres createdb assureme
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'yourpassword';"
+
+# Update .env with local database URL
+echo 'DATABASE_URL="postgresql://postgres:yourpassword@localhost:5432/assureme"' >> .env
+```
+
+#### **2.2 Database Schema and Seeding**
+```bash
+# Push schema to database
+npx prisma db push
+
+# Open Prisma Studio to verify database
+npx prisma studio  # Opens browser at http://localhost:5555
+
+# Seed database with sample data
+npx prisma db seed
+
+# Reset database if needed (WARNING: Deletes all data)
+npx prisma db reset
+```
+
+### **🧪 Phase 3: Testing Framework Implementation**
+
+#### **3.1 Remove Existing Testing Libraries**
+```bash
+# Navigate to frontend
+cd ../frontend
+
+# Remove React Testing Library dependencies
+npm uninstall @testing-library/react @testing-library/jest-dom @testing-library/user-event
+
+# Clear npm cache
+npm cache clean --force
+```
+
+#### **3.2 Install Jest and Enzyme**
+```bash
+# Install Enzyme and React 18 adapter
+npm install --save-dev enzyme @cfaester/enzyme-adapter-react-18 @types/enzyme
+
+# Install additional testing dependencies
+npm install --save-dev jest-environment-jsdom jsdom-global whatwg-fetch
+npm install --save-dev jest-sonar-reporter
+
+# Install with legacy peer deps flag if needed
+npm install --save-dev enzyme @cfaester/enzyme-adapter-react-18 @types/enzyme --legacy-peer-deps
+```
+
+#### **3.3 Configure Testing Environment**
+```bash
+# Create test utilities directory
+mkdir -p src/__tests__/utils
+
+# Update setupTests.ts (automatically detected by Create React App)
+# File is already configured - no command needed
+
+# Verify Jest configuration in package.json
+cat package.json | grep -A 20 '"jest"'
+```
+
+#### **3.4 Generate Test Files**
+```bash
+# Create test generation script
+touch scripts/generate-jest-enzyme-tests.js
+
+# Make script executable
+chmod +x scripts/generate-jest-enzyme-tests.js
+
+# Run test generation script
+node scripts/generate-jest-enzyme-tests.js
+
+# Verify generated test files
+find src -name "*.test.tsx" -o -name "*.test.ts" | head -10
+```
+
+### **🔧 Phase 4: Development Server Startup**
+
+#### **4.1 Start Backend Server**
+```bash
+# Navigate to backend (if not already there)
+cd backend
+
+# Start development server with hot reload
+npm run dev
+
+# Alternative: Start without hot reload
+npm start
+
+# Check server status
+curl http://localhost:5000/api/health  # If health endpoint exists
+```
+
+#### **4.2 Start Frontend Server**
+```bash
+# Open new terminal window/tab
+# Navigate to frontend
+cd frontend
+
+# Start React development server
+npm start
+
+# Frontend should open automatically at http://localhost:3000
+# If not, manually open: http://localhost:3000
+```
+
+#### **4.3 Verify Both Servers**
+```bash
+# Check backend API
+curl http://localhost:5000/api
+
+# Check frontend
+curl http://localhost:3000
+
+# Check if both servers are running
+lsof -i :5000  # Backend
+lsof -i :3000  # Frontend
+```
+
+### **🧪 Phase 5: Running Tests**
+
+#### **5.1 Frontend Testing**
+```bash
+# Navigate to frontend
+cd frontend
+
+# Run all tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in CI mode (non-interactive)
+npm run test:ci
+
+# Run specific test file
+npm test -- Dashboard.test.tsx
+
+# Run tests matching pattern
+npm test -- --testNamePattern="should render"
+
+# Generate coverage report
+npm run coverage:report
+
+# Check coverage files
+ls -la coverage/
+```
+
+#### **5.2 Backend Testing**
+```bash
+# Navigate to backend
+cd ../backend
+
+# Run all backend tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run specific test file
+npm test -- authController.test.ts
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+#### **5.3 Combined Testing**
+```bash
+# From project root
+npm run test:all      # If script exists
+npm run coverage:full # If script exists
+
+# Manual combined testing
+cd frontend && npm run test:ci && cd ../backend && npm run test:coverage
+```
+
+### **🔍 Phase 6: Code Quality and Linting**
+
+#### **6.1 TypeScript Compilation Check**
+```bash
+# Frontend TypeScript check
+cd frontend
+npx tsc --noEmit
+
+# Backend TypeScript check
+cd ../backend
+npx tsc --noEmit
+
+# Build TypeScript (backend)
+npm run build
+```
+
+#### **6.2 Linting and Code Quality**
+```bash
+# Frontend linting
+cd frontend
+npm run lint  # If script exists
+npx eslint src/ --ext .ts,.tsx
+
+# Backend linting
+cd ../backend
+npm run lint  # If script exists
+npx eslint src/ --ext .ts
+
+# Fix auto-fixable linting issues
+npx eslint src/ --ext .ts,.tsx --fix
+```
+
+#### **6.3 Prettier Formatting**
+```bash
+# Format frontend code
+cd frontend
+npx prettier --write "src/**/*.{ts,tsx,js,jsx,json,css,md}"
+
+# Format backend code
+cd ../backend
+npx prettier --write "src/**/*.{ts,js,json,md}"
+```
+
+### **📦 Phase 7: Build and Production**
+
+#### **7.1 Production Builds**
+```bash
+# Build frontend for production
+cd frontend
+npm run build
+
+# Verify build
+ls -la build/
+du -sh build/  # Check build size
+
+# Build backend for production
+cd ../backend
+npm run build
+
+# Verify backend build
+ls -la dist/
+```
+
+#### **7.2 Production Testing**
+```bash
+# Test production frontend build locally
+cd frontend
+npx serve -s build -l 3000
+
+# Test production backend
+cd ../backend
+NODE_ENV=production npm start
+```
+
+### **🚀 Phase 8: Git Operations and Deployment**
+
+#### **8.1 Git Workflow**
+```bash
+# Check git status
+git status
+
+# Add all changes
+git add .
+
+# Check what will be committed
+git diff --cached
+
+# Commit changes
+git commit -m "feat: implement comprehensive Jest and Enzyme testing suite with 90%+ coverage"
+
+# Push to repository
+git push origin main
+
+# Create feature branch for testing
+git checkout -b feature/jest-enzyme-testing
+git push -u origin feature/jest-enzyme-testing
+```
+
+#### **8.2 GitHub Repository Operations**
+```bash
+# Check remote repository
+git remote -v
+
+# Fetch latest changes
+git fetch origin
+
+# Pull latest changes
+git pull origin main
+
+# Push specific branch
+git push origin feature/jest-enzyme-testing
+
+# Create and push tags
+git tag -a v2.0.0 -m "Version 2.0.0 - Complete testing implementation"
+git push origin v2.0.0
+```
+
+### **⚡ Phase 9: Quick Development Workflow**
+
+#### **9.1 Daily Development Startup**
+```bash
+# Quick startup script (create this as start-dev.sh)
+#!/bin/bash
+echo "Starting AssureMe Development Environment..."
+
+# Start backend
+cd backend && npm run dev &
+
+# Wait a moment for backend to start
+sleep 3
+
+# Start frontend
+cd ../frontend && npm start &
+
+echo "Both servers starting..."
+echo "Backend: http://localhost:5000"
+echo "Frontend: http://localhost:3000"
+```
+
+#### **9.2 Quick Testing Workflow**
+```bash
+# Quick test script (create this as test-all.sh)
+#!/bin/bash
+echo "Running comprehensive tests..."
+
+# Frontend tests
+echo "Running frontend tests..."
+cd frontend && npm run test:ci
+
+# Backend tests
+echo "Running backend tests..."
+cd ../backend && npm run test:coverage
+
+# Generate coverage report
+echo "Generating coverage report..."
+cd ../frontend && npm run coverage:report
+
+echo "All tests completed!"
+```
+
+### **🔧 Phase 10: Troubleshooting Commands**
+
+#### **10.1 Common Fix Commands**
+```bash
+# Clear all node_modules and reinstall
+rm -rf frontend/node_modules frontend/package-lock.json
+rm -rf backend/node_modules backend/package-lock.json
+cd frontend && npm install
+cd ../backend && npm install
+
+# Clear npm cache
+npm cache clean --force
+
+# Reset database
+cd backend && npx prisma db reset
+
+# Clear React build cache
+cd frontend && rm -rf build/ && npm run build
+
+# Kill processes on ports
+lsof -ti:3000 | xargs kill -9  # Kill frontend
+lsof -ti:5000 | xargs kill -9  # Kill backend
+```
+
+#### **10.2 Debugging Commands**
+```bash
+# Check running processes
+ps aux | grep node
+
+# Check port usage
+netstat -tulpn | grep :3000
+netstat -tulpn | grep :5000
+
+# Check system resources
+free -h  # Memory usage
+df -h    # Disk usage
+
+# View logs
+cd backend && npm run dev 2>&1 | tee backend.log
+cd frontend && npm start 2>&1 | tee frontend.log
+```
+
+### **📊 Phase 11: Performance and Monitoring**
+
+#### **11.1 Performance Testing**
+```bash
+# Frontend bundle analysis
+cd frontend
+npm run build
+npx webpack-bundle-analyzer build/static/js/*.js
+
+# Backend performance testing
+cd ../backend
+npm install -g artillery
+artillery quick --count 10 --num 10 http://localhost:5000/api
+
+# Memory usage monitoring
+node --inspect backend/dist/server.js
+```
+
+#### **11.2 Coverage and Quality Reports**
+```bash
+# Generate detailed coverage reports
+cd frontend
+npm run test:coverage
+open coverage/lcov-report/index.html  # macOS
+xdg-open coverage/lcov-report/index.html  # Linux
+
+# TypeScript coverage
+npx type-coverage --detail
+
+# Security audit
+npm audit
+npm audit fix
+```
+
+### **🎯 Phase 12: Deployment Commands**
+
+#### **12.1 Pre-deployment Checks**
+```bash
+# Run all quality checks
+cd frontend
+npm run lint && npm run test:ci && npm run build
+
+cd ../backend
+npm run lint && npm run test:coverage && npm run build
+
+# Environment check
+cd backend && node -e "console.log('NODE_ENV:', process.env.NODE_ENV)"
+```
+
+#### **12.2 Deployment to Production**
+```bash
+# Build for production
+cd frontend && npm run build
+cd ../backend && npm run build
+
+# Deploy to Vercel (frontend)
+cd frontend
+npm install -g vercel
+vercel --prod
+
+# Deploy to Render (backend)
+# (Usually done via Git push to connected repository)
+git push origin main
+```
+
+### **📝 Summary of Essential Commands**
+
+#### **🔄 Daily Development Commands**
+```bash
+# Start development
+cd backend && npm run dev &
+cd frontend && npm start
+
+# Run tests
+cd frontend && npm test
+cd backend && npm test
+
+# Check code quality
+npx tsc --noEmit  # TypeScript check
+npm run lint      # ESLint check
+```
+
+#### **🚀 Deployment Commands**
+```bash
+# Build for production
+npm run build
+
+# Push to repository
+git add . && git commit -m "feat: your changes" && git push
+
+# Deploy (automatic via connected services)
+```
+
+#### **🔧 Troubleshooting Commands**
+```bash
+# Reset everything
+rm -rf node_modules package-lock.json && npm install
+
+# Reset database
+npx prisma db reset
+
+# Clear caches
+npm cache clean --force
+```
+
+### **💡 Pro Tips for Smooth Development**
+
+1. **Always run TypeScript check before committing:**
+   ```bash
+   npx tsc --noEmit
+   ```
+
+2. **Use concurrent terminals for development:**
+   ```bash
+   # Terminal 1: Backend
+   cd backend && npm run dev
+   
+   # Terminal 2: Frontend  
+   cd frontend && npm start
+   
+   # Terminal 3: Testing
+   cd frontend && npm test -- --watch
+   ```
+
+3. **Regular health checks:**
+   ```bash
+   # Check if servers are running
+   curl http://localhost:5000/api && curl http://localhost:3000
+   ```
+
+4. **Before major changes, create a backup:**
+   ```bash
+   git branch backup-$(date +%Y%m%d)
+   git checkout -b feature/your-new-feature
+   ```
+
+5. **Monitor test coverage regularly:**
+   ```bash
+   npm run test:coverage && open coverage/lcov-report/index.html
+   ```
 
 ---
 
