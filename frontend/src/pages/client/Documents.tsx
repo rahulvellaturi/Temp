@@ -70,11 +70,7 @@ const Documents: React.FC = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Load data using unified service
-  const { data: documents, loading, setData: setDocuments } = useDataLoader(
-    () => unifiedMockDataService.fetchDocumentsAsync(),
-    { initialData: [] }
-  );
+  const [loading, setLoading] = useState(true);
 
   const documentCategories: DocumentCategory[] = [
     {

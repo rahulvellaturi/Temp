@@ -1,21 +1,33 @@
-import 'jsdom-global/register';
-import 'whatwg-fetch';
-import '@testing-library/jest-dom';
+// Jest and Enzyme setup for React 18 testing
+import { configure } from 'enzyme';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 
-// Add missing polyfills for Node.js environment
-const { TextEncoder, TextDecoder } = require('util');
+// Configure Enzyme with React 18 adapter
+configure({ adapter: new Adapter() });
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
-
-// Additional polyfills
-if (typeof global.URL === 'undefined') {
-  global.URL = require('url').URL;
+// Polyfills for Node.js test environment
+if (typeof global.TextEncoder === 'undefined') {
+  global.TextEncoder = require('util').TextEncoder;
 }
 
-if (typeof global.URLSearchParams === 'undefined') {
-  global.URLSearchParams = require('url').URLSearchParams;
+if (typeof global.TextDecoder === 'undefined') {
+  global.TextDecoder = require('util').TextDecoder;
 }
+
+// Mock browser APIs
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
 
 // Mock IntersectionObserver
 global.IntersectionObserver = jest.fn().mockImplementation(() => ({
@@ -31,26 +43,8 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
-// Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
-
-// Mock scrollTo
-Object.defineProperty(window, 'scrollTo', {
-  writable: true,
-  value: jest.fn(),
-});
+// Mock scrollIntoView
+Element.prototype.scrollIntoView = jest.fn();
 
 // Mock localStorage
 const localStorageMock = {
@@ -74,16 +68,17 @@ Object.defineProperty(window, 'sessionStorage', {
   value: sessionStorageMock
 });
 
-// Mock fetch
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    json: () => Promise.resolve({}),
-    ok: true,
-    status: 200,
-  } as Response)
-);
+// Mock URL constructor
+if (typeof global.URL === 'undefined') {
+  global.URL = require('url').URL;
+}
 
-// Mock react-router-dom
+// Mock fetch
+if (typeof global.fetch === 'undefined') {
+  global.fetch = require('whatwg-fetch').fetch;
+}
+
+// Mock React Router
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
@@ -103,23 +98,43 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }));
 
-// Suppress console warnings in tests
-const originalWarn = console.warn;
-const originalError = console.error;
-
-beforeAll(() => {
-  console.warn = jest.fn();
-  console.error = jest.fn();
-});
-
-afterAll(() => {
-  console.warn = originalWarn;
-  console.error = originalError;
-});
-
-// Clean up after each test
-afterEach(() => {
+// Global test setup
+beforeEach(() => {
   jest.clearAllMocks();
   localStorageMock.clear();
   sessionStorageMock.clear();
 });
+
+// Console error suppression for test environment
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args: any[]) => {
+    if (
+      typeof args[0] === 'string' &&
+      args[0].includes('Warning: ReactDOM.render is deprecated')
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+});
+
+// Performance monitoring mock
+Object.defineProperty(window, 'performance', {
+  value: {
+    mark: jest.fn(),
+    measure: jest.fn(),
+    getEntriesByName: jest.fn(() => []),
+    getEntriesByType: jest.fn(() => []),
+  },
+});
+
+// Animation frame mocks
+global.requestAnimationFrame = jest.fn(cb => setTimeout(cb, 0));
+global.cancelAnimationFrame = jest.fn();
+
+export {};

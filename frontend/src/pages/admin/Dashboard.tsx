@@ -97,7 +97,9 @@ const AdminDashboard: React.FC = () => {
       
       setStats(adminStats);
       setRecentActivity(recentActivity);
-      setQuickActions(quickActions);
+      
+      // Mock activity data
+      const mockActivity = [
         {
           id: '1',
           type: 'USER_REGISTERED',
@@ -146,7 +148,7 @@ const AdminDashboard: React.FC = () => {
         },
       ];
 
-      setStats(mockStats);
+      setStats(adminStats);
       setRecentActivity(mockActivity);
     } catch (error) {
       console.error('Failed to load dashboard data:', error);

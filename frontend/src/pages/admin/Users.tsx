@@ -134,8 +134,9 @@ const AdminUsers: React.FC = () => {
       
       // Load users from mock data service
       const allUsers = mockDataService.getUsers();
-      setUsers(allUsers);
-      setFilteredUsers(allUsers);
+      
+      // Mock users data
+      const mockUsers = [
         {
           id: '1',
           firstName: 'John',
@@ -244,6 +245,10 @@ const AdminUsers: React.FC = () => {
           claimsCount: 3,
           totalPremiums: 2800,
         },
+      ];
+      
+      setUsers(mockUsers);
+      setFilteredUsers(mockUsers);
     } catch (error) {
       console.error('Failed to load users:', error);
     } finally {

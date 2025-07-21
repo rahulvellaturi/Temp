@@ -1,164 +1,201 @@
 import React, { ReactElement } from 'react';
 import { mount, shallow, ShallowWrapper, ReactWrapper } from 'enzyme';
-import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
-import { authSlice } from '@/store/slices/authSlice';
-import { User } from '@/types';
+import { faker } from '@faker-js/faker';
 
-// Mock data for testing
-export const mockUser: User = {
-  id: '1',
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'john.doe@example.com',
-  role: 'CLIENT',
-  avatar: '/avatars/john-doe.jpg'
-};
+// Store setup for testing
+import { authSlice } from '../../store/slices/authSlice';
+import { claimsSlice } from '../../store/slices/claimsSlice';
+import { adminSlice } from '../../store/slices/adminSlice';
+import { uiSlice } from '../../store/slices/uiSlice';
 
-export const mockAgent: User = {
-  id: '2',
-  firstName: 'Jane',
-  lastName: 'Agent',
-  email: 'jane.agent@assureme.com',
-  role: 'AGENT',
-  avatar: '/avatars/jane-agent.jpg'
-};
+// Types
+export interface MockUser {
+  id: string;
+  email: string;
+  name: string;
+  role: 'client' | 'admin';
+}
 
-export const mockAdmin: User = {
-  id: '3',
-  firstName: 'Admin',
-  lastName: 'User',
-  email: 'admin@assureme.com',
-  role: 'ADMIN',
-  avatar: '/avatars/admin-user.jpg'
-};
+export interface MockClaim {
+  id: string;
+  policyNumber: string;
+  claimNumber: string;
+  status: 'pending' | 'approved' | 'rejected';
+  amount: number;
+  description: string;
+  dateSubmitted: string;
+  userId: string;
+}
 
-// Create a test store
-export const createTestStore = (initialState?: any) => {
+export interface TestStore {
+  auth: {
+    user: MockUser | null;
+    token: string | null;
+    isAuthenticated: boolean;
+    loading: boolean;
+    error: string | null;
+  };
+  claims: {
+    claims: MockClaim[];
+    loading: boolean;
+    error: string | null;
+    selectedClaim: MockClaim | null;
+  };
+  admin: {
+    users: MockUser[];
+    claims: MockClaim[];
+    loading: boolean;
+    error: string | null;
+    stats: {
+      totalClaims: number;
+      pendingClaims: number;
+      approvedClaims: number;
+      rejectedClaims: number;
+      totalUsers: number;
+    };
+  };
+  ui: {
+    theme: 'light' | 'dark';
+    sidebarOpen: boolean;
+    notifications: Array<{
+      id: string;
+      type: 'success' | 'error' | 'warning' | 'info';
+      message: string;
+      timestamp: string;
+    }>;
+  };
+}
+
+// Mock data factories
+export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => ({
+  id: faker.string.uuid(),
+  email: faker.internet.email(),
+  name: faker.person.fullName(),
+  role: faker.helpers.arrayElement(['client', 'admin']),
+  ...overrides,
+});
+
+export const createMockClaim = (overrides: Partial<MockClaim> = {}): MockClaim => ({
+  id: faker.string.uuid(),
+  policyNumber: faker.string.alphanumeric(10).toUpperCase(),
+  claimNumber: faker.string.alphanumeric(8).toUpperCase(),
+  status: faker.helpers.arrayElement(['pending', 'approved', 'rejected']),
+  amount: faker.number.int({ min: 100, max: 50000 }),
+  description: faker.lorem.sentence(),
+  dateSubmitted: faker.date.recent().toISOString(),
+  userId: faker.string.uuid(),
+  ...overrides,
+});
+
+// Create test store
+export const createTestStore = (initialState: Partial<TestStore> = {}) => {
+  const defaultState: TestStore = {
+    auth: {
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      loading: false,
+      error: null,
+    },
+    claims: {
+      claims: [],
+      loading: false,
+      error: null,
+      selectedClaim: null,
+    },
+    admin: {
+      users: [],
+      claims: [],
+      loading: false,
+      error: null,
+      stats: {
+        totalClaims: 0,
+        pendingClaims: 0,
+        approvedClaims: 0,
+        rejectedClaims: 0,
+        totalUsers: 0,
+      },
+    },
+    ui: {
+      theme: 'light',
+      sidebarOpen: false,
+      notifications: [],
+    },
+  };
+
+  const mergedState = {
+    ...defaultState,
+    ...initialState,
+    auth: { ...defaultState.auth, ...initialState.auth },
+    claims: { ...defaultState.claims, ...initialState.claims },
+    admin: { ...defaultState.admin, ...initialState.admin },
+    ui: { ...defaultState.ui, ...initialState.ui },
+  };
+
   return configureStore({
     reducer: {
       auth: authSlice.reducer,
+      claims: claimsSlice.reducer,
+      admin: adminSlice.reducer,
+      ui: uiSlice.reducer,
     },
-    preloadedState: initialState,
+    preloadedState: mergedState,
   });
 };
 
-// Enhanced wrapper options
-interface WrapperOptions {
-  initialState?: any;
+// Wrapper components
+export const TestProviders: React.FC<{
+  children: React.ReactNode;
   store?: ReturnType<typeof createTestStore>;
-  route?: string;
-  mountType?: 'mount' | 'shallow';
-}
+  initialEntries?: string[];
+}> = ({ children, store, initialEntries = ['/'] }) => {
+  const testStore = store || createTestStore();
 
-// Enhanced mount with providers
+  return (
+    <Provider store={testStore}>
+      <BrowserRouter>
+        {children}
+      </BrowserRouter>
+    </Provider>
+  );
+};
+
+// Enhanced mount function with providers
 export const mountWithProviders = (
   component: ReactElement,
-  options: WrapperOptions = {}
+  options: {
+    store?: ReturnType<typeof createTestStore>;
+    initialEntries?: string[];
+    mountOptions?: any;
+  } = {}
 ): ReactWrapper => {
-  const {
-    initialState = {},
-    store = createTestStore(initialState),
-    route = '/',
-    mountType = 'mount'
-  } = options;
-
-  // Set initial route
-  window.history.pushState({}, 'Test page', route);
-
-  const ProviderWrapper = ({ children }: { children: React.ReactNode }) => (
-    <Provider store={store}>
-      <BrowserRouter>
-        {children}
-      </BrowserRouter>
-    </Provider>
-  );
-
-  if (mountType === 'shallow') {
-    return mount(component, {
-      wrappingComponent: ProviderWrapper
-    });
-  }
+  const { store, initialEntries, mountOptions = {} } = options;
 
   return mount(
-    <ProviderWrapper>
+    <TestProviders store={store} initialEntries={initialEntries}>
       {component}
-    </ProviderWrapper>
+    </TestProviders>,
+    mountOptions
   );
 };
 
-// Shallow mount with providers
+// Enhanced shallow function
 export const shallowWithProviders = (
   component: ReactElement,
-  options: WrapperOptions = {}
+  options: {
+    store?: ReturnType<typeof createTestStore>;
+    shallowOptions?: any;
+  } = {}
 ): ShallowWrapper => {
-  const {
-    initialState = {},
-    store = createTestStore(initialState),
-  } = options;
-
-  const ProviderWrapper = ({ children }: { children: React.ReactNode }) => (
-    <Provider store={store}>
-      <BrowserRouter>
-        {children}
-      </BrowserRouter>
-    </Provider>
-  );
-
-  return shallow(
-    <ProviderWrapper>
-      {component}
-    </ProviderWrapper>
-  );
+  const { shallowOptions = {} } = options;
+  return shallow(component, shallowOptions);
 };
 
-// Mount with authenticated user
-export const mountWithAuth = (
-  component: ReactElement,
-  user: User = mockUser,
-  options: WrapperOptions = {}
-): ReactWrapper => {
-  const initialState = {
-    auth: {
-      user,
-      token: 'mock-token',
-      isAuthenticated: true,
-      loading: false,
-      error: null,
-    },
-  };
-
-  return mountWithProviders(component, {
-    ...options,
-    initialState: { ...initialState, ...options.initialState },
-  });
-};
-
-// Shallow mount with authenticated user
-export const shallowWithAuth = (
-  component: ReactElement,
-  user: User = mockUser,
-  options: WrapperOptions = {}
-): ShallowWrapper => {
-  const initialState = {
-    auth: {
-      user,
-      token: 'mock-token',
-      isAuthenticated: true,
-      loading: false,
-      error: null,
-    },
-  };
-
-  return shallowWithProviders(component, {
-    ...options,
-    initialState: { ...initialState, ...options.initialState },
-  });
-};
-
-// Utility to simulate async operations
-export const waitForAsync = (wrapper: ReactWrapper | ShallowWrapper, ms = 0): Promise<void> => {
+// Utility functions for testing
+export const waitForAsync = (wrapper: ReactWrapper, ms: number = 0): Promise<void> => {
   return new Promise(resolve => {
     setTimeout(() => {
       wrapper.update();
@@ -167,171 +204,217 @@ export const waitForAsync = (wrapper: ReactWrapper | ShallowWrapper, ms = 0): Pr
   });
 };
 
-// Utility to simulate user events
 export const simulateEvent = (
   wrapper: ReactWrapper | ShallowWrapper,
   selector: string,
   event: string,
-  eventData?: any
+  eventData: any = {}
 ): void => {
   const element = wrapper.find(selector);
-  if (element.length > 0) {
-    element.simulate(event, eventData);
-    wrapper.update();
+  if (element.length === 0) {
+    throw new Error(`Element with selector "${selector}" not found`);
+  }
+  element.simulate(event, eventData);
+  wrapper.update();
+};
+
+export const findByTestId = (
+  wrapper: ReactWrapper | ShallowWrapper,
+  testId: string
+): ReactWrapper | ShallowWrapper => {
+  return wrapper.find(`[data-testid="${testId}"]`);
+};
+
+export const findByText = (
+  wrapper: ReactWrapper | ShallowWrapper,
+  text: string | RegExp
+): ReactWrapper | ShallowWrapper => {
+  if (typeof text === 'string') {
+    return wrapper.findWhere(node => node.text() === text);
+  } else {
+    return wrapper.findWhere(node => text.test(node.text()));
   }
 };
 
-// Utility to check if element exists and has text
-export const expectElementWithText = (
-  wrapper: ReactWrapper | ShallowWrapper,
-  selector: string,
-  text: string
-): void => {
-  const element = wrapper.find(selector);
-  expect(element.exists()).toBe(true);
-  expect(element.text()).toContain(text);
-};
-
-// Utility to check element properties
-export const expectElementProps = (
-  wrapper: ReactWrapper | ShallowWrapper,
-  selector: string,
-  props: Record<string, any>
-): void => {
-  const element = wrapper.find(selector);
-  expect(element.exists()).toBe(true);
-  Object.entries(props).forEach(([key, value]) => {
-    expect(element.prop(key)).toEqual(value);
-  });
-};
-
-// Mock API responses
-export const mockApiResponse = <T>(data: T, delay = 0): Promise<T> => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(data), delay);
-  });
-};
-
-export const mockApiError = (message = 'API Error', delay = 0): Promise<never> => {
-  return new Promise((_, reject) => {
-    setTimeout(() => reject(new Error(message)), delay);
-  });
-};
-
-// Form testing utilities
-export const fillFormField = (
-  wrapper: ReactWrapper | ShallowWrapper,
-  selector: string,
-  value: string
-): void => {
-  const input = wrapper.find(selector);
-  input.simulate('change', { target: { value } });
-  wrapper.update();
-};
-
-export const submitForm = (
-  wrapper: ReactWrapper | ShallowWrapper,
-  formSelector: string = 'form'
-): void => {
-  const form = wrapper.find(formSelector);
-  form.simulate('submit', { preventDefault: jest.fn() });
-  wrapper.update();
-};
-
-// Mock data factories
-export const createMockClaim = (overrides = {}) => ({
-  id: '1',
-  claimNumber: 'CLM-2024-001',
-  policyId: '1',
-  policyType: 'AUTO',
-  policyNumber: 'AUTO-2024-001',
-  clientId: '1',
-  clientName: 'John Doe',
-  type: 'Collision',
-  status: 'SUBMITTED',
-  amount: 5000,
-  estimatedAmount: 5500,
-  payoutAmount: 0,
-  submittedDate: '2024-01-15',
-  submittedAt: '2024-01-15T14:30:00Z',
-  updatedAt: '2024-01-18T10:15:00Z',
-  incidentDate: '2024-01-10',
-  description: 'Rear-end collision on Highway 101',
-  location: 'Highway 101, San Francisco, CA',
-  adjusterName: 'Sarah Johnson',
-  adjusterPhone: '(555) 123-4567',
-  adjusterEmail: 'sarah.johnson@assureme.com',
-  documents: [],
-  timeline: [],
-  ...overrides
-});
-
-export const createMockPolicy = (overrides = {}) => ({
-  id: '1',
-  policyNumber: 'AUTO-2024-001',
-  clientId: '1',
-  clientName: 'John Doe',
-  type: 'AUTO',
-  status: 'ACTIVE',
-  startDate: '2024-01-01',
-  endDate: '2024-12-31',
-  premium: 1200,
-  deductible: 500,
-  coverageAmount: 100000,
-  description: 'Comprehensive auto insurance coverage',
-  ...overrides
-});
-
-export const createMockPayment = (overrides = {}) => ({
-  id: '1',
-  policyId: '1',
-  clientId: '1',
-  amount: 1200,
-  dueDate: '2024-02-01',
-  paidDate: '2024-01-28',
-  status: 'COMPLETED',
-  method: 'Credit Card',
-  description: 'Monthly premium payment',
-  ...overrides
-});
-
-export const createMockDocument = (overrides = {}) => ({
-  id: '1',
-  name: 'policy-document.pdf',
-  type: 'POLICY',
-  category: 'Auto Insurance',
-  uploadDate: '2024-01-15',
-  size: 1024000,
-  userId: '1',
-  ...overrides
-});
-
 // Performance testing utilities
-export const measureRenderTime = (renderFn: () => ReactWrapper | ShallowWrapper): number => {
+export const measureRenderTime = (renderFunction: () => void): number => {
   const start = performance.now();
-  renderFn();
+  renderFunction();
   const end = performance.now();
   return end - start;
 };
 
-// Component state testing utilities
-export const getComponentState = (wrapper: ReactWrapper, stateName: string): any => {
-  return wrapper.state(stateName);
+export const checkMemoryLeaks = (wrapper: ReactWrapper): void => {
+  const initialMemory = (performance as any).memory?.usedJSHeapSize || 0;
+  wrapper.unmount();
+  
+  // Force garbage collection if available (in Node.js with --expose-gc)
+  if (global.gc) {
+    global.gc();
+  }
+  
+  const finalMemory = (performance as any).memory?.usedJSHeapSize || 0;
+  const memoryDiff = finalMemory - initialMemory;
+  
+  if (memoryDiff > 1000000) { // 1MB threshold
+    console.warn(`Potential memory leak detected: ${memoryDiff} bytes`);
+  }
 };
 
-export const setComponentState = (wrapper: ReactWrapper, state: Record<string, any>): void => {
-  wrapper.setState(state);
+// Accessibility testing helpers
+export const checkAriaAttributes = (wrapper: ReactWrapper | ShallowWrapper): void => {
+  const elementsWithAriaLabel = wrapper.find('[aria-label]');
+  const elementsWithAriaDescribedBy = wrapper.find('[aria-describedby]');
+  const elementsWithRole = wrapper.find('[role]');
+  
+  expect(elementsWithAriaLabel.length + elementsWithAriaDescribedBy.length + elementsWithRole.length)
+    .toBeGreaterThan(0);
+};
+
+export const checkKeyboardNavigation = (
+  wrapper: ReactWrapper,
+  focusableSelectors: string[]
+): void => {
+  focusableSelectors.forEach(selector => {
+    const element = wrapper.find(selector);
+    if (element.length > 0) {
+      element.simulate('keydown', { key: 'Tab' });
+      element.simulate('keydown', { key: 'Enter' });
+      element.simulate('keydown', { key: ' ' });
+    }
+  });
+};
+
+// Form testing utilities
+export const fillForm = (
+  wrapper: ReactWrapper,
+  formData: Record<string, any>
+): void => {
+  Object.entries(formData).forEach(([field, value]) => {
+    const input = wrapper.find(`[name="${field}"]`);
+    if (input.length > 0) {
+      input.simulate('change', { target: { name: field, value } });
+    }
+  });
   wrapper.update();
 };
 
-// Props testing utilities
-export const getComponentProps = (wrapper: ReactWrapper | ShallowWrapper): any => {
-  return wrapper.props();
+export const submitForm = (wrapper: ReactWrapper, formSelector: string = 'form'): void => {
+  const form = wrapper.find(formSelector);
+  if (form.length > 0) {
+    form.simulate('submit', { preventDefault: jest.fn() });
+  }
+  wrapper.update();
 };
 
-// Cleanup utilities
-export const cleanupWrapper = (wrapper: ReactWrapper | ShallowWrapper): void => {
-  if (wrapper && wrapper.unmount) {
-    wrapper.unmount();
+// Redux testing utilities
+export const getStoreState = (store: ReturnType<typeof createTestStore>): TestStore => {
+  return store.getState() as TestStore;
+};
+
+export const dispatchAction = (
+  store: ReturnType<typeof createTestStore>,
+  action: any
+): void => {
+  store.dispatch(action);
+};
+
+// Mock API responses
+export const mockApiSuccess = (data: any) => ({
+  ok: true,
+  status: 200,
+  json: () => Promise.resolve(data),
+});
+
+export const mockApiError = (status: number = 400, message: string = 'Error') => ({
+  ok: false,
+  status,
+  json: () => Promise.resolve({ message }),
+});
+
+// Component testing helpers
+export const expectComponentToRender = (wrapper: ReactWrapper | ShallowWrapper): void => {
+  expect(wrapper.exists()).toBe(true);
+  expect(wrapper.length).toBe(1);
+};
+
+export const expectComponentToHaveProps = (
+  wrapper: ReactWrapper | ShallowWrapper,
+  expectedProps: Record<string, any>
+): void => {
+  Object.entries(expectedProps).forEach(([prop, value]) => {
+    expect(wrapper.prop(prop)).toEqual(value);
+  });
+};
+
+export const expectComponentToHaveState = (
+  wrapper: ReactWrapper,
+  expectedState: Record<string, any>
+): void => {
+  Object.entries(expectedState).forEach(([key, value]) => {
+    expect(wrapper.state(key)).toEqual(value);
+  });
+};
+
+// Snapshot testing utilities
+export const expectToMatchSnapshot = (wrapper: ReactWrapper | ShallowWrapper): void => {
+  expect(wrapper).toMatchSnapshot();
+};
+
+// Error boundary testing
+export const triggerError = (wrapper: ReactWrapper, error: Error): void => {
+  const errorComponent = wrapper.find('ThrowError');
+  if (errorComponent.length > 0) {
+    errorComponent.prop('onError')(error);
   }
+  wrapper.update();
+};
+
+// Export commonly used test data
+export const mockUsers = Array.from({ length: 5 }, () => createMockUser());
+export const mockClaims = Array.from({ length: 10 }, () => createMockClaim());
+
+export const mockAuthenticatedUser = createMockUser({
+  id: 'auth-user-id',
+  email: 'test@example.com',
+  name: 'Test User',
+  role: 'client',
+});
+
+export const mockAdminUser = createMockUser({
+  id: 'admin-user-id',
+  email: 'admin@example.com',
+  name: 'Admin User',
+  role: 'admin',
+});
+
+export default {
+  mountWithProviders,
+  shallowWithProviders,
+  createTestStore,
+  createMockUser,
+  createMockClaim,
+  waitForAsync,
+  simulateEvent,
+  findByTestId,
+  findByText,
+  measureRenderTime,
+  checkMemoryLeaks,
+  checkAriaAttributes,
+  checkKeyboardNavigation,
+  fillForm,
+  submitForm,
+  getStoreState,
+  dispatchAction,
+  mockApiSuccess,
+  mockApiError,
+  expectComponentToRender,
+  expectComponentToHaveProps,
+  expectComponentToHaveState,
+  expectToMatchSnapshot,
+  triggerError,
+  mockUsers,
+  mockClaims,
+  mockAuthenticatedUser,
+  mockAdminUser,
 };
