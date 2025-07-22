@@ -7,8 +7,6 @@ import { faker } from '@faker-js/faker';
 
 // Store setup for testing
 import { authSlice } from '../../store/slices/authSlice';
-import { claimsSlice } from '../../store/slices/claimsSlice';
-import { adminSlice } from '../../store/slices/adminSlice';
 import { uiSlice } from '../../store/slices/uiSlice';
 
 // Types
@@ -37,25 +35,6 @@ export interface TestStore {
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
-  };
-  claims: {
-    claims: MockClaim[];
-    loading: boolean;
-    error: string | null;
-    selectedClaim: MockClaim | null;
-  };
-  admin: {
-    users: MockUser[];
-    claims: MockClaim[];
-    loading: boolean;
-    error: string | null;
-    stats: {
-      totalClaims: number;
-      pendingClaims: number;
-      approvedClaims: number;
-      rejectedClaims: number;
-      totalUsers: number;
-    };
   };
   ui: {
     theme: 'light' | 'dark';
@@ -100,25 +79,6 @@ export const createTestStore = (initialState: Partial<TestStore> = {}) => {
       loading: false,
       error: null,
     },
-    claims: {
-      claims: [],
-      loading: false,
-      error: null,
-      selectedClaim: null,
-    },
-    admin: {
-      users: [],
-      claims: [],
-      loading: false,
-      error: null,
-      stats: {
-        totalClaims: 0,
-        pendingClaims: 0,
-        approvedClaims: 0,
-        rejectedClaims: 0,
-        totalUsers: 0,
-      },
-    },
     ui: {
       theme: 'light',
       sidebarOpen: false,
@@ -130,16 +90,12 @@ export const createTestStore = (initialState: Partial<TestStore> = {}) => {
     ...defaultState,
     ...initialState,
     auth: { ...defaultState.auth, ...initialState.auth },
-    claims: { ...defaultState.claims, ...initialState.claims },
-    admin: { ...defaultState.admin, ...initialState.admin },
     ui: { ...defaultState.ui, ...initialState.ui },
   };
 
   return configureStore({
     reducer: {
       auth: authSlice.reducer,
-      claims: claimsSlice.reducer,
-      admin: adminSlice.reducer,
       ui: uiSlice.reducer,
     },
     preloadedState: mergedState,

@@ -1,4 +1,4 @@
-import responseHelpers from '../responseHelpers';
+import * as responseHelpers from '../responseHelpers';
 
 // Mock external dependencies
 jest.mock('axios', () => ({

@@ -84,7 +84,6 @@ const Dashboard: React.FC = () => {
         claims: dashboardData.claims,
         payments: dashboardData.payments,
         stats: dashboardData.stats,
-        }
       });
     } catch (error) {
       console.error('Failed to load dashboard data:', error);

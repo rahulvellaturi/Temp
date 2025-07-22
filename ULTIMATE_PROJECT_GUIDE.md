@@ -2873,6 +2873,473 @@ cd frontend && node -e "console.log('Frontend deps OK')" && cd ..
 
 ---
 
+## 📚 **Detailed Dependencies Installation Guide**
+
+> **This comprehensive guide explains what each dependency does, when you need to install it, and why it's required for the AssureMe Insurance Platform.**
+
+### **🎯 Installation Phases and Timing**
+
+#### **Phase 1: System Prerequisites (Install First)**
+These must be installed before anything else:
+
+**1. Node.js (v18.0.0 or higher)**
+- **What it is**: JavaScript runtime environment
+- **Why needed**: Required to run npm, build tools, and the entire application
+- **When to install**: Before cloning the project
+- **How to install**:
+  ```bash
+  # Windows (using winget)
+  winget install OpenJS.NodeJS
+  
+  # macOS (using Homebrew)
+  brew install node
+  
+  # Linux (Ubuntu/Debian)
+  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  ```
+
+**2. npm (v8.0.0 or higher)**
+- **What it is**: Node.js package manager
+- **Why needed**: Install and manage all project dependencies
+- **When to install**: Comes with Node.js
+- **Verify installation**: `npm --version`
+
+**3. Git (any recent version)**
+- **What it is**: Version control system
+- **Why needed**: Clone the repository and manage code versions
+- **When to install**: Before cloning the project
+- **How to install**:
+  ```bash
+  # Windows
+  winget install Git.Git
+  
+  # macOS
+  brew install git
+  
+  # Linux
+  sudo apt install git
+  ```
+
+#### **Phase 2: Project Dependencies (Install After Cloning)**
+
+**1. Root Project Dependencies**
+```bash
+# Install from project root
+npm install
+```
+
+**Dependencies installed:**
+- `concurrently@^8.2.2`: Runs multiple commands simultaneously (frontend + backend)
+
+**When to install**: Immediately after cloning the repository
+
+**2. Backend Dependencies**
+```bash
+# Navigate to backend and install
+cd backend && npm install
+```
+
+**Core Production Dependencies:**
+- `express@^4.18.2`: Web application framework for Node.js
+- `cors@^2.8.5`: Enable Cross-Origin Resource Sharing
+- `helmet@^7.1.0`: Security middleware for HTTP headers
+- `dotenv@^16.3.1`: Load environment variables from .env files
+- `bcryptjs@^2.4.3`: Password hashing library
+- `jsonwebtoken@^9.0.2`: JSON Web Token implementation
+- `passport@^0.7.0`: Authentication middleware
+- `passport-local@^1.0.0`: Local username/password authentication
+- `passport-jwt@^4.0.1`: JWT authentication strategy
+- `nodemailer@^6.9.7`: Send emails from Node.js
+- `speakeasy@^2.0.0`: Two-factor authentication library
+- `qrcode@^1.5.3`: QR code generation for MFA setup
+- `multer@^1.4.5-lts.1`: Middleware for handling file uploads
+- `cloudinary@^1.41.0`: Cloud-based image and video management
+- `prisma@^5.6.0`: Database ORM and migration tool
+- `@prisma/client@^5.6.0`: Prisma database client
+
+**Development Dependencies:**
+- `typescript@^5.2.2`: TypeScript compiler
+- `@types/node@^20.9.0`: TypeScript types for Node.js
+- `@types/express@^4.17.21`: TypeScript types for Express
+- `@types/cors@^2.8.17`: TypeScript types for CORS
+- `@types/bcryptjs@^2.4.6`: TypeScript types for bcryptjs
+- `@types/jsonwebtoken@^9.0.5`: TypeScript types for JWT
+- `@types/passport@^1.0.16`: TypeScript types for Passport
+- `@types/passport-local@^1.0.38`: TypeScript types for passport-local
+- `@types/passport-jwt@^4.0.1`: TypeScript types for passport-jwt
+- `@types/nodemailer@^6.4.14`: TypeScript types for nodemailer
+- `@types/speakeasy@^2.0.10`: TypeScript types for speakeasy
+- `@types/qrcode@^1.5.5`: TypeScript types for qrcode
+- `@types/multer@^1.4.11`: TypeScript types for multer
+- `nodemon@^3.0.1`: Auto-restart server during development
+- `ts-node@^10.9.1`: Execute TypeScript directly
+- `jest@^29.7.0`: JavaScript testing framework
+- `@types/jest@^29.5.8`: TypeScript types for Jest
+- `ts-jest@^29.1.1`: Jest transformer for TypeScript
+- `supertest@^6.3.3`: HTTP testing library
+- `@types/supertest@^2.0.16`: TypeScript types for supertest
+
+**When to install**: After installing root dependencies
+
+**3. Frontend Dependencies**
+```bash
+# Navigate to frontend and install
+cd frontend && npm install
+```
+
+**Core Production Dependencies:**
+- `react@^18.2.0`: React library for building user interfaces
+- `react-dom@^18.2.0`: React DOM rendering
+- `react-scripts@5.0.1`: Create React App build scripts and configuration
+- `@reduxjs/toolkit@^1.9.7`: Redux state management with utilities
+- `react-redux@^8.1.3`: React bindings for Redux
+- `redux-persist@^6.0.0`: Persist Redux state to localStorage
+- `react-router-dom@^6.20.1`: Declarative routing for React
+- `react-hook-form@^7.48.2`: Performant forms with easy validation
+- `@hookform/resolvers@^3.3.2`: Validation resolvers for react-hook-form
+- `zod@^3.22.4`: TypeScript-first schema declaration and validation
+- `axios@^1.6.2`: Promise-based HTTP client
+- `framer-motion@^10.16.5`: Motion library for React animations
+- `lucide-react@^0.294.0`: Beautiful and consistent icon library
+- `date-fns@^2.30.0`: Modern JavaScript date utility library
+- `clsx@^2.0.0`: Utility for constructing className strings conditionally
+- `tailwind-merge@^2.1.0`: Merge Tailwind CSS classes without style conflicts
+- `class-variance-authority@^0.7.0`: Create variant-based component APIs
+
+**Radix UI Components** (Headless UI primitives):
+- `@radix-ui/react-accordion@^1.1.2`: Collapsible content areas
+- `@radix-ui/react-alert-dialog@^1.0.5`: Modal dialogs for alerts
+- `@radix-ui/react-avatar@^1.0.4`: User profile pictures
+- `@radix-ui/react-checkbox@^1.0.4`: Checkbox input controls
+- `@radix-ui/react-dialog@^1.0.5`: Modal dialog windows
+- `@radix-ui/react-dropdown-menu@^2.0.6`: Dropdown menu components
+- `@radix-ui/react-label@^2.0.2`: Form field labels
+- `@radix-ui/react-popover@^1.0.7`: Popover content containers
+- `@radix-ui/react-progress@^1.0.3`: Progress indicators
+- `@radix-ui/react-scroll-area@^1.0.5`: Custom scrollable areas
+- `@radix-ui/react-select@^2.0.0`: Select dropdown controls
+- `@radix-ui/react-separator@^1.0.3`: Visual dividers
+- `@radix-ui/react-slider@^1.1.2`: Range slider controls
+- `@radix-ui/react-switch@^1.0.3`: Toggle switch controls
+- `@radix-ui/react-tabs@^1.0.4`: Tab navigation components
+- `@radix-ui/react-toast@^1.1.5`: Toast notification system
+- `@radix-ui/react-tooltip@^1.0.7`: Tooltip overlays
+
+**Development Dependencies:**
+- `@types/node@^20.9.0`: TypeScript types for Node.js APIs
+- `@types/react@^18.2.37`: TypeScript types for React
+- `@types/react-dom@^18.2.15`: TypeScript types for React DOM
+- `enzyme@^3.11.0`: JavaScript testing utility for React
+- `@cfaester/enzyme-adapter-react-18@^0.8.0`: Enzyme adapter for React 18
+- `@types/enzyme@^3.10.19`: TypeScript types for Enzyme
+- `@faker-js/faker@^8.3.1`: Generate fake data for testing
+- `jest@^27.5.1`: JavaScript testing framework
+- `jest-environment-jsdom@^29.7.0`: JSDOM environment for Jest
+- `jsdom-global@^3.0.2`: Global JSDOM setup
+- `whatwg-fetch@^3.6.20`: Fetch API polyfill
+- `react-refresh@^0.14.2`: Fast refresh for React development
+- `tailwindcss@^3.3.5`: Utility-first CSS framework
+- `autoprefixer@^10.4.16`: PostCSS plugin to parse CSS and add vendor prefixes
+- `postcss@^8.4.31`: Tool for transforming CSS with JavaScript
+
+**When to install**: After installing backend dependencies
+
+#### **Phase 3: Database Dependencies (Install When Setting Up Database)**
+
+**If using local PostgreSQL:**
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+# macOS
+brew install postgresql@15
+brew services start postgresql@15
+
+# Windows
+# Download and install from https://www.postgresql.org/download/windows/
+```
+
+**When to install**: Only if you choose local database over cloud database (Supabase)
+
+#### **Phase 4: Development Tools (Install As Needed)**
+
+**Global Development Tools (Optional but Recommended):**
+```bash
+# TypeScript compiler (global)
+npm install -g typescript
+
+# Prisma CLI (global)
+npm install -g prisma
+
+# Vercel CLI (for deployment)
+npm install -g vercel
+
+# Artillery (for performance testing)
+npm install -g artillery
+```
+
+**When to install**: 
+- TypeScript: If you want to run `tsc` commands globally
+- Prisma CLI: If you prefer global Prisma commands over `npx prisma`
+- Vercel CLI: When ready to deploy frontend
+- Artillery: When doing performance testing
+
+### **🔧 Dependency Installation Troubleshooting**
+
+#### **Common Installation Issues and Solutions**
+
+**1. Node.js Version Conflicts**
+```bash
+# Problem: Multiple Node.js versions causing conflicts
+# Solution: Use nvm (Node Version Manager)
+
+# Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+
+# Install and use Node.js 18
+nvm install 18
+nvm use 18
+nvm alias default 18
+```
+
+**2. npm Permission Errors (Linux/macOS)**
+```bash
+# Problem: Permission denied when installing packages
+# Solution: Fix npm permissions
+
+sudo chown -R $(whoami) ~/.npm
+sudo chown -R $(whoami) /usr/local/lib/node_modules
+```
+
+**3. Package Lock Conflicts**
+```bash
+# Problem: package-lock.json conflicts
+# Solution: Clean reinstall
+
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**4. Peer Dependency Warnings**
+```bash
+# Problem: Peer dependency warnings with Enzyme
+# Solution: Install with legacy peer deps flag
+
+npm install --legacy-peer-deps
+```
+
+**5. TypeScript Compilation Errors**
+```bash
+# Problem: TypeScript can't find types
+# Solution: Install missing type packages
+
+npm install --save-dev @types/node @types/jest
+```
+
+**6. Prisma Client Issues**
+```bash
+# Problem: Prisma client not generated
+# Solution: Generate Prisma client
+
+cd backend
+npx prisma generate
+```
+
+### **🚀 Dependency Update Strategy**
+
+#### **When to Update Dependencies**
+
+**1. Security Updates (Update Immediately)**
+```bash
+# Check for security vulnerabilities
+npm audit
+
+# Fix automatically fixable issues
+npm audit fix
+
+# For breaking changes, update manually
+npm audit fix --force
+```
+
+**2. Minor Updates (Update Monthly)**
+```bash
+# Check for outdated packages
+npm outdated
+
+# Update to latest compatible versions
+npm update
+
+# Update specific package
+npm install package-name@latest
+```
+
+**3. Major Updates (Update Quarterly)**
+```bash
+# Update React and related packages
+npm install react@latest react-dom@latest @types/react@latest @types/react-dom@latest
+
+# Update Node.js types
+npm install --save-dev @types/node@latest
+
+# Update testing dependencies
+npm install --save-dev jest@latest @types/jest@latest
+```
+
+#### **Dependency Update Testing Process**
+
+1. **Before Updating**:
+   ```bash
+   # Create backup branch
+   git checkout -b dependency-updates-$(date +%Y%m%d)
+   
+   # Run tests to establish baseline
+   npm test
+   ```
+
+2. **During Updates**:
+   ```bash
+   # Update dependencies
+   npm update
+   
+   # Test compilation
+   npx tsc --noEmit
+   
+   # Run tests
+   npm test
+   ```
+
+3. **After Updates**:
+   ```bash
+   # Build project
+   npm run build
+   
+   # Manual testing
+   npm start
+   
+   # If successful, merge changes
+   git add . && git commit -m "chore: update dependencies"
+   git checkout main && git merge dependency-updates-$(date +%Y%m%d)
+   ```
+
+### **📊 Dependency Size and Performance Impact**
+
+#### **Bundle Size Analysis**
+
+**Frontend Bundle Sizes (approximate):**
+- React + React DOM: ~40KB gzipped
+- Redux Toolkit: ~15KB gzipped
+- Radix UI components: ~5-10KB per component gzipped
+- Framer Motion: ~30KB gzipped
+- Tailwind CSS: ~10KB gzipped (after purging)
+- Total frontend bundle: ~150-200KB gzipped
+
+**Backend Dependencies:**
+- Express.js: ~25KB
+- Prisma Client: ~500KB-1MB (varies by schema)
+- Authentication libraries: ~50KB combined
+- Total backend size: ~2-3MB
+
+#### **Performance Optimization Tips**
+
+1. **Code Splitting**:
+   ```javascript
+   // Lazy load heavy components
+   const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+   ```
+
+2. **Tree Shaking**:
+   ```javascript
+   // Import only what you need
+   import { format } from 'date-fns';
+   // Instead of: import * as dateFns from 'date-fns';
+   ```
+
+3. **Bundle Analysis**:
+   ```bash
+   # Analyze frontend bundle
+   npm run build
+   npx webpack-bundle-analyzer build/static/js/*.js
+   ```
+
+### **🔒 Security Considerations**
+
+#### **Dependency Security Best Practices**
+
+1. **Regular Security Audits**:
+   ```bash
+   # Run weekly
+   npm audit
+   
+   # Check for known vulnerabilities
+   npm audit --audit-level high
+   ```
+
+2. **Use Exact Versions for Critical Dependencies**:
+   ```json
+   {
+     "dependencies": {
+       "jsonwebtoken": "9.0.2",  // Exact version for security
+       "bcryptjs": "2.4.3"       // Exact version for security
+     }
+   }
+   ```
+
+3. **Monitor Dependencies**:
+   - Use GitHub Dependabot for automated security updates
+   - Subscribe to security advisories for critical packages
+   - Review dependency changes in pull requests
+
+4. **Minimize Attack Surface**:
+   ```bash
+   # Remove unused dependencies
+   npm uninstall unused-package
+   
+   # Use npm-check to find unused dependencies
+   npx npm-check
+   ```
+
+### **📈 Dependency Monitoring and Maintenance**
+
+#### **Automated Monitoring Setup**
+
+1. **GitHub Dependabot Configuration** (`.github/dependabot.yml`):
+   ```yaml
+   version: 2
+   updates:
+     - package-ecosystem: "npm"
+       directory: "/frontend"
+       schedule:
+         interval: "weekly"
+     - package-ecosystem: "npm"
+       directory: "/backend"
+       schedule:
+         interval: "weekly"
+   ```
+
+2. **Package.json Scripts for Maintenance**:
+   ```json
+   {
+     "scripts": {
+       "deps:check": "npm outdated",
+       "deps:update": "npm update",
+       "deps:audit": "npm audit",
+       "deps:audit-fix": "npm audit fix",
+       "deps:clean": "rm -rf node_modules package-lock.json && npm install"
+     }
+   }
+   ```
+
+3. **Regular Maintenance Schedule**:
+   - **Daily**: Check for security alerts
+   - **Weekly**: Run `npm audit`
+   - **Monthly**: Update minor versions
+   - **Quarterly**: Plan major updates
+
+---
+
 ## 📋 **Complete Installation Guide**
 
 // ... existing code ...

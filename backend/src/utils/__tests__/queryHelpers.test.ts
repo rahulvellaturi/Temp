@@ -1,4 +1,4 @@
-import queryHelpers from '../queryHelpers';
+import * as queryHelpers from '../queryHelpers';
 
 // Mock external dependencies
 jest.mock('axios', () => ({

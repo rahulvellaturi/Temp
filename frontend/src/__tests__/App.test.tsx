@@ -22,7 +22,7 @@ import {
   expectToMatchSnapshot,
   mockAuthenticatedUser,
   mockAdminUser
-} from '../../__tests__/utils/enzyme-utils';
+} from './utils/enzyme-utils';
 
 // Mock dependencies
 jest.mock('react-router-dom', () => ({
@@ -45,7 +45,7 @@ jest.mock('framer-motion', () => ({
     button: 'button',
     span: 'span',
   },
-  AnimatePresence: ({ children }) => children,
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 jest.mock('lucide-react', () => ({
@@ -80,7 +80,7 @@ describe('App', () => {
     useNavigate.mockReturnValue(mockNavigate);
 
     
-    useSelector.mockImplementation((selector) => {
+    useSelector.mockImplementation((selector: any) => {
       const state = {
         auth: {
           user: mockAuthenticatedUser,
