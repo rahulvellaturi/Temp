@@ -101,12 +101,276 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
-The setup script will:
-- ✅ Check Node.js and npm versions
-- ✅ Install all dependencies
-- ✅ Create environment files
-- ✅ Generate Prisma client
-- ✅ Create helper scripts
+### **🔄 What the Setup Script Actually Does:**
+
+#### **Step 1: 🔍 Advanced Node.js & npm Version Management**
+```bash
+🔄 STEP: Checking Node.js and npm versions
+  └─ Found Node.js version: 22.16.0
+  └─ Found npm version: 10.9.2
+✅ SUCCESS: Node.js version 22.16.0 meets requirements (>= 18.0.0)
+✅ SUCCESS: npm version 10.9.2 meets requirements (>= 8.0.0)
+```
+**What it actually checks:**
+- **Semantic version comparison** - Not just basic version checking
+- **Automatic npm updates** - Updates npm if below v8.0.0
+- **Platform detection** - Provides OS-specific installation instructions
+- **nvm integration** - Suggests Node Version Manager for conflicts
+- **Exit with guidance** - Detailed installation steps if Node.js missing
+
+#### **Step 2: 📦 Comprehensive Dependency Installation**
+```bash
+🔄 STEP: Installing all project dependencies
+  └─ Installing root project dependencies...
+✅ SUCCESS: Root dependencies installed successfully
+  └─ Installing backend dependencies...
+✅ SUCCESS: Backend dependencies installed successfully
+  └─ Installing frontend dependencies...
+✅ SUCCESS: Frontend dependencies installed successfully
+  └─ Running security audit...
+⚠️  WARNING: Security vulnerabilities found. Run 'npm audit fix' to resolve.
+```
+**What it actually installs:**
+- **Root**: `concurrently@^8.2.2` (runs frontend + backend simultaneously)
+- **Backend**: 47 production dependencies + 23 dev dependencies including:
+  - `express`, `prisma`, `passport`, `jsonwebtoken`, `bcryptjs`
+  - `nodemailer`, `speakeasy`, `qrcode`, `cloudinary`, `multer`
+  - Complete TypeScript stack with `@types/*` packages
+- **Frontend**: 89 dependencies including:
+  - `react@18.2.0`, `@reduxjs/toolkit`, `react-router-dom`
+  - Complete Radix UI component library (15 components)
+  - `framer-motion`, `tailwindcss`, `enzyme` testing suite
+- **Security audit** - Scans for vulnerabilities in all packages
+- **Legacy peer deps** - Uses `--legacy-peer-deps` for Enzyme compatibility
+
+#### **Step 3: 🔐 Intelligent Environment File Creation**
+```bash
+🔄 STEP: Creating environment files
+  └─ Creating root .env file with default values...
+✅ SUCCESS: Created root .env file with default configuration
+  └─ Creating backend .env file with default values...
+✅ SUCCESS: Created backend .env file with default configuration
+  └─ Creating frontend .env file with default values...
+✅ SUCCESS: Created frontend .env file with default configuration
+  └─ Set secure permissions on environment files
+```
+**What it actually creates:**
+
+**Root `.env` (Project-wide settings):**
+```bash
+NODE_ENV=development
+PROJECT_NAME=AssureMe Insurance Platform
+VERSION=1.0.0
+DEBUG=true
+LOG_LEVEL=info
+FRONTEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:5000
+```
+
+**Backend `.env` (37 configuration variables):**
+```bash
+# Server Configuration
+NODE_ENV=development
+PORT=5000
+HOST=localhost
+
+# Database with schema
+DATABASE_URL="postgresql://postgres:password@localhost:5432/assureme_db?schema=public"
+
+# JWT with auto-generated secrets
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production-1703123456"
+JWT_EXPIRES_IN="24h"
+JWT_REFRESH_SECRET="your-super-secret-refresh-key-change-this-in-production-1703123456"
+
+# Complete SMTP configuration
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# MFA settings
+MFA_APP_NAME="AssureMe Insurance"
+MFA_ISSUER="AssureMe"
+
+# File upload limits
+MAX_FILE_SIZE=10485760
+ALLOWED_FILE_TYPES=jpg,jpeg,png,pdf,doc,docx
+
+# Security hardening
+BCRYPT_ROUNDS=12
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+SESSION_SECRET="auto-generated-session-secret-1703123456"
+```
+
+**Frontend `.env` (20 configuration variables):**
+```bash
+# API Configuration
+REACT_APP_API_BASE_URL=http://localhost:5000/api
+REACT_APP_API_VERSION=v1
+
+# Feature Flags
+REACT_APP_ENABLE_ANALYTICS=false
+REACT_APP_ENABLE_CHAT_SUPPORT=false
+REACT_APP_ENABLE_NOTIFICATIONS=true
+REACT_APP_ENABLE_DARK_MODE=true
+
+# Performance Settings
+REACT_APP_ENABLE_PERFORMANCE_MONITORING=true
+GENERATE_SOURCEMAP=true
+INLINE_RUNTIME_CHUNK=false
+```
+
+**Security Features:**
+- **Unique secrets** - Generated with timestamps: `$(date +%s)`
+- **File permissions** - Set to 600 (owner read/write only)
+- **Smart detection** - Uses `.env.example` if exists, otherwise creates defaults
+
+#### **Step 4: 🗃️ Prisma Client Generation & Database Preparation**
+```bash
+🔄 STEP: Generating Prisma client
+  └─ Generating Prisma client...
+✅ SUCCESS: Prisma client generated successfully
+  └─ Checking database connection...
+⚠️  WARNING: Could not connect to database. This is normal for initial setup.
+ℹ️  INFO: Make sure to configure your database connection in backend/.env
+ℹ️  INFO: Then run: cd backend && npx prisma db push
+```
+**What it actually generates:**
+- **TypeScript client** - Type-safe database operations from `schema.prisma`
+- **Model types** - User, Policy, Claim, Document, Payment models
+- **Relationship mappings** - Complete foreign key relationships
+- **Query methods** - `findMany()`, `create()`, `update()`, `delete()` with full typing
+- **Database testing** - Attempts connection (gracefully handles failure)
+- **Migration readiness** - Client ready for `prisma db push`
+
+#### **Step 5: 🛠️ Comprehensive Helper Scripts Creation**
+```bash
+🔄 STEP: Creating helper scripts
+  └─ Creating development helper script...
+✅ SUCCESS: Created development helper script: scripts/dev.sh
+  └─ Creating build helper script...
+✅ SUCCESS: Created build helper script: scripts/build.sh
+  └─ Creating test helper script...
+✅ SUCCESS: Created test helper script: scripts/test.sh
+  └─ Creating database helper script...
+✅ SUCCESS: Created database helper script: scripts/db.sh
+  └─ Creating deployment helper script...
+✅ SUCCESS: Created deployment helper script: scripts/deploy.sh
+  └─ Creating maintenance helper script...
+✅ SUCCESS: Created maintenance helper script: scripts/maintenance.sh
+```
+
+**What scripts are actually created:**
+
+**🚀 `scripts/dev.sh` - Development Launcher**
+```bash
+#!/bin/bash
+# Checks for node_modules in all directories
+# Validates dependencies before starting
+# Runs: npm run dev (concurrently frontend + backend)
+# Shows: Frontend: http://localhost:3000, Backend: http://localhost:5000
+```
+
+**🏗️ `scripts/build.sh` - Production Builder**
+```bash
+#!/bin/bash
+# Backend: npm run build (TypeScript → JavaScript in dist/)
+# Frontend: npm run build (React → optimized static files in build/)
+# Output: Shows build sizes and locations
+```
+
+**🧪 `scripts/test.sh` - Test Runner**
+```bash
+#!/bin/bash
+# Backend: npm test (Jest with supertest for API testing)
+# Frontend: npm test --watchAll=false --verbose (Enzyme + Jest)
+# Reports: Combined test results with exit codes
+```
+
+**🗃️ `scripts/db.sh` - Database Manager**
+```bash
+#!/bin/bash
+# Commands: reset, migrate, seed, studio, generate
+# reset: npx prisma db push --force-reset (⚠️ destroys data)
+# migrate: npx prisma db push (applies schema changes)
+# seed: npx prisma db seed (populates with sample data)
+# studio: npx prisma studio (opens GUI at http://localhost:5555)
+# generate: npx prisma generate (regenerates client)
+```
+
+**🚀 `scripts/deploy.sh` - Deployment Prep**
+```bash
+#!/bin/bash
+# 1. Runs all tests (exits if any fail)
+# 2. Builds production assets
+# 3. Validates environment files exist
+# 4. Shows deployment checklist
+```
+
+**🔧 `scripts/maintenance.sh` - System Maintenance**
+```bash
+#!/bin/bash
+# update: npm update (all packages in root, backend, frontend)
+# audit: npm audit (security vulnerability scan)
+# clean: rm -rf node_modules, dist, build (complete cleanup)
+# logs: tail -n 50 backend/logs/app.log (recent application logs)
+```
+
+#### **Step 6: ✅ Setup Verification & Completion Report**
+```bash
+🔄 STEP: Verifying setup completion
+  └─ ✅ package.json exists
+  └─ ✅ backend/package.json exists
+  └─ ✅ frontend/package.json exists
+  └─ ✅ .env exists
+  └─ ✅ backend/.env exists
+  └─ ✅ frontend/.env exists
+  └─ ✅ backend/prisma/schema.prisma exists
+  └─ ✅ scripts/dev.sh created and executable
+  └─ ✅ scripts/build.sh created and executable
+  └─ ✅ scripts/test.sh created and executable
+  └─ ✅ scripts/db.sh created and executable
+  └─ ✅ scripts/deploy.sh created and executable
+  └─ ✅ scripts/maintenance.sh created and executable
+```
+
+**Final Success Display:**
+```bash
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              Setup Complete!                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+✅ SUCCESS: AssureMe Insurance Platform setup completed successfully!
+
+📋 Next Steps:
+1. 🗃️  Configure your database:
+   • Update DATABASE_URL in backend/.env
+   • Run: ./scripts/db.sh migrate
+   • Run: ./scripts/db.sh seed (optional)
+
+2. 📧 Configure email settings:
+   • Update SMTP settings in backend/.env  
+   • For Gmail: Enable 2FA and create an App Password
+
+3. 🔐 Update security settings:
+   • Change JWT_SECRET in backend/.env
+   • Update SESSION_SECRET in backend/.env
+
+4. 🚀 Start development:
+   • Run: ./scripts/dev.sh
+   • Frontend: http://localhost:3000
+   • Backend: http://localhost:5000
+
+🛠️  Available Helper Scripts:
+   • ./scripts/dev.sh       - Start development servers
+   • ./scripts/build.sh     - Build for production  
+   • ./scripts/test.sh      - Run all tests
+   • ./scripts/db.sh        - Database management
+   • ./scripts/deploy.sh    - Prepare for deployment
+   • ./scripts/maintenance.sh - Maintenance utilities
+```
 
 ### **📋 Detailed Setup Process Breakdown**
 
