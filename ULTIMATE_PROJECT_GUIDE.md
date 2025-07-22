@@ -172,6 +172,723 @@ cd frontend && npm start
 
 ---
 
+## 🖥️ **Complete Local Machine Setup Guide**
+
+> **This comprehensive guide will walk you through setting up the AssureMe Insurance Platform on your local machine from scratch, including all system dependencies, troubleshooting common issues, and verification steps.**
+
+### **📋 System Requirements**
+
+#### **Minimum System Requirements**
+- **Operating System**: Windows 10/11, macOS 10.15+, or Ubuntu 18.04+ (Linux)
+- **RAM**: 8GB minimum, 16GB recommended
+- **Storage**: 5GB free space
+- **Internet**: Stable internet connection for dependency downloads
+
+#### **Required Software Versions**
+- **Node.js**: v18.0.0 or higher (v22.16.0 tested and working)
+- **npm**: v8.0.0 or higher (v10.9.2 tested and working)
+- **Git**: Any recent version
+- **PostgreSQL**: v13+ (for local database) OR cloud database account
+
+### **🔧 Step 1: System Dependencies Installation**
+
+#### **Windows Setup**
+
+##### **Install Node.js and npm**
+```bash
+# Option 1: Download from official website
+# Go to https://nodejs.org/en/download/
+# Download and install the LTS version
+
+# Option 2: Using Chocolatey (if installed)
+choco install nodejs
+
+# Option 3: Using winget
+winget install OpenJS.NodeJS
+```
+
+##### **Install Git**
+```bash
+# Download from https://git-scm.com/download/win
+# Or using Chocolatey
+choco install git
+
+# Or using winget
+winget install Git.Git
+```
+
+##### **Install PostgreSQL (Optional - for local database)**
+```bash
+# Download from https://www.postgresql.org/download/windows/
+# Or using Chocolatey
+choco install postgresql
+
+# Or using winget
+winget install PostgreSQL.PostgreSQL
+```
+
+#### **macOS Setup**
+
+##### **Install Node.js and npm**
+```bash
+# Option 1: Download from official website
+# Go to https://nodejs.org/en/download/
+
+# Option 2: Using Homebrew (recommended)
+brew install node
+
+# Option 3: Using MacPorts
+sudo port install nodejs18
+```
+
+##### **Install Git**
+```bash
+# Using Homebrew
+brew install git
+
+# Or install Xcode Command Line Tools
+xcode-select --install
+```
+
+##### **Install PostgreSQL (Optional)**
+```bash
+# Using Homebrew
+brew install postgresql@15
+brew services start postgresql@15
+
+# Or using Postgres.app
+# Download from https://postgresapp.com/
+```
+
+#### **Linux (Ubuntu/Debian) Setup**
+
+##### **Install Node.js and npm**
+```bash
+# Update package index
+sudo apt update
+
+# Install Node.js and npm
+sudo apt install nodejs npm
+
+# Or install specific version using NodeSource repository
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Or using snap
+sudo snap install node --classic
+```
+
+##### **Install Git**
+```bash
+sudo apt update
+sudo apt install git
+```
+
+##### **Install PostgreSQL (Optional)**
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+# Start PostgreSQL service
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+#### **Linux (CentOS/RHEL/Fedora) Setup**
+
+##### **Install Node.js and npm**
+```bash
+# For CentOS/RHEL
+sudo yum install nodejs npm
+
+# For Fedora
+sudo dnf install nodejs npm
+
+# Or using NodeSource repository
+curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+sudo yum install nodejs
+```
+
+### **🔍 Step 2: Verify Installation**
+
+#### **Check Installed Versions**
+```bash
+# Check Node.js version (should be 18+)
+node --version
+
+# Check npm version (should be 8+)
+npm --version
+
+# Check Git version
+git --version
+
+# Check PostgreSQL version (if installed locally)
+psql --version
+```
+
+#### **Expected Output**
+```bash
+$ node --version
+v18.17.0  # or higher
+
+$ npm --version
+9.6.7     # or higher
+
+$ git --version
+git version 2.34.1  # any recent version
+
+$ psql --version
+psql (PostgreSQL) 15.3  # if using local PostgreSQL
+```
+
+### **📦 Step 3: Project Setup**
+
+#### **Clone the Repository**
+```bash
+# Clone the project
+git clone https://github.com/rahulvellaturi/AssureMe_Insurance
+cd AssureMe_Insurance
+
+# Verify project structure
+ls -la
+```
+
+#### **Expected Project Structure**
+```
+AssureMe_Insurance/
+├── backend/              # Backend API server
+├── frontend/             # React frontend application
+├── scripts/              # Utility scripts
+├── setup.sh             # Automated setup script
+├── start-dev.sh         # Development startup script
+├── package.json         # Root package configuration
+├── README.md            # Project documentation
+└── ULTIMATE_PROJECT_GUIDE.md  # Complete guide (this file)
+```
+
+### **🛠️ Step 4: Dependency Installation**
+
+#### **Option A: Automated Installation (Recommended)**
+```bash
+# Make setup script executable (Linux/macOS)
+chmod +x setup.sh
+
+# Run automated setup
+./setup.sh
+
+# On Windows (if using Git Bash)
+bash setup.sh
+
+# On Windows (if using Command Prompt/PowerShell)
+# You'll need to run the manual installation steps below
+```
+
+#### **Option B: Manual Installation**
+
+##### **Install Root Dependencies**
+```bash
+# Install project-level dependencies
+npm install
+```
+
+##### **Install Backend Dependencies**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Install all backend dependencies
+npm install
+
+# Install additional dependencies if needed
+npm install --save-dev @types/jest
+
+# Go back to project root
+cd ..
+```
+
+##### **Install Frontend Dependencies**
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install all frontend dependencies
+npm install
+
+# Install missing dependencies if any
+npm install react-refresh
+
+# Go back to project root
+cd ..
+```
+
+### **🗄️ Step 5: Database Setup**
+
+#### **Option A: Cloud Database (Supabase - Recommended)**
+
+##### **Create Supabase Account**
+1. Go to [supabase.com](https://supabase.com)
+2. Sign up for a free account
+3. Click "New Project"
+4. Fill in project details:
+   - **Name**: `assureme-insurance`
+   - **Database Password**: Generate a strong password (save this!)
+   - **Region**: Choose closest to your location
+   - **Plan**: Free
+
+##### **Get Database Connection String**
+1. Once project is created, go to **Settings** → **Database**
+2. Scroll down to "Connection string"
+3. Copy the URI format connection string
+4. Replace `[YOUR-PASSWORD]` with your actual password
+
+##### **Configure Backend Environment**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Copy environment example
+cp .env.example .env
+
+# Edit the .env file (use your preferred editor)
+nano .env
+# or
+code .env
+# or
+vim .env
+```
+
+##### **Update Database URL in .env**
+```env
+# Replace with your actual Supabase connection string
+DATABASE_URL="postgresql://postgres:your-password@db.your-project-ref.supabase.co:5432/postgres"
+```
+
+#### **Option B: Local PostgreSQL Database**
+
+##### **Create Local Database**
+```bash
+# Switch to postgres user (Linux/macOS)
+sudo -u postgres psql
+
+# Create database and user
+CREATE DATABASE assureme;
+CREATE USER assureme_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE assureme TO assureme_user;
+\q
+
+# On Windows (using psql command prompt)
+psql -U postgres
+# Then run the same SQL commands above
+```
+
+##### **Configure Local Database Connection**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Copy and edit environment file
+cp .env.example .env
+```
+
+##### **Update .env for Local Database**
+```env
+DATABASE_URL="postgresql://assureme_user:your_password@localhost:5432/assureme"
+```
+
+#### **Initialize Database Schema**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Generate Prisma client
+npx prisma generate
+
+# Push database schema
+npx prisma db push
+
+# Seed database with sample data
+npx prisma db seed
+
+# Verify database setup (optional)
+npx prisma studio
+# This opens a web interface at http://localhost:5555
+```
+
+### **⚙️ Step 6: Environment Configuration**
+
+#### **Backend Environment (.env)**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Edit .env file with all required variables
+```
+
+##### **Complete Backend .env Template**
+```env
+# Database Configuration (REQUIRED)
+DATABASE_URL="your-database-connection-string"
+
+# Server Configuration
+NODE_ENV=development
+PORT=5000
+FRONTEND_URL=http://localhost:3000
+
+# JWT Configuration (REQUIRED)
+JWT_SECRET=your-super-secret-jwt-key-at-least-32-characters-long
+JWT_EXPIRES_IN=24h
+
+# Email Configuration (Optional - for production)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+EMAIL_FROM=noreply@assureme.com
+
+# File Upload Configuration (Optional)
+CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+MAX_FILE_SIZE=10485760
+
+# Feature Flags
+ENABLE_MFA=true
+ENABLE_EMAIL_NOTIFICATIONS=false
+ENABLE_FILE_UPLOAD=true
+```
+
+#### **Frontend Environment (.env)**
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Copy and edit environment file
+cp .env.example .env
+```
+
+##### **Complete Frontend .env Template**
+```env
+# API Configuration (REQUIRED)
+REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_BACKEND_URL=http://localhost:5000
+
+# Application Configuration
+REACT_APP_APP_NAME=AssureMe
+REACT_APP_VERSION=1.0.0
+REACT_APP_ENVIRONMENT=development
+
+# Feature Flags
+REACT_APP_ENABLE_ANALYTICS=false
+REACT_APP_ENABLE_DEBUG=true
+REACT_APP_ENABLE_MFA=true
+REACT_APP_ENABLE_NOTIFICATIONS=true
+
+# Development Configuration
+GENERATE_SOURCEMAP=true
+REACT_APP_ENABLE_REDUX_DEVTOOLS=true
+```
+
+### **🚀 Step 7: Start the Application**
+
+#### **Option A: Start Both Servers with One Command**
+```bash
+# From project root directory
+npm run dev
+
+# This starts both backend and frontend simultaneously
+```
+
+#### **Option B: Start Servers Manually**
+
+##### **Terminal 1: Start Backend Server**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Start backend development server
+npm run dev
+
+# You should see output like:
+# Server running on port 5000
+# Database connected successfully
+```
+
+##### **Terminal 2: Start Frontend Server**
+```bash
+# Open a new terminal window/tab
+# Navigate to frontend directory
+cd frontend
+
+# Start React development server
+npm start
+
+# You should see output like:
+# webpack compiled with 0 errors
+# Local:            http://localhost:3000
+# On Your Network:  http://192.168.1.x:3000
+```
+
+### **✅ Step 8: Verify Installation**
+
+#### **Check Server Status**
+```bash
+# Check if backend is running
+curl http://localhost:5000/api
+# Expected: {"message": "AssureMe API is running"}
+
+# Check if frontend is accessible
+curl -I http://localhost:3000
+# Expected: HTTP/1.1 200 OK
+```
+
+#### **Test Database Connection**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Open Prisma Studio to verify database
+npx prisma studio
+
+# This should open http://localhost:5555 in your browser
+# You should see your database tables with sample data
+```
+
+#### **Access the Application**
+1. **Frontend Application**: http://localhost:3000
+2. **Backend API**: http://localhost:5000/api
+3. **Database Admin**: http://localhost:5555 (Prisma Studio)
+
+#### **Test Login**
+1. Go to http://localhost:3000
+2. Try logging in with test credentials:
+   - **Client**: `john.doe@email.com` / `password123`
+   - **Admin**: `admin@assureme.com` / `admin123`
+
+### **🔧 Common Issues & Solutions**
+
+#### **Issue 1: Node.js Version Too Old**
+```bash
+# Error: Node.js version not supported
+# Solution: Update Node.js
+
+# Using nvm (recommended)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+nvm install 18
+nvm use 18
+nvm alias default 18
+
+# Verify version
+node --version  # Should show v18.x.x or higher
+```
+
+#### **Issue 2: Port Already in Use**
+```bash
+# Error: Port 3000/5000 already in use
+# Solution: Kill existing processes
+
+# Find and kill process on port 3000
+lsof -ti:3000 | xargs kill -9
+
+# Find and kill process on port 5000
+lsof -ti:5000 | xargs kill -9
+
+# Or change ports in environment files
+# Backend: Change PORT=5001 in backend/.env
+# Frontend: Change port in package.json or use PORT=3001 npm start
+```
+
+#### **Issue 3: Database Connection Failed**
+```bash
+# Error: Database connection failed
+# Solutions:
+
+# 1. Check DATABASE_URL in backend/.env
+# 2. Verify database server is running (if local)
+sudo systemctl status postgresql  # Linux
+brew services list | grep postgresql  # macOS
+
+# 3. Test connection manually
+npx prisma db pull  # Should connect without errors
+
+# 4. Reset database if needed
+npx prisma db reset  # WARNING: This deletes all data
+```
+
+#### **Issue 4: npm Install Fails**
+```bash
+# Error: npm install fails with permission errors
+# Solutions:
+
+# 1. Clear npm cache
+npm cache clean --force
+
+# 2. Delete node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# 3. Fix npm permissions (Linux/macOS)
+sudo chown -R $(whoami) ~/.npm
+
+# 4. Use different registry if needed
+npm install --registry https://registry.npmjs.org/
+```
+
+#### **Issue 5: TypeScript Compilation Errors**
+```bash
+# Error: TypeScript compilation fails
+# Solutions:
+
+# 1. Install missing types
+npm install --save-dev @types/jest @types/node
+
+# 2. Update TypeScript configuration
+# Edit tsconfig.json to exclude test files from build:
+"exclude": [
+  "node_modules",
+  "dist",
+  "**/*.test.ts",
+  "**/*.test.tsx",
+  "**/__tests__/**/*"
+]
+
+# 3. Skip lib check temporarily
+# Add to tsconfig.json compilerOptions:
+"skipLibCheck": true
+```
+
+#### **Issue 6: Frontend Build Fails**
+```bash
+# Error: React build fails with missing dependencies
+# Solutions:
+
+# 1. Install missing dependencies
+npm install react-refresh
+
+# 2. Clear React cache
+rm -rf node_modules/.cache
+npm start
+
+# 3. Update React scripts if needed
+npm install react-scripts@latest
+```
+
+### **🧪 Step 9: Run Tests**
+
+#### **Backend Tests**
+```bash
+# Navigate to backend directory
+cd backend
+
+# Run all tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run specific test file
+npm test -- authController.test.ts
+```
+
+#### **Frontend Tests**
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Run all tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in CI mode (non-interactive)
+npm run test:ci
+```
+
+### **📊 Step 10: Performance Optimization**
+
+#### **Development Performance**
+```bash
+# Increase Node.js memory limit if needed
+export NODE_OPTIONS="--max-old-space-size=4096"
+
+# Use faster npm installs
+npm config set registry https://registry.npmjs.org/
+npm config set prefer-offline true
+```
+
+#### **System Resource Monitoring**
+```bash
+# Monitor system resources
+# Linux/macOS
+htop
+# or
+top
+
+# Windows
+# Open Task Manager (Ctrl+Shift+Esc)
+```
+
+### **🔐 Security Considerations**
+
+#### **Environment Variables**
+- ✅ Never commit `.env` files to version control
+- ✅ Use strong JWT secrets (32+ characters)
+- ✅ Change default passwords in production
+- ✅ Use HTTPS in production
+
+#### **Database Security**
+- ✅ Use strong database passwords
+- ✅ Limit database access to necessary IPs
+- ✅ Regular database backups
+- ✅ Keep database software updated
+
+### **📈 Next Steps**
+
+Once your local setup is complete:
+
+1. **Explore the Application**
+   - Test all features in both client and admin portals
+   - Verify form submissions and data persistence
+   - Test file uploads and downloads
+
+2. **Development Workflow**
+   - Make code changes and see hot reload in action
+   - Run tests before committing changes
+   - Use browser developer tools for debugging
+
+3. **Prepare for Production**
+   - Set up cloud database (Supabase recommended)
+   - Configure email service (Gmail, SendGrid, etc.)
+   - Set up file storage (Cloudinary)
+   - Plan deployment strategy
+
+### **💡 Development Tips**
+
+1. **Use Multiple Terminals**
+   - Terminal 1: Backend server (`npm run dev`)
+   - Terminal 2: Frontend server (`npm start`)
+   - Terminal 3: Database management (`npx prisma studio`)
+   - Terminal 4: Testing and git commands
+
+2. **Browser Developer Tools**
+   - Open DevTools (F12) to debug frontend issues
+   - Use Network tab to monitor API calls
+   - Check Console for JavaScript errors
+
+3. **Database Management**
+   - Use Prisma Studio for visual database management
+   - Keep database schema in sync with `npx prisma db push`
+   - Regular backups with `pg_dump` (PostgreSQL)
+
+4. **Code Quality**
+   - Run TypeScript checks: `npx tsc --noEmit`
+   - Format code: `npx prettier --write .`
+   - Run linting: `npx eslint src/`
+
+---
+
 ## 📋 **Complete Installation Guide**
 
 ### **Prerequisites**
@@ -1945,3 +2662,217 @@ The AssureMe Insurance Platform is now a **complete, production-ready, enterpris
 *Last updated: December 2024 | Version: 2.0.0 - Ultimate Enterprise Edition*
 
 *This document represents the complete merger of all project documentation into one comprehensive guide covering every aspect of the AssureMe Insurance Platform development, testing, deployment, and maintenance.*
+
+---
+
+## 📦 **Dependencies Summary**
+
+> **Quick reference of all dependencies required for the AssureMe Insurance Platform**
+
+### **🖥️ System Dependencies**
+
+| Dependency | Minimum Version | Tested Version | Installation |
+|------------|----------------|----------------|--------------|
+| **Node.js** | v18.0.0 | v22.16.0 | [nodejs.org](https://nodejs.org) |
+| **npm** | v8.0.0 | v10.9.2 | Included with Node.js |
+| **Git** | Any recent | 2.34.1+ | [git-scm.com](https://git-scm.com) |
+| **PostgreSQL** | v13.0+ | v15.3+ | [postgresql.org](https://postgresql.org) (Optional) |
+
+### **🔧 Backend Dependencies (backend/package.json)**
+
+#### **Production Dependencies**
+```json
+{
+  "express": "^4.18.2",           // Web framework
+  "cors": "^2.8.5",               // Cross-origin resource sharing
+  "helmet": "^7.1.0",             // Security headers
+  "dotenv": "^16.3.1",            // Environment variables
+  "bcryptjs": "^2.4.3",           // Password hashing
+  "jsonwebtoken": "^9.0.2",       // JWT authentication
+  "nodemailer": "^6.9.7",         // Email service
+  "multer": "^1.4.5-lts.1",       // File upload handling
+  "cloudinary": "^1.41.0",        // Cloud file storage
+  "prisma": "^5.6.0",             // Database ORM
+  "@prisma/client": "^5.6.0"      // Prisma client
+}
+```
+
+#### **Development Dependencies**
+```json
+{
+  "@types/node": "^20.9.0",       // TypeScript types for Node.js
+  "@types/express": "^4.17.21",   // TypeScript types for Express
+  "@types/cors": "^2.8.17",       // TypeScript types for CORS
+  "@types/bcryptjs": "^2.4.6",    // TypeScript types for bcryptjs
+  "@types/jsonwebtoken": "^9.0.5", // TypeScript types for JWT
+  "@types/nodemailer": "^6.4.14", // TypeScript types for nodemailer
+  "@types/multer": "^1.4.11",     // TypeScript types for multer
+  "typescript": "^5.2.2",         // TypeScript compiler
+  "nodemon": "^3.0.1",            // Development server with hot reload
+  "ts-node": "^10.9.1",           // TypeScript execution for Node.js
+  "jest": "^29.7.0",              // Testing framework
+  "@types/jest": "^29.5.8",       // TypeScript types for Jest
+  "ts-jest": "^29.1.1",           // Jest TypeScript preprocessor
+  "supertest": "^6.3.3",          // HTTP testing library
+  "@types/supertest": "^2.0.16"   // TypeScript types for supertest
+}
+```
+
+### **⚛️ Frontend Dependencies (frontend/package.json)**
+
+#### **Production Dependencies**
+```json
+{
+  "react": "^18.2.0",             // React library
+  "react-dom": "^18.2.0",         // React DOM rendering
+  "react-scripts": "5.0.1",       // Create React App scripts
+  "@reduxjs/toolkit": "^1.9.7",   // Redux state management
+  "react-redux": "^8.1.3",        // React Redux bindings
+  "redux-persist": "^6.0.0",      // Redux persistence
+  "react-router-dom": "^6.20.1",  // React routing
+  "react-hook-form": "^7.48.2",   // Form handling
+  "@hookform/resolvers": "^3.3.2", // Form validation resolvers
+  "zod": "^3.22.4",               // Schema validation
+  "axios": "^1.6.2",              // HTTP client
+  "framer-motion": "^10.16.5",    // Animation library
+  "lucide-react": "^0.294.0",     // Icon library
+  "date-fns": "^2.30.0",          // Date utilities
+  "clsx": "^2.0.0",               // Conditional CSS classes
+  "tailwind-merge": "^2.1.0",     // Tailwind CSS utilities
+  "class-variance-authority": "^0.7.0" // CSS variant utilities
+}
+```
+
+#### **Radix UI Components**
+```json
+{
+  "@radix-ui/react-accordion": "^1.1.2",
+  "@radix-ui/react-alert-dialog": "^1.0.5",
+  "@radix-ui/react-avatar": "^1.0.4",
+  "@radix-ui/react-checkbox": "^1.0.4",
+  "@radix-ui/react-dialog": "^1.0.5",
+  "@radix-ui/react-dropdown-menu": "^2.0.6",
+  "@radix-ui/react-label": "^2.0.2",
+  "@radix-ui/react-popover": "^1.0.7",
+  "@radix-ui/react-progress": "^1.0.3",
+  "@radix-ui/react-scroll-area": "^1.0.5",
+  "@radix-ui/react-select": "^2.0.0",
+  "@radix-ui/react-separator": "^1.0.3",
+  "@radix-ui/react-slider": "^1.1.2",
+  "@radix-ui/react-switch": "^1.0.3",
+  "@radix-ui/react-tabs": "^1.0.4",
+  "@radix-ui/react-toast": "^1.1.5",
+  "@radix-ui/react-tooltip": "^1.0.7"
+}
+```
+
+#### **Development Dependencies**
+```json
+{
+  "@types/node": "^20.9.0",       // TypeScript types for Node.js
+  "@types/react": "^18.2.37",     // TypeScript types for React
+  "@types/react-dom": "^18.2.15", // TypeScript types for React DOM
+  "enzyme": "^3.11.0",            // Testing utility for React
+  "@cfaester/enzyme-adapter-react-18": "^0.8.0", // Enzyme adapter for React 18
+  "@types/enzyme": "^3.10.19",    // TypeScript types for Enzyme
+  "@faker-js/faker": "^8.3.1",    // Fake data generation for tests
+  "jest": "^27.5.1",              // Testing framework
+  "jest-environment-jsdom": "^29.7.0", // JSDOM environment for Jest
+  "jsdom-global": "^3.0.2",       // Global JSDOM setup
+  "whatwg-fetch": "^3.6.20",      // Fetch polyfill
+  "tailwindcss": "^3.3.5",        // CSS framework
+  "autoprefixer": "^10.4.16",     // CSS autoprefixer
+  "postcss": "^8.4.31"            // CSS processor
+}
+```
+
+### **🔧 Root Dependencies (package.json)**
+
+```json
+{
+  "concurrently": "^8.2.2"        // Run multiple commands simultaneously
+}
+```
+
+### **🌐 External Services (Optional)**
+
+| Service | Purpose | Free Tier | Required |
+|---------|---------|-----------|----------|
+| **Supabase** | PostgreSQL Database | 500MB, 2M requests/month | Recommended |
+| **Cloudinary** | File Storage | 25 credits/month | Optional |
+| **Gmail SMTP** | Email Service | Free with Gmail account | Optional |
+| **Stripe** | Payment Processing | Test mode free | Optional |
+
+### **🛠️ Development Tools**
+
+| Tool | Purpose | Installation |
+|------|---------|--------------|
+| **Prisma Studio** | Database GUI | `npx prisma studio` |
+| **TypeScript** | Type checking | `npx tsc --noEmit` |
+| **ESLint** | Code linting | `npx eslint src/` |
+| **Prettier** | Code formatting | `npx prettier --write .` |
+| **Jest** | Testing framework | `npm test` |
+
+### **📊 Dependency Installation Commands**
+
+#### **Complete Fresh Installation**
+```bash
+# Clone repository
+git clone https://github.com/rahulvellaturi/AssureMe_Insurance
+cd AssureMe_Insurance
+
+# Install all dependencies (root, backend, frontend)
+npm install
+cd backend && npm install && cd ../frontend && npm install && cd ..
+
+# Install missing dependencies if needed
+cd frontend && npm install react-refresh && cd ..
+cd backend && npm install --save-dev @types/jest && cd ..
+```
+
+#### **Dependency Updates**
+```bash
+# Check for outdated packages
+npm outdated
+
+# Update all dependencies to latest compatible versions
+npm update
+
+# Update specific dependency
+npm install package-name@latest
+```
+
+#### **Security Audits**
+```bash
+# Check for security vulnerabilities
+npm audit
+
+# Fix automatically fixable vulnerabilities
+npm audit fix
+
+# Force fix (may introduce breaking changes)
+npm audit fix --force
+```
+
+### **🔍 Dependency Verification Commands**
+
+```bash
+# Verify all dependencies are installed correctly
+cd backend && npm ls && cd ../frontend && npm ls && cd ..
+
+# Check for missing peer dependencies
+npm ls --depth=0
+
+# Verify TypeScript compilation
+cd backend && npx tsc --noEmit && cd ../frontend && npx tsc --noEmit && cd ..
+
+# Test dependency loading
+cd backend && node -e "console.log('Backend deps OK')" && cd ..
+cd frontend && node -e "console.log('Frontend deps OK')" && cd ..
+```
+
+---
+
+## 📋 **Complete Installation Guide**
+
+// ... existing code ...
