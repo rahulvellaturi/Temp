@@ -221,6 +221,7 @@ export const FormModal: React.FC<{
   isLoading?: boolean;
   size?: ModalProps['size'];
   icon?: React.ReactNode;
+  backdrop?: ModalProps['backdrop'];
 }> = ({
   isOpen,
   onClose,
@@ -232,7 +233,8 @@ export const FormModal: React.FC<{
   cancelText = 'Cancel',
   isLoading = false,
   size = 'md',
-  icon
+  icon,
+  backdrop = 'none',
 }) => {
   return (
     <Modal
@@ -242,6 +244,7 @@ export const FormModal: React.FC<{
       subtitle={subtitle}
       size={size}
       icon={icon}
+      backdrop={backdrop}
       footer={
         <div className="flex justify-end space-x-3">
           <Button
