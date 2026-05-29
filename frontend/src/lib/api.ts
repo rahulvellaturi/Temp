@@ -123,11 +123,17 @@ const createApiClient = (): AxiosInstance => {
         });
       }
 
-      // Handle token expiration
-      if (error.response?.status === 401 && !originalRequest?.skipAuth) {
+      // Handle token expiration (do not redirect on failed login/register attempts)
+      const requestUrl = originalRequest?.url ?? '';
+      const isAuthRoute =
+        requestUrl.includes('/auth/login') || requestUrl.includes('/auth/register');
+
+      if (error.response?.status === 401 && !originalRequest?.skipAuth && !isAuthRoute) {
         localStorage.removeItem('token');
         delete client.defaults.headers.common['Authorization'];
-        window.location.href = '/login';
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login';
+        }
         return Promise.reject(new ApiError('Authentication required', 401, 'UNAUTHORIZED'));
       }
 

@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
 import { loginUser, clearError } from '@/store/slices/authSlice';
 import { useGenericForm } from '@/hooks/useGenericForm';
 import { authSchemas } from '@/lib/validations';
 import { ROUTES } from '@/lib/constants';
+import { DEMO_ACCOUNTS, DemoAccount } from '@/lib/demoAccounts';
 import { FormField, FormInput } from '@/components/common/Form';
 import Button from '@/components/common/Button';
 
@@ -12,6 +13,7 @@ const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { isLoading, error, mfaRequired, isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const [submitting, setSubmitting] = useState(false);
 
   const form = useGenericForm({
     schema: authSchemas.login,
@@ -24,21 +26,34 @@ const LoginPage: React.FC = () => {
     showSuccessMessage: false,
   });
 
-  const { register, handleSubmit, formState: { errors }, reset } = form;
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = form;
 
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const isClient = !user || user.role === 'CLIENT';
-      navigate(isClient ? ROUTES.CLIENT.ROOT : ROUTES.ADMIN.ROOT);
+    if (isAuthenticated && user) {
+      const isClient = user.role === 'CLIENT';
+      navigate(isClient ? ROUTES.CLIENT.ROOT : ROUTES.ADMIN.ROOT, { replace: true });
     }
   }, [isAuthenticated, user, navigate]);
 
-  const onSubmit = async (data: any) => {
-    await dispatch(loginUser(data)).unwrap();
+  const onSubmit = async (data: { email: string; password: string; mfaToken?: string }) => {
+    try {
+      setSubmitting(true);
+      await dispatch(loginUser(data)).unwrap();
+    } catch {
+      // Error shown via auth slice
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const fillDemoAccount = (account: DemoAccount) => {
+    dispatch(clearError());
+    setValue('email', account.email);
+    setValue('password', account.password);
   };
 
   const handleTryAgain = () => {
@@ -46,7 +61,7 @@ const LoginPage: React.FC = () => {
     reset();
   };
 
-  if (isLoading) {
+  if (isLoading && !submitting && isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -85,11 +100,7 @@ const LoginPage: React.FC = () => {
           )}
 
           <div className="space-y-4">
-            <FormField
-              label="Email address"
-              error={errors.email?.message}
-              required
-            >
+            <FormField label="Email address" error={errors.email?.message} required>
               <FormInput
                 {...register('email')}
                 type="email"
@@ -99,11 +110,7 @@ const LoginPage: React.FC = () => {
               />
             </FormField>
 
-            <FormField
-              label="Password"
-              error={errors.password?.message}
-              required
-            >
+            <FormField label="Password" error={errors.password?.message} required>
               <FormInput
                 {...register('password')}
                 variant="password"
@@ -145,34 +152,42 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <Button
-              type="submit"
-              loading={isLoading}
-              className="w-full"
-              size="lg"
-            >
+            <Button type="submit" loading={submitting} className="w-full" size="lg">
               Sign in
             </Button>
 
             <div className="text-center">
-              <Link
-                to={ROUTES.FORGOT_PASSWORD}
-                className="text-sm text-primary hover:text-primary/80"
-              >
+              <Link to={ROUTES.FORGOT_PASSWORD} className="text-sm text-primary hover:text-primary/80">
                 Forgot your password?
               </Link>
             </div>
           </div>
         </form>
 
-        <div className="mt-6 text-center text-sm text-neutral-600">
-          <p>Demo Accounts:</p>
-          <p className="mt-1">
-            <strong>Client:</strong> john.doe@example.com / client123
+        <div className="mt-6 rounded-lg border border-neutral-200 bg-white p-4 text-left shadow-sm">
+          <p className="text-sm font-semibold text-neutral-900">Demo accounts</p>
+          <p className="mt-1 text-xs text-neutral-500">
+            Click a row to fill email and password. Ensure the API is running and the database is seeded.
           </p>
-          <p>
-            <strong>Admin:</strong> admin@assureme.com / admin123
-          </p>
+          <ul className="mt-3 space-y-2">
+            {DEMO_ACCOUNTS.map((account) => (
+              <li key={account.email}>
+                <button
+                  type="button"
+                  onClick={() => fillDemoAccount(account)}
+                  className="w-full rounded-md border border-neutral-100 px-3 py-2 text-left text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
+                >
+                  <span className="font-medium text-neutral-900">{account.label}</span>
+                  <span className="mt-0.5 block font-mono text-xs text-neutral-600">
+                    {account.email} / {account.password}
+                  </span>
+                  <span className="text-xs text-neutral-400">
+                    {account.portal === 'admin' ? 'Admin portal' : 'Client portal'} · {account.role}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

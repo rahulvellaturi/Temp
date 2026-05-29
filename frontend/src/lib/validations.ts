@@ -10,6 +10,7 @@ export const authSchemas = {
   login: z.object({
     email: z.string().email('Please enter a valid email address'),
     password: z.string().min(1, 'Password is required'),
+    mfaToken: z.string().optional(),
     rememberMe: z.boolean().optional(),
   }),
 

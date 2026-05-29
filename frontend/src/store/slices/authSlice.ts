@@ -7,17 +7,27 @@ export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string; mfaToken?: string }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/login', credentials);
-      const { token, user } = response.data;
-      
-      // Store token in localStorage and set default header
+      const response = await api.post('/auth/login', credentials, { skipAuth: true } as any);
+      const body = response.data ?? {};
+      const token = body.token ?? body.data?.token;
+      const user = body.user ?? body.data?.user;
+
+      if (!token || !user) {
+        return rejectWithValue('Login failed: invalid server response. Is the API running?');
+      }
+
       localStorage.setItem('token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
+
       return { token, user };
     } catch (error: any) {
       const data = error.response?.data;
-      const message = data?.error || error.message || 'Login failed';
+      const message =
+        data?.error ||
+        data?.message ||
+        (typeof data === 'string' ? data : null) ||
+        error.message ||
+        'Login failed';
       if (data?.details?.mfaRequired) {
         return rejectWithValue('MFA required');
       }
@@ -40,8 +50,14 @@ export const registerUser = createAsyncThunk(
     zipCode?: string;
   }, { rejectWithValue }) => {
     try {
-      const response = await api.post('/auth/register', userData);
-      const { token, user } = response.data;
+      const response = await api.post('/auth/register', userData, { skipAuth: true } as any);
+      const body = response.data ?? {};
+      const token = body.token ?? body.data?.token;
+      const user = body.user ?? body.data?.user;
+
+      if (!token || !user) {
+        return rejectWithValue('Registration failed: invalid server response');
+      }
       
       // Store token in localStorage and set default header
       localStorage.setItem('token', token);

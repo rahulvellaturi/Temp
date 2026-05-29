@@ -39,9 +39,15 @@ chmod +x setup.sh
 - **Backend API**: http://localhost:5000
 - **API Docs**: http://localhost:5000/api-docs
 
-**Test credentials:**
-- **Client**: `john.doe@example.com` / `client123`
-- **Admin**: `admin@assureme.com` / `admin123`
+**Test credentials** (run `cd backend && npx ts-node prisma/seed.ts` if logins fail):
+
+| Role | Email | Password |
+|------|-------|----------|
+| Super Admin | `admin@assureme.com` | `admin123` |
+| Claims Adjuster | `adjuster@assureme.com` | `adjuster123` |
+| Billing Specialist | `billing@assureme.com` | `billing123` |
+| Client (John) | `john.doe@example.com` | `client123` |
+| Client (Jane) | `jane.smith@example.com` | `client123` |
 
 ## 📚 **Complete Documentation**
 
