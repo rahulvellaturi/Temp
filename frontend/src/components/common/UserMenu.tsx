@@ -143,7 +143,7 @@ const UserMenu: React.FC = () => {
         className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 transition-colors hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary/40"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-700 text-sm font-semibold text-white shadow-sm">
-          {getInitials(fullName)}
+          {getInitials(user.firstName, user.lastName)}
         </span>
         <span className="hidden text-left sm:block">
           <span className="block text-sm font-medium leading-tight text-neutral-800">{fullName}</span>
