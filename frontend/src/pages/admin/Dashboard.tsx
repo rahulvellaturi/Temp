@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAppSelector } from '@/hooks/useAppDispatch';
+import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
+import { addNotification } from '@/store/slices/uiSlice';
+import { buildAdminReportCsv, downloadCsv, getAdminQuickActions } from '@/lib/roleDashboardConfig';
 import PageHeader from '@/components/common/PageHeader';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
@@ -49,15 +52,6 @@ interface RecentActivity {
   timestamp: string;
   user: string;
   amount?: number;
-}
-
-interface QuickAction {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  action: string;
-  color: string;
 }
 
 type CardId =
@@ -134,7 +128,17 @@ const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   <h4 className="mb-2 mt-5 text-sm font-semibold uppercase tracking-wide text-neutral-500">{children}</h4>
 );
 
+const quickActionIcon = (id: string) => {
+  if (id.includes('policy') || id === 'policies' || id === 'billing-policies') return <Shield className="h-6 w-6" />;
+  if (id.includes('user') || id === 'users') return <Users className="h-6 w-6" />;
+  if (id.includes('claim') || id.includes('underwriting')) return <FileText className="h-6 w-6" />;
+  if (id.includes('report')) return <BarChart3 className="h-6 w-6" />;
+  return <Activity className="h-6 w-6" />;
+};
+
 const AdminDashboard: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
@@ -149,6 +153,10 @@ const AdminDashboard: React.FC = () => {
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCard, setActiveCard] = useState<CardId | null>(null);
+  const [showAllActivity, setShowAllActivity] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const roleQuickActions = useMemo(() => getAdminQuickActions(user?.role), [user?.role]);
 
   useEffect(() => {
     loadDashboardData();
@@ -176,12 +184,31 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const quickActions: QuickAction[] = [
-    { id: '1', title: 'Create Policy', description: 'Create a new insurance policy', icon: <Shield className="h-6 w-6" />, action: 'CREATE_POLICY', color: 'blue' },
-    { id: '2', title: 'Add User', description: 'Add a new client or agent', icon: <Users className="h-6 w-6" />, action: 'ADD_USER', color: 'green' },
-    { id: '3', title: 'Review Claims', description: 'Review pending claims', icon: <FileText className="h-6 w-6" />, action: 'REVIEW_CLAIMS', color: 'orange' },
-    { id: '4', title: 'Generate Report', description: 'Create analytics report', icon: <BarChart3 className="h-6 w-6" />, action: 'GENERATE_REPORT', color: 'purple' },
-  ];
+  const handleExportReport = async () => {
+    try {
+      setExporting(true);
+      const csv = buildAdminReportCsv(stats);
+      downloadCsv(`assureme-admin-report-${new Date().toISOString().slice(0, 10)}.csv`, csv);
+      dispatch(
+        addNotification({
+          type: 'success',
+          title: 'Report downloaded',
+          message: 'Admin dashboard summary exported as CSV.',
+          duration: 4000,
+        })
+      );
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleQuickAction = (action: ReturnType<typeof getAdminQuickActions>[0]) => {
+    if (!action.path) {
+      handleExportReport();
+      return;
+    }
+    navigate(action.path);
+  };
 
   const getActivityIcon = (type: string) => {
     const icons: Record<string, React.ReactNode> = {
@@ -491,7 +518,7 @@ const AdminDashboard: React.FC = () => {
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Refresh
               </Button>
-              <Button>
+              <Button onClick={handleExportReport} loading={exporting}>
                 <Download className="mr-2 h-4 w-4" />
                 Export Report
               </Button>
@@ -650,19 +677,23 @@ const AdminDashboard: React.FC = () => {
               <Settings className="h-5 w-5 text-neutral-500" />
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {quickActions.map((action) => (
-                <div
+              {roleQuickActions.map((action) => (
+                <motion.button
                   key={action.id}
-                  className={`cursor-pointer rounded-lg border-2 border-dashed p-4 transition-all hover:shadow-md ${getQuickActionColor(action.color)}`}
+                  type="button"
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => handleQuickAction(action)}
+                  className={`w-full rounded-lg border-2 border-dashed p-4 text-left transition-shadow hover:shadow-md ${getQuickActionColor(action.color)}`}
                 >
                   <div className="flex items-center space-x-3">
-                    {action.icon}
+                    {quickActionIcon(action.id)}
                     <div>
                       <h4 className="font-medium">{action.title}</h4>
                       <p className="text-sm opacity-75">{action.description}</p>
                     </div>
                   </div>
-                </div>
+                </motion.button>
               ))}
             </div>
           </Card>
@@ -690,7 +721,7 @@ const AdminDashboard: React.FC = () => {
               ))}
             </div>
             <div className="mt-4 border-t pt-4">
-              <Button variant="outline" size="sm" className="w-full">
+              <Button variant="outline" size="sm" className="w-full" onClick={() => setShowAllActivity(true)}>
                 <Eye className="mr-2 h-4 w-4" />
                 View All Activity
               </Button>
@@ -726,6 +757,33 @@ const AdminDashboard: React.FC = () => {
         accent={active?.accent}
       >
         {active?.render()}
+      </CardDetailModal>
+
+      <CardDetailModal
+        open={showAllActivity}
+        onClose={() => setShowAllActivity(false)}
+        title="All Recent Activity"
+        subtitle="Complete activity feed for your role"
+        icon={<Bell className="h-5 w-5" />}
+        accent="bg-orange-50 text-orange-600"
+      >
+        <div className="space-y-4">
+          {recentActivity.map((activity) => (
+            <div key={activity.id} className="flex items-start space-x-3 rounded-lg border border-neutral-100 p-3">
+              <div className="mt-0.5 flex-shrink-0">{getActivityIcon(activity.type)}</div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium text-neutral-900">{activity.user}</p>
+                  <span className="text-xs text-neutral-500">{formatDate(activity.timestamp)}</span>
+                </div>
+                <p className="text-sm text-neutral-600">{activity.description}</p>
+                {activity.amount != null && (
+                  <p className="text-sm font-medium text-green-600">{formatCurrency(activity.amount)}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </CardDetailModal>
     </div>
   );

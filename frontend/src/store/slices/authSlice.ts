@@ -16,9 +16,12 @@ export const loginUser = createAsyncThunk(
       
       return { token, user };
     } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.error || error.message || 'Login failed'
-      );
+      const data = error.response?.data;
+      const message = data?.error || error.message || 'Login failed';
+      if (data?.details?.mfaRequired) {
+        return rejectWithValue('MFA required');
+      }
+      return rejectWithValue(message);
     }
   }
 );

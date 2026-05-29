@@ -168,7 +168,7 @@ const LoginPage: React.FC = () => {
         <div className="mt-6 text-center text-sm text-neutral-600">
           <p>Demo Accounts:</p>
           <p className="mt-1">
-            <strong>Client:</strong> john.doe@email.com / password123
+            <strong>Client:</strong> john.doe@example.com / client123
           </p>
           <p>
             <strong>Admin:</strong> admin@assureme.com / admin123

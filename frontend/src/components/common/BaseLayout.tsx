@@ -1,7 +1,7 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
 import UserMenu from '@/components/common/UserMenu';
 import { ParallaxBackground } from '@/components/common/Parallax';
+import { AnimatedOutlet } from '@/components/common/PageTransition';
 
 interface BaseLayoutProps {
   title: string;
@@ -49,7 +49,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
         className="relative max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
         style={hasBackground ? { perspective: 1200 } : undefined}
       >
-        <Outlet />
+        <AnimatedOutlet />
       </main>
     </div>
   );

@@ -40,7 +40,7 @@ chmod +x setup.sh
 - **API Docs**: http://localhost:5000/api-docs
 
 **Test credentials:**
-- **Client**: `john.doe@email.com` / `password123`
+- **Client**: `john.doe@example.com` / `client123`
 - **Admin**: `admin@assureme.com` / `admin123`
 
 ## 📚 **Complete Documentation**
