@@ -1,0 +1,57 @@
+name: Migrate to Insurance-project
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout migration branch content
+        uses: actions/checkout@v4
+        with:
+          ref: cursor/admin-portal-ui-enhancements-f525
+
+      - name: Validate secret
+        run: |
+          if [ -z "${{ secrets.INSURANCE_PUSH_TOKEN }}" ]; then
+            echo "::error::Add repository secret INSURANCE_PUSH_TOKEN (PAT with repo scope on Insurance-project)"
+            exit 1
+          fi
+
+      - name: Push branches to Insurance-project
+        env:
+          TOKEN: ${{ secrets.INSURANCE_PUSH_TOKEN }}
+          BUNDLE: ${{ github.workspace }}/migration/insurance-project-branches.bundle
+        run: |
+          set -euo pipefail
+          git clone "https://x-access-token:${TOKEN}@github.com/rahulvellaturi/Insurance-project.git" repo
+          cd repo
+          git fetch "$BUNDLE" cursor/run-project-dev-f525:cursor/run-project-dev-f525
+          git fetch "$BUNDLE" cursor/admin-portal-ui-enhancements-f525:cursor/admin-portal-ui-enhancements-f525
+          git push origin cursor/run-project-dev-f525
+          git push origin cursor/admin-portal-ui-enhancements-f525
+
+      - name: Create pull requests
+        env:
+          GH_TOKEN: ${{ secrets.INSURANCE_PUSH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh pr list --repo rahulvellaturi/Insurance-project --head cursor/run-project-dev-f525 --json number --jq 'length' | grep -qv '^0$'; then
+            echo "PR for run-project-dev-f525 already exists"
+          else
+            gh pr create --repo rahulvellaturi/Insurance-project \
+              --base main \
+              --head cursor/run-project-dev-f525 \
+              --title "Make AssureMe runnable in dev (backend + frontend) and fix blank admin portal" \
+              --body "Migrated from Temp. All changes are under \`insurance_project/\`."
+          fi
+          if gh pr list --repo rahulvellaturi/Insurance-project --head cursor/admin-portal-ui-enhancements-f525 --json number --jq 'length' | grep -qv '^0$'; then
+            echo "PR for admin-portal-ui-enhancements-f525 already exists"
+          else
+            gh pr create --repo rahulvellaturi/Insurance-project \
+              --base cursor/run-project-dev-f525 \
+              --head cursor/admin-portal-ui-enhancements-f525 \
+              --title "AssureMe: admin UI, client portal fixes, Claims Center and form focus" \
+              --body "Migrated from Temp. Stack on the dev-fixes PR. Changes under \`insurance_project/\`."
+          fi
