@@ -86,6 +86,7 @@ module.exports = {
         error: "#DC3545",
         // Neutral colors from BRD
         neutral: {
+          25: "#FCFCFD",
           50: "#F8F9FA",
           100: "#E9ECEF",
           200: "#DEE2E6",

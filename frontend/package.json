@@ -42,9 +42,10 @@
     "zod": "^3.22.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "dev": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "test:watch": "react-scripts test --watchAll=false",
     "test:coverage": "react-scripts test --coverage --watchAll=false --verbose",
     "test:ci": "CI=true react-scripts test --coverage --watchAll=false --verbose",
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "@cfaester/enzyme-adapter-react-18": "^0.8.0",
+    "@craco/craco": "^7.1.0",
     "@faker-js/faker": "^8.3.1",
     "@types/enzyme": "^3.10.19",
     "@types/enzyme-adapter-react-16": "^1.0.6",
