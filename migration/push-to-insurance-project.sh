@@ -5,7 +5,8 @@
 set -euo pipefail
 
 REPO="https://github.com/rahulvellaturi/Insurance-project.git"
-BUNDLE="$(dirname "$0")/insurance-project-branches.bundle"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BUNDLE="$SCRIPT_DIR/insurance-project-branches.bundle"
 
 if [[ ! -f "$BUNDLE" ]]; then
   echo "Missing bundle: $BUNDLE"
