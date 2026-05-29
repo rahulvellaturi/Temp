@@ -30,6 +30,7 @@
     "**/__tests__/**/*"
   ],
   "ts-node": {
-    "esm": false
+    "esm": false,
+    "transpileOnly": true
   }
 }
