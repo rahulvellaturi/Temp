@@ -238,3 +238,18 @@ export function buildQueryString(params: Record<string, any>): string {
   }
   return searchParams.toString();
 }
+
+// Map a status value to Tailwind badge classes
+export function getStatusColor(status: string): string {
+  const normalized = (status || '').toUpperCase();
+  if (['ACTIVE', 'APPROVED', 'PAID', 'COMPLETED', 'SUCCESS'].includes(normalized)) {
+    return 'bg-secondary-100 text-secondary-700';
+  }
+  if (['PENDING', 'UNDER_REVIEW', 'SUBMITTED', 'INVESTIGATING', 'PENDING_RENEWAL', 'PROCESSING'].includes(normalized)) {
+    return 'bg-warning/20 text-warning';
+  }
+  if (['REJECTED', 'DENIED', 'FAILED', 'EXPIRED', 'CANCELLED', 'CLOSED'].includes(normalized)) {
+    return 'bg-destructive-100 text-destructive-700';
+  }
+  return 'bg-neutral-100 text-neutral-700';
+}
