@@ -8,9 +8,10 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
  */
 export const ParallaxBackground: React.FC<{ image: string }> = ({ image }) => {
   const { scrollY } = useScroll();
-  const rawY = useTransform(scrollY, [0, 1200], [0, 220]);
-  const y = useSpring(rawY, { stiffness: 80, damping: 30, mass: 0.4 });
-  const scale = useTransform(scrollY, [0, 1200], [1.12, 1.28]);
+  // Move the image noticeably (but slower than the content) for clear parallax.
+  const rawY = useTransform(scrollY, [0, 700], [0, 200]);
+  const y = useSpring(rawY, { stiffness: 90, damping: 28, mass: 0.4 });
+  const scale = useTransform(scrollY, [0, 700], [1.15, 1.32]);
 
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -19,8 +20,8 @@ export const ParallaxBackground: React.FC<{ image: string }> = ({ image }) => {
         style={{ y, scale, backgroundImage: `url(${image})` }}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
       />
-      {/* Readability overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/82 via-white/86 to-white/92" />
+      {/* Light overlay: keeps text readable while leaving the image clearly visible. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-white/45 to-white/65" />
     </div>
   );
 };

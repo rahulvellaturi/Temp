@@ -57,10 +57,10 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({
             role="dialog"
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
-            initial={{ opacity: 0, scale: 0.82, rotateX: -28, y: 60 }}
+            initial={{ opacity: 0, scale: 0.8, rotateX: -45, y: 80 }}
             animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
-            exit={{ opacity: 0, scale: 0.85, rotateX: 22, y: 40 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            exit={{ opacity: 0, scale: 0.85, rotateX: 35, y: 50 }}
+            transition={{ type: 'spring', stiffness: 170, damping: 19 }}
             style={{ transformPerspective: 1400, transformStyle: 'preserve-3d' }}
             className="relative z-[61] w-full max-w-2xl max-h-[88vh] overflow-hidden rounded-2xl bg-white shadow-2xl"
           >
