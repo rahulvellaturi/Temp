@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import AdminModalShell from '@/components/common/AdminModalShell';
+import { useModalFromSearchParam } from '@/hooks/useModalFromSearchParam';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { useApi } from '@/hooks/useApi';
 import { useGenericForm } from '@/hooks/useGenericForm';
@@ -77,6 +79,9 @@ const AdminUsers: React.FC = () => {
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [showEditUser, setShowEditUser] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const openCreateFromRoute = useCallback(() => setShowCreateUser(true), []);
+  useModalFromSearchParam('create', openCreateFromRoute);
 
   const { execute: fetchUsers } = useApi();
 
@@ -374,8 +379,7 @@ const AdminUsers: React.FC = () => {
     if (!selectedUser) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <AdminModalShell onClose={() => setShowDetails(false)} maxWidthClass="max-w-2xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -502,8 +506,7 @@ const AdminUsers: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
-      </div>
+      </AdminModalShell>
     );
   };
 
@@ -511,8 +514,7 @@ const AdminUsers: React.FC = () => {
     const { register, handleSubmit, formState: { errors } } = newUserForm;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <AdminModalShell onClose={() => setShowCreateUser(false)} maxWidthClass="max-w-2xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-900">Create New User</h2>
@@ -658,8 +660,7 @@ const AdminUsers: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
-      </div>
+      </AdminModalShell>
     );
   };
 
@@ -668,8 +669,7 @@ const AdminUsers: React.FC = () => {
     const { register, handleSubmit, formState: { errors } } = editUserForm;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <AdminModalShell onClose={() => setShowEditUser(false)} maxWidthClass="max-w-2xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-900">
@@ -792,8 +792,7 @@ const AdminUsers: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
-      </div>
+      </AdminModalShell>
     );
   };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface UseDataLoaderOptions<T> {
   initialData?: T;
@@ -32,11 +32,15 @@ export function useDataLoader<T>(
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Keep latest loader without retriggering effects when parent passes inline arrows
+  const loadFunctionRef = useRef(loadFunction);
+  loadFunctionRef.current = loadFunction;
+
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const result = await loadFunction();
+      const result = await loadFunctionRef.current();
       setData(result);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
@@ -45,7 +49,7 @@ export function useDataLoader<T>(
     } finally {
       setLoading(false);
     }
-  }, [loadFunction]);
+  }, []);
 
   const reset = useCallback(() => {
     setData(initialData);

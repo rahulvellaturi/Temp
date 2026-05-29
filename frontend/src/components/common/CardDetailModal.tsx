@@ -49,8 +49,8 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({
           onClick={onClose}
           style={{ perspective: 1400 }}
         >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm" />
+          {/* Light scrim — avoids heavy black overlay */}
+          <div className="absolute inset-0 bg-neutral-400/15 backdrop-blur-[2px]" />
 
           {/* 3D animated panel */}
           <motion.div

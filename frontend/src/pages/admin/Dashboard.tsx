@@ -16,7 +16,7 @@ import {
   Users,
   Shield,
   FileText,
-  DollarSign,
+  Wallet,
   TrendingUp,
   AlertTriangle,
   CheckCircle,
@@ -152,6 +152,7 @@ const AdminDashboard: React.FC = () => {
   });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [activeCard, setActiveCard] = useState<CardId | null>(null);
   const [showAllActivity, setShowAllActivity] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -162,9 +163,13 @@ const AdminDashboard: React.FC = () => {
     loadDashboardData();
   }, []);
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       const adminStats = mockDataService.getAdminStats() as AdminStats;
       setStats(adminStats);
 
@@ -177,10 +182,31 @@ const AdminDashboard: React.FC = () => {
         { id: '6', type: 'USER_REGISTERED', description: 'New client registration', timestamp: '2024-01-19T16:20:00Z', user: 'David Martinez' },
       ];
       setRecentActivity(mockActivity);
+      if (isRefresh) {
+        dispatch(
+          addNotification({
+            type: 'success',
+            title: 'Dashboard updated',
+            message: 'Latest metrics and activity have been refreshed.',
+            duration: 3000,
+          })
+        );
+      }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+      if (isRefresh) {
+        dispatch(
+          addNotification({
+            type: 'error',
+            title: 'Refresh failed',
+            message: 'Could not reload dashboard data. Please try again.',
+            duration: 4000,
+          })
+        );
+      }
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -207,6 +233,10 @@ const AdminDashboard: React.FC = () => {
       handleExportReport();
       return;
     }
+    if (action.openAction) {
+      navigate(`${action.path}?action=${action.openAction}`);
+      return;
+    }
     navigate(action.path);
   };
 
@@ -215,7 +245,7 @@ const AdminDashboard: React.FC = () => {
       USER_REGISTERED: <Users className="h-4 w-4 text-green-500" />,
       POLICY_CREATED: <Shield className="h-4 w-4 text-blue-500" />,
       CLAIM_FILED: <FileText className="h-4 w-4 text-orange-500" />,
-      PAYMENT_RECEIVED: <DollarSign className="h-4 w-4 text-green-500" />,
+      PAYMENT_RECEIVED: <Wallet className="h-4 w-4 text-green-500" />,
       CLAIM_APPROVED: <CheckCircle className="h-4 w-4 text-green-500" />,
     };
     return icons[type] || <Activity className="h-4 w-4 text-neutral-500" />;
@@ -370,7 +400,7 @@ const AdminDashboard: React.FC = () => {
     monthlyRevenue: {
       title: 'Monthly Revenue',
       subtitle: 'Revenue collected this month',
-      icon: <DollarSign className="h-5 w-5" />,
+      icon: <Wallet className="h-5 w-5" />,
       accent: 'bg-emerald-50 text-emerald-600',
       render: () => (
         <div>
@@ -456,7 +486,7 @@ const AdminDashboard: React.FC = () => {
     revenueOverview: {
       title: 'Revenue Overview',
       subtitle: 'Premium revenue at a glance',
-      icon: <DollarSign className="h-5 w-5" />,
+      icon: <Wallet className="h-5 w-5" />,
       accent: 'bg-emerald-50 text-emerald-600',
       render: () => {
         const premiumByType = (policies as any[]).reduce((acc: Record<string, number>, p) => {
@@ -514,8 +544,8 @@ const AdminDashboard: React.FC = () => {
           description="Monitor your insurance business operations and analytics"
           actions={
             <div className="flex space-x-2">
-              <Button variant="outline" onClick={loadDashboardData}>
-                <RefreshCw className="mr-2 h-4 w-4" />
+              <Button variant="outline" onClick={() => loadDashboardData(true)} loading={refreshing}>
+                <RefreshCw className={cn('mr-2 h-4 w-4', refreshing && 'animate-spin')} />
                 Refresh
               </Button>
               <Button onClick={handleExportReport} loading={exporting}>
@@ -589,7 +619,7 @@ const AdminDashboard: React.FC = () => {
                     <span className="text-sm text-green-600">Revenue growth</span>
                   </div>
                 </div>
-                <DollarSign className="h-8 w-8 text-green-500" />
+                <Wallet className="h-8 w-8 text-green-500" />
               </div>
             </Card>
           </ClickableCard>
@@ -647,7 +677,7 @@ const AdminDashboard: React.FC = () => {
             <Card className="h-full p-6">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-neutral-900">Revenue Overview</h3>
-                <DollarSign className="h-5 w-5 text-neutral-500" />
+                <Wallet className="h-5 w-5 text-neutral-500" />
               </div>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">

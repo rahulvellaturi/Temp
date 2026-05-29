@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import AdminModalShell from '@/components/common/AdminModalShell';
+import { useModalFromSearchParam } from '@/hooks/useModalFromSearchParam';
+import { formatCurrency } from '@/lib/utils';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { useApi } from '@/hooks/useApi';
 import { useGenericForm } from '@/hooks/useGenericForm';
@@ -18,7 +21,7 @@ import {
   Home,
   Heart,
   Activity,
-  DollarSign,
+  Wallet,
   Calendar,
   Users,
   CheckCircle,
@@ -80,7 +83,12 @@ const AdminPolicies: React.FC = () => {
   const [showEditPolicy, setShowEditPolicy] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const openCreateFromRoute = useCallback(() => setShowCreatePolicy(true), []);
+  useModalFromSearchParam('create', openCreateFromRoute);
+
   const { execute: fetchPolicies } = useApi();
+
+  const currencyPrefix = <span className="text-sm font-medium text-neutral-500">$</span>;
 
   const newPolicyForm = useGenericForm({
     schema: policySchemas.requestQuote,
@@ -386,8 +394,7 @@ const AdminPolicies: React.FC = () => {
     if (!selectedPolicy) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <AdminModalShell onClose={() => setShowDetails(false)} maxWidthClass="max-w-4xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -549,8 +556,7 @@ const AdminPolicies: React.FC = () => {
               </Button>
             </div>
           </div>
-        </div>
-      </div>
+      </AdminModalShell>
     );
   };
 
@@ -558,8 +564,7 @@ const AdminPolicies: React.FC = () => {
     const { register, handleSubmit, formState: { errors } } = newPolicyForm;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <AdminModalShell onClose={() => setShowCreatePolicy(false)} maxWidthClass="max-w-2xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-900">Create New Policy</h2>
@@ -613,7 +618,7 @@ const AdminPolicies: React.FC = () => {
                   min="0"
                   step="0.01"
                   placeholder="1200.00"
-                  leftIcon={<DollarSign className="h-4 w-4" />}
+                  leftIcon={currencyPrefix}
                 />
               </FormField>
 
@@ -622,7 +627,7 @@ const AdminPolicies: React.FC = () => {
                   type="number"
                   min="0"
                   placeholder="100000"
-                  leftIcon={<DollarSign className="h-4 w-4" />}
+                  leftIcon={currencyPrefix}
                 />
               </FormField>
 
@@ -631,7 +636,7 @@ const AdminPolicies: React.FC = () => {
                   type="number"
                   min="0"
                   placeholder="500"
-                  leftIcon={<DollarSign className="h-4 w-4" />}
+                  leftIcon={currencyPrefix}
                 />
               </FormField>
 
@@ -670,8 +675,7 @@ const AdminPolicies: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
-      </div>
+      </AdminModalShell>
     );
   };
 
@@ -772,7 +776,7 @@ const AdminPolicies: React.FC = () => {
                 {formatCurrency(policies.reduce((sum, p) => sum + p.premium, 0))}
               </p>
             </div>
-            <DollarSign className="h-8 w-8 text-green-500" />
+            <Wallet className="h-8 w-8 text-green-500" />
           </div>
         </Card>
       </div>

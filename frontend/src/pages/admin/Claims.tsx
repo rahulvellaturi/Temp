@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, Eye, Edit, CheckCircle, XCircle, Clock, AlertTriangle, FileText, DollarSign, Calendar, User, Phone, Mail } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Search, Filter, Eye, CheckCircle, XCircle, Clock, AlertTriangle, FileText, Calendar, User, Mail } from 'lucide-react';
+import AdminModalShell from '@/components/common/AdminModalShell';
+import { useModalFromSearchParam } from '@/hooks/useModalFromSearchParam';
+import { formatCurrency } from '@/lib/utils';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
@@ -16,15 +19,19 @@ const AdminClaims: React.FC = () => {
   const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
   const [showClaimModal, setShowClaimModal] = useState(false);
 
-  // Load data using unified service
-  const { data: claims, loading: isLoading } = useDataLoader(
-    () => unifiedMockDataService.fetchClaimsAsync(),
-    { initialData: [] }
+  const openReviewFromRoute = useCallback(() => {
+    setStatusFilter('SUBMITTED');
+  }, []);
+  useModalFromSearchParam('review', openReviewFromRoute);
+
+  const loadClaims = useCallback(() => unifiedMockDataService.fetchClaimsAsync(), []);
+
+  const { data: claimsData, loading: isLoading, setData: setClaimsData } = useDataLoader(
+    loadClaims,
+    { initialData: [] as Claim[] }
   );
 
-  useEffect(() => {
-    setFilteredClaims(claims);
-  }, [claims]);
+  const claims = useMemo(() => claimsData ?? [], [claimsData]);
 
   useEffect(() => {
     let filtered = claims;
@@ -51,13 +58,13 @@ const AdminClaims: React.FC = () => {
   }, [claims, searchTerm, statusFilter, policyTypeFilter]);
 
   const handleStatusChange = (claimId: string, newStatus: ClaimStatus) => {
-    setClaims(prevClaims =>
-      prevClaims.map(claim =>
+    setClaimsData((prevClaims) =>
+      (prevClaims ?? []).map((claim) =>
         claim.id === claimId ? { ...claim, status: newStatus } : claim
       )
     );
     if (selectedClaim?.id === claimId) {
-      setSelectedClaim(prev => prev ? { ...prev, status: newStatus } : null);
+      setSelectedClaim((prev) => (prev ? { ...prev, status: newStatus } : null));
     }
   };
 
@@ -78,13 +85,6 @@ const AdminClaims: React.FC = () => {
       default:
         return <Clock className="w-4 h-4 text-gray-600" />;
     }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
@@ -235,8 +235,9 @@ const AdminClaims: React.FC = () => {
 
                                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-neutral-600">
                       <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4" />
-                        <span className="font-medium">{formatCurrency(claim.payoutAmount || 0)}</span>
+                        <span className="font-medium text-neutral-900">
+                          {formatCurrency(claim.payoutAmount || 0)}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4" />
@@ -306,8 +307,7 @@ const AdminClaims: React.FC = () => {
 
       {/* Claim Detail Modal */}
       {showClaimModal && selectedClaim && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <AdminModalShell onClose={() => setShowClaimModal(false)} maxWidthClass="max-w-4xl">
             <div className="p-6 border-b border-neutral-200">
               <div className="flex items-center justify-between">
                 <div>
@@ -499,8 +499,7 @@ const AdminClaims: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        </div>
+        </AdminModalShell>
       )}
     </div>
   );

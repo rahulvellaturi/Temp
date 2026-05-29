@@ -5,6 +5,8 @@ export interface DashboardQuickAction {
   title: string;
   description: string;
   path: string;
+  /** When set, navigates to path with ?action=<value> to auto-open the target modal. */
+  openAction?: string;
   color: 'blue' | 'green' | 'orange' | 'purple';
 }
 
@@ -14,6 +16,7 @@ const ADMIN_ACTIONS: DashboardQuickAction[] = [
     title: 'Create Policy',
     description: 'Create a new insurance policy',
     path: '/admin/policies',
+    openAction: 'create',
     color: 'blue',
   },
   {
@@ -21,6 +24,7 @@ const ADMIN_ACTIONS: DashboardQuickAction[] = [
     title: 'Add User',
     description: 'Add a new client or agent',
     path: '/admin/users',
+    openAction: 'create',
     color: 'green',
   },
   {
@@ -28,6 +32,7 @@ const ADMIN_ACTIONS: DashboardQuickAction[] = [
     title: 'Review Claims',
     description: 'Review pending claims',
     path: '/admin/claims',
+    openAction: 'review',
     color: 'orange',
   },
   {
