@@ -2,7 +2,7 @@
 
 /* Modal Overlay */
 .modal-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4;
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none;
 }
 
 .modal-overlay-enter {
@@ -198,7 +198,7 @@
 
 /* Drawer/Slide Over */
 .drawer-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 z-50;
+  @apply fixed inset-0 z-50 pointer-events-none;
 }
 
 .drawer-container {
@@ -350,7 +350,7 @@
 
 /* Alert Dialog */
 .alert-dialog-overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4;
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none;
 }
 
 .alert-dialog-container {

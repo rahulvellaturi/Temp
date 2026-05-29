@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ColDef } from 'ag-grid-community';
+import DataGrid from '@/components/common/DataGrid';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
@@ -474,42 +476,47 @@ const ClientDashboard: React.FC = () => {
               </Button>
             </Link>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-neutral-200">
-                  <th className="px-4 py-3 text-left font-medium text-neutral-900">Description</th>
-                  <th className="px-4 py-3 text-left font-medium text-neutral-900">Amount</th>
-                  <th className="px-4 py-3 text-left font-medium text-neutral-900">Date</th>
-                  <th className="px-4 py-3 text-left font-medium text-neutral-900">Status</th>
-                  <th className="px-4 py-3 text-left font-medium text-neutral-900">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {payments.map((payment) => (
-                  <tr key={payment.id} className="border-b border-neutral-100">
-                    <td className="px-4 py-3">{payment.policyType}</td>
-                    <td className="px-4 py-3 font-medium">{formatCurrency(payment.amount)}</td>
-                    <td className="px-4 py-3">{formatDate(payment.dueDate)}</td>
-                    <td className="px-4 py-3">
-                      <span className={cn('status-badge', getStatusColor(payment.status))}>
-                        {payment.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {payment.status === 'PENDING' ? (
-                        <Button size="sm" variant="outline" onClick={() => handlePayNow(payment.id)}>
-                          Pay Now
-                        </Button>
-                      ) : (
-                        <span className="text-sm text-green-600">Paid</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataGrid<PaymentRow>
+            rowData={payments}
+            columnDefs={[
+              { headerName: 'Description', field: 'policyType', minWidth: 140 },
+              {
+                headerName: 'Amount',
+                field: 'amount',
+                minWidth: 100,
+                valueFormatter: (p) => formatCurrency(p.value as number),
+              },
+              {
+                headerName: 'Date',
+                field: 'dueDate',
+                minWidth: 110,
+                valueFormatter: (p) => formatDate(p.value as string),
+              },
+              { headerName: 'Status', field: 'status', minWidth: 110 },
+              {
+                headerName: 'Action',
+                colId: 'action',
+                minWidth: 100,
+                sortable: false,
+                filter: false,
+                cellRenderer: (p) =>
+                  p.data?.status === 'PENDING' ? (
+                    <button
+                      type="button"
+                      className="rounded border border-primary px-2 py-1 text-xs text-primary"
+                      onClick={() => handlePayNow(p.data!.id)}
+                    >
+                      Pay Now
+                    </button>
+                  ) : (
+                    <span className="text-xs text-green-600">Paid</span>
+                  ),
+              },
+            ]}
+            height={280}
+            pagination={false}
+            emptyMessage="No recent payments."
+          />
         </Card>
       </Reveal3D>
 

@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import type { ColDef } from 'ag-grid-community';
+import AppModalShell from '@/components/common/AdminModalShell';
+import DataGrid from '@/components/common/DataGrid';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { useGenericForm } from '@/hooks/useGenericForm';
 import { useDataLoader } from '@/hooks/useDataLoader';
@@ -211,8 +214,7 @@ const Payments: React.FC = () => {
     if (!selectedPayment) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <AppModalShell onClose={() => setShowDetails(false)} maxWidthClass="max-w-2xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <div>
@@ -327,8 +329,7 @@ const Payments: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
-      </div>
+      </AppModalShell>
     );
   };
 
@@ -338,8 +339,7 @@ const Payments: React.FC = () => {
     const selectedPolicy = availablePolicies.find(p => p.id === watchPolicyId);
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <AppModalShell onClose={() => setShowMakePayment(false)} maxWidthClass="max-w-2xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-900">Make Payment</h2>
@@ -449,8 +449,7 @@ const Payments: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
-      </div>
+      </AppModalShell>
     );
   };
 
@@ -460,8 +459,7 @@ const Payments: React.FC = () => {
     const years = Array.from({ length: 20 }, (_, i) => currentYear + i);
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <AppModalShell onClose={() => setShowAddPaymentMethod(false)} maxWidthClass="max-w-md">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-900">Add Payment Method</h2>
@@ -614,10 +612,61 @@ const Payments: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
-      </div>
+      </AppModalShell>
     );
   };
+
+  const paymentColumnDefs = useMemo<ColDef<Payment>[]>(
+    () => [
+      {
+        headerName: 'Payment',
+        field: 'paymentNumber',
+        minWidth: 180,
+        valueGetter: (p) =>
+          p.data ? `${p.data.paymentNumber}\n${p.data.description}` : '',
+        cellRenderer: (p) =>
+          p.data ? (
+            <div>
+              <p className="font-medium text-neutral-900">{p.data.paymentNumber}</p>
+              <p className="text-xs text-neutral-500">{p.data.description}</p>
+            </div>
+          ) : null,
+      },
+      {
+        headerName: 'Policy',
+        minWidth: 140,
+        valueGetter: (p) => (p.data ? `${p.data.policyNumber} (${p.data.policyType})` : ''),
+      },
+      {
+        headerName: 'Amount',
+        field: 'amount',
+        minWidth: 110,
+        valueFormatter: (p) => (p.value != null ? formatCurrency(p.value as number) : ''),
+      },
+      { headerName: 'Due Date', field: 'dueDate', minWidth: 120, valueFormatter: (p) => formatDate(p.value as string) },
+      { headerName: 'Status', field: 'status', minWidth: 120, filter: true },
+      { headerName: 'Method', field: 'paymentMethod', minWidth: 130 },
+      {
+        headerName: 'Actions',
+        colId: 'actions',
+        minWidth: 100,
+        maxWidth: 110,
+        sortable: false,
+        filter: false,
+        cellRenderer: (p) =>
+          p.data ? (
+            <button
+              type="button"
+              className="rounded-md border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-50"
+              onClick={() => handleViewDetails(p.data as Payment)}
+            >
+              View
+            </button>
+          ) : null,
+      },
+    ],
+    []
+  );
 
   return (
     <div className="space-y-6">
@@ -804,71 +853,17 @@ const Payments: React.FC = () => {
       {/* Payment History */}
       <Card className="p-6">
         <h3 className="text-lg font-semibold text-neutral-900 mb-4">Payment History</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-neutral-200">
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Payment</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Policy</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Amount</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Due Date</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Status</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Method</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPayments.map((payment) => (
-                <tr key={payment.id} className="border-b border-neutral-100 hover:bg-neutral-50">
-                  <td className="py-3 px-4">
-                    <div>
-                      <p className="font-medium text-neutral-900">{payment.paymentNumber}</p>
-                      <p className="text-sm text-neutral-600">{payment.description}</p>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div>
-                      <p className="font-medium">{payment.policyNumber}</p>
-                      <p className="text-sm text-neutral-600">{payment.policyType}</p>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 font-medium">{formatCurrency(payment.amount)}</td>
-                  <td className="py-3 px-4">{formatDate(payment.dueDate)}</td>
-                  <td className="py-3 px-4">
-                    <StatusBadge 
-                      status={payment.status} 
-                      variant={getStatusColor(payment.status) as any}
-                    />
-                  </td>
-                  <td className="py-3 px-4">
-                    {payment.paymentMethod}
-                    {payment.lastFourDigits && (
-                      <span className="text-sm text-neutral-500"> ••••{payment.lastFourDigits}</span>
-                    )}
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewDetails(payment)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      {payment.status === 'FAILED' && (
-                        <Button size="sm">
-                          <RefreshCw className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataGrid<Payment>
+          rowData={filteredPayments}
+          columnDefs={paymentColumnDefs}
+          quickFilterText={searchTerm}
+          loading={loading}
+          height={440}
+          emptyMessage="No payments match your filters."
+          onRowClicked={(row) => handleViewDetails(row)}
+        />
 
-        {filteredPayments.length === 0 && (
+        {payments.length === 0 && !loading && filteredPayments.length === 0 && (
           <div className="text-center py-12">
             <Receipt className="h-16 w-16 text-neutral-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-neutral-900 mb-2">No payments found</h3>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AppModalShell from '@/components/common/AdminModalShell';
 import { useAppSelector, useAppDispatch } from '@/hooks/useAppDispatch';
 import { updateProfile, changePassword, enableMFA, disableMFA } from '@/store/slices/authSlice';
 import { useGenericForm } from '@/hooks/useGenericForm';
@@ -176,8 +177,7 @@ const Profile: React.FC = () => {
     const { register, handleSubmit, formState: { errors }, watch } = passwordForm;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full">
+      <AppModalShell onClose={() => setShowChangePassword(false)} maxWidthClass="max-w-md">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-900">Change Password</h2>
@@ -271,15 +271,13 @@ const Profile: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
-      </div>
+      </AppModalShell>
     );
   };
 
   const MFASetupModal = () => {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full">
+      <AppModalShell onClose={() => setShowMFASetup(false)} maxWidthClass="max-w-md">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-900">Setup Two-Factor Authentication</h2>
@@ -329,8 +327,7 @@ const Profile: React.FC = () => {
               </Button>
             </div>
           </div>
-        </div>
-      </div>
+      </AppModalShell>
     );
   };
 

@@ -8,9 +8,9 @@ interface AdminModalShellProps {
 }
 
 /**
- * Centered admin dialog without a dark fullscreen overlay.
+ * Centered dialog without a dark fullscreen overlay (client + admin).
  */
-const AdminModalShell: React.FC<AdminModalShellProps> = ({
+const AppModalShell: React.FC<AdminModalShellProps> = ({
   children,
   onClose,
   maxWidthClass = 'max-w-2xl',
@@ -43,4 +43,6 @@ const AdminModalShell: React.FC<AdminModalShellProps> = ({
   );
 };
 
-export default AdminModalShell;
+export default AppModalShell;
+/** @deprecated Use AppModalShell — kept for existing imports */
+export { AppModalShell as AdminModalShell };

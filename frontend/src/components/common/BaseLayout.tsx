@@ -1,6 +1,6 @@
 import React from 'react';
 import UserMenu from '@/components/common/UserMenu';
-import { ParallaxBackground } from '@/components/common/Parallax';
+import { ParallaxBackground, ClientParallaxBackground } from '@/components/common/Parallax';
 import { AnimatedOutlet } from '@/components/common/PageTransition';
 
 interface BaseLayoutProps {
@@ -10,6 +10,8 @@ interface BaseLayoutProps {
   actions?: React.ReactNode;
   /** When provided, renders a fixed parallax background image behind the page. */
   backgroundImage?: string;
+  /** Use client-style 3D wallpaper (teal gradient + motion orbs). */
+  clientWallpaper?: boolean;
 }
 
 const BaseLayout: React.FC<BaseLayoutProps> = ({
@@ -17,12 +19,18 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({
   navigation,
   actions,
   backgroundImage,
+  clientWallpaper = false,
 }) => {
   const hasBackground = Boolean(backgroundImage);
 
   return (
     <div className={`relative min-h-screen ${hasBackground ? 'bg-transparent' : 'bg-neutral-50'}`}>
-      {hasBackground && <ParallaxBackground image={backgroundImage as string} />}
+      {hasBackground &&
+        (clientWallpaper ? (
+          <ClientParallaxBackground image={backgroundImage as string} />
+        ) : (
+          <ParallaxBackground image={backgroundImage as string} />
+        ))}
 
       <header
         className={`sticky top-0 z-40 border-b ${

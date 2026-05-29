@@ -41,28 +41,23 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          onClick={onClose}
           style={{ perspective: 1400 }}
         >
-          {/* Light scrim — avoids heavy black overlay */}
-          <div className="absolute inset-0 bg-neutral-400/15 backdrop-blur-[2px]" />
-
-          {/* 3D animated panel */}
           <motion.div
             role="dialog"
             aria-modal="true"
-            onClick={(e) => e.stopPropagation()}
+            className="pointer-events-auto"
             initial={{ opacity: 0, scale: 0.8, rotateX: -45, y: 80 }}
             animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
             exit={{ opacity: 0, scale: 0.85, rotateX: 35, y: 50 }}
             transition={{ type: 'spring', stiffness: 170, damping: 19 }}
             style={{ transformPerspective: 1400, transformStyle: 'preserve-3d' }}
-            className="relative z-[61] w-full max-w-2xl max-h-[88vh] overflow-hidden rounded-2xl bg-white shadow-2xl"
+            className="relative z-[61] w-full max-w-2xl max-h-[88vh] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-neutral-200"
           >
             <div className="flex items-start justify-between border-b border-neutral-200 px-6 py-4">
               <div className="flex items-center gap-3">

@@ -1,5 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ColDef } from 'ag-grid-community';
 import AdminModalShell from '@/components/common/AdminModalShell';
+import DataGrid from '@/components/common/DataGrid';
 import { useModalFromSearchParam } from '@/hooks/useModalFromSearchParam';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { useApi } from '@/hooks/useApi';
@@ -796,6 +798,79 @@ const AdminUsers: React.FC = () => {
     );
   };
 
+  const userColumnDefs = useMemo<ColDef<User>[]>(
+    () => [
+      {
+        headerName: 'User',
+        minWidth: 200,
+        valueGetter: (p) => (p.data ? `${p.data.firstName} ${p.data.lastName}` : ''),
+        cellRenderer: (p) =>
+          p.data ? (
+            <div>
+              <p className="font-medium">{p.data.firstName} {p.data.lastName}</p>
+              {p.data.role === 'CLIENT' && (
+                <p className="text-xs text-neutral-500">
+                  {p.data.policiesCount} policies · {formatCurrency(p.data.totalPremiums)}
+                </p>
+              )}
+            </div>
+          ) : null,
+      },
+      {
+        headerName: 'Email',
+        field: 'email',
+        minWidth: 180,
+      },
+      {
+        headerName: 'Phone',
+        field: 'phone',
+        minWidth: 120,
+      },
+      { headerName: 'Role', field: 'role', minWidth: 100 },
+      { headerName: 'Status', field: 'status', minWidth: 100 },
+      {
+        headerName: 'Joined',
+        field: 'dateJoined',
+        minWidth: 110,
+        valueFormatter: (p) => formatDate(p.value as string),
+      },
+      {
+        headerName: 'Last Login',
+        field: 'lastLogin',
+        minWidth: 130,
+        valueFormatter: (p) => (p.value ? formatDateTime(p.value as string) : 'Never'),
+      },
+      {
+        headerName: 'Actions',
+        colId: 'actions',
+        minWidth: 120,
+        maxWidth: 130,
+        sortable: false,
+        filter: false,
+        cellRenderer: (p) =>
+          p.data ? (
+            <div className="flex gap-1">
+              <button
+                type="button"
+                className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                onClick={() => handleViewDetails(p.data as User)}
+              >
+                View
+              </button>
+              <button
+                type="button"
+                className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                onClick={() => handleEditUser(p.data as User)}
+              >
+                Edit
+              </button>
+            </div>
+          ) : null,
+      },
+    ],
+    []
+  );
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -939,92 +1014,15 @@ const AdminUsers: React.FC = () => {
         </div>
       </Card>
 
-      {/* Users Table */}
       <Card className="p-6">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-neutral-200">
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">User</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Contact</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Role</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Status</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Joined</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Last Login</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="border-b border-neutral-100 hover:bg-neutral-50">
-                  <td className="py-3 px-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-primary">
-                          {user.firstName[0]}{user.lastName[0]}
-                        </span>
-                      </div>
-                      <div>
-                        <p className="font-medium text-neutral-900">
-                          {user.firstName} {user.lastName}
-                        </p>
-                        {user.role === 'CLIENT' && (
-                          <p className="text-sm text-neutral-600">
-                            {user.policiesCount} policies • {formatCurrency(user.totalPremiums)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div>
-                      <p className="text-sm text-neutral-900">{user.email}</p>
-                      {user.phone && (
-                        <p className="text-sm text-neutral-600">{user.phone}</p>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <StatusBadge 
-                      status={user.role} 
-                      variant={getRoleColor(user.role) as any}
-                    />
-                  </td>
-                  <td className="py-3 px-4">
-                    <StatusBadge 
-                      status={user.status} 
-                      variant={getStatusColor(user.status) as any}
-                    />
-                  </td>
-                  <td className="py-3 px-4 text-sm text-neutral-600">
-                    {formatDate(user.dateJoined)}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-neutral-600">
-                    {user.lastLogin ? formatDateTime(user.lastLogin) : 'Never'}
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewDetails(user)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditUser(user)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataGrid<User>
+          rowData={filteredUsers}
+          columnDefs={userColumnDefs}
+          quickFilterText={searchTerm}
+          height={480}
+          emptyMessage="No users match your filters."
+          onRowClicked={(row) => handleViewDetails(row)}
+        />
 
         {filteredUsers.length === 0 && (
           <div className="text-center py-12">
