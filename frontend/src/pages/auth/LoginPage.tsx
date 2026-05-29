@@ -11,7 +11,7 @@ import Button from '@/components/common/Button';
 const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { isLoading, error, mfaRequired, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isLoading, error, mfaRequired, isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   const form = useGenericForm({
     schema: authSchemas.login,
@@ -32,9 +32,10 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(ROUTES.CLIENT.ROOT);
+      const isClient = !user || user.role === 'CLIENT';
+      navigate(isClient ? ROUTES.CLIENT.ROOT : ROUTES.ADMIN.ROOT);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   const onSubmit = async (data: any) => {
     await dispatch(loginUser(data)).unwrap();

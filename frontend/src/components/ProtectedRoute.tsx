@@ -27,9 +27,22 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
-  // Check role-based access if required
-  if (requiredRole && user.role !== requiredRole) {
-    // Redirect to appropriate dashboard based on user role
+  // Check role-based access if required.
+  // The backend exposes several admin-type roles (ADMIN, SUPER_ADMIN,
+  // CLAIMS_ADJUSTER, BILLING_SPECIALIST); any of them may access ADMIN routes.
+  const ADMIN_ROLES = ['ADMIN', 'SUPER_ADMIN', 'CLAIMS_ADJUSTER', 'BILLING_SPECIALIST'];
+  const isAdminRole = ADMIN_ROLES.includes(user.role);
+
+  const hasAccess = (() => {
+    if (!requiredRole) return true;
+    if (requiredRole === 'ADMIN') return isAdminRole;
+    if (requiredRole === 'CLIENT') return user.role === 'CLIENT';
+    return user.role === requiredRole;
+  })();
+
+  if (!hasAccess) {
+    // Redirect to the dashboard that matches the user's role. Using the
+    // role (not the failed requiredRole) prevents an infinite redirect loop.
     const redirectPath = user.role === 'CLIENT' ? '/client' : '/admin';
     return <Navigate to={redirectPath} replace />;
   }
