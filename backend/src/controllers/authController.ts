@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 import { z } from 'zod';
@@ -46,11 +46,15 @@ const schemas = {
 };
 
 // Helper functions
-const generateToken = (user: any) => {
+const generateToken = (user: { id: string; role: UserRole }) => {
+  const signOptions: SignOptions = {
+    expiresIn: (process.env.JWT_EXPIRES_IN || '24h') as SignOptions['expiresIn'],
+  };
+
   return jwt.sign(
     { id: user.id, role: user.role },
-    process.env.JWT_SECRET!,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+    process.env.JWT_SECRET as string,
+    signOptions
   );
 };
 
