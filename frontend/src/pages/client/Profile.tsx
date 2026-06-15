@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import ChangePasswordModal from './profile/ChangePasswordModal';
+import MFASetupModal from './profile/MFASetupModal';
 import { useAppSelector, useAppDispatch } from '@/hooks/useAppDispatch';
 import { updateProfile, changePassword, enableMFA, disableMFA } from '@/store/slices/authSlice';
 import { useGenericForm } from '@/hooks/useGenericForm';
@@ -14,8 +16,6 @@ import {
   Calendar,
   Shield,
   Lock,
-  Eye,
-  EyeOff,
   Key,
   Smartphone,
   Bell,
@@ -96,10 +96,6 @@ const Profile: React.FC = () => {
     successMessage: 'Password changed successfully!',
   });
 
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const US_STATES = [
     'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
     'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
@@ -170,168 +166,6 @@ const Profile: React.FC = () => {
       month: 'long',
       day: 'numeric'
     });
-  };
-
-  const ChangePasswordModal = () => {
-    const { register, handleSubmit, formState: { errors }, watch } = passwordForm;
-
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full">
-          <div className="p-6 border-b">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-neutral-900">Change Password</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowChangePassword(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit(handleChangePassword)} className="p-6 space-y-4">
-            <FormField
-              label="Current Password"
-              error={errors.currentPassword?.message}
-              required
-            >
-              <div className="relative">
-                <FormInput
-                  {...register('currentPassword')}
-                  type={showCurrentPassword ? 'text' : 'password'}
-                  placeholder="Enter current password"
-                  error={!!errors.currentPassword}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                >
-                  {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </FormField>
-
-            <FormField
-              label="New Password"
-              error={errors.newPassword?.message}
-              required
-            >
-              <div className="relative">
-                <FormInput
-                  {...register('newPassword')}
-                  type={showNewPassword ? 'text' : 'password'}
-                  placeholder="Enter new password"
-                  error={!!errors.newPassword}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                >
-                  {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </FormField>
-
-            <FormField
-              label="Confirm New Password"
-              error={errors.confirmPassword?.message}
-              required
-            >
-              <div className="relative">
-                <FormInput
-                  {...register('confirmPassword')}
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm new password"
-                  error={!!errors.confirmPassword}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </FormField>
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowChangePassword(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" loading={isLoading}>
-                Change Password
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  };
-
-  const MFASetupModal = () => {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-md w-full">
-          <div className="p-6 border-b">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-neutral-900">Setup Two-Factor Authentication</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowMFASetup(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="p-6 space-y-4">
-            <div className="text-center">
-              <div className="w-32 h-32 bg-neutral-200 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                <span className="text-neutral-500">QR Code</span>
-              </div>
-              <p className="text-sm text-neutral-600 mb-4">
-                Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
-              </p>
-            </div>
-
-            <div className="p-4 bg-neutral-50 rounded-lg">
-              <p className="text-sm text-neutral-600 mb-2">Manual entry code:</p>
-              <code className="text-sm font-mono bg-white p-2 rounded border block">
-                ABCD EFGH IJKL MNOP QRST UVWX YZ12 3456
-              </code>
-            </div>
-
-            <FormField label="Verification Code" required>
-              <FormInput
-                placeholder="Enter 6-digit code"
-                maxLength={6}
-              />
-            </FormField>
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setShowMFASetup(false)}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleMFASetup} loading={isLoading}>
-                Enable MFA
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -885,8 +719,20 @@ const Profile: React.FC = () => {
       )}
 
       {/* Modals */}
-      {showChangePassword && <ChangePasswordModal />}
-      {showMFASetup && <MFASetupModal />}
+      <ChangePasswordModal
+        isOpen={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+        onSubmit={handleChangePassword}
+        form={passwordForm}
+        isLoading={isLoading}
+      />
+
+      <MFASetupModal
+        isOpen={showMFASetup}
+        onClose={() => setShowMFASetup(false)}
+        onEnable={handleMFASetup}
+        isLoading={isLoading}
+      />
     </div>
   );
 };

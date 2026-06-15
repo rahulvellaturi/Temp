@@ -11,6 +11,8 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   showCloseButton?: boolean;
   closeOnBackdrop?: boolean;
+  /** dark = dimmed overlay; none = no overlay (floating panel only) */
+  backdrop?: 'dark' | 'none';
   className?: string;
   headerClassName?: string;
   bodyClassName?: string;
@@ -28,6 +30,7 @@ const Modal: React.FC<ModalProps> = ({
   size = 'md',
   showCloseButton = true,
   closeOnBackdrop = true,
+  backdrop = 'none',
   className = '',
   headerClassName = '',
   bodyClassName = '',
@@ -71,15 +74,22 @@ const Modal: React.FC<ModalProps> = ({
     }
   };
 
+  const overlayClass =
+    backdrop === 'none'
+      ? 'fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none'
+      : 'fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4';
+
+  const panelClass =
+    backdrop === 'none'
+      ? `pointer-events-auto bg-white rounded-lg shadow-2xl ring-1 ring-neutral-200 w-full max-h-[90vh] overflow-y-auto ${sizeClasses[size]} ${className}`
+      : `bg-white rounded-lg shadow-xl w-full max-h-[90vh] overflow-y-auto ${sizeClasses[size]} ${className}`;
+
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      onClick={handleBackdropClick}
+      className={overlayClass}
+      onClick={backdrop === 'dark' ? handleBackdropClick : undefined}
     >
-      <div className={`
-        bg-white rounded-lg shadow-xl w-full max-h-[90vh] overflow-y-auto
-        ${sizeClasses[size]} ${className}
-      `}>
+      <div className={panelClass}>
         {/* Header */}
         {(title || showCloseButton || icon) && (
           <div className={`px-6 py-4 border-b border-neutral-200 ${headerClassName}`}>
@@ -211,6 +221,7 @@ export const FormModal: React.FC<{
   isLoading?: boolean;
   size?: ModalProps['size'];
   icon?: React.ReactNode;
+  backdrop?: ModalProps['backdrop'];
 }> = ({
   isOpen,
   onClose,
@@ -222,7 +233,8 @@ export const FormModal: React.FC<{
   cancelText = 'Cancel',
   isLoading = false,
   size = 'md',
-  icon
+  icon,
+  backdrop = 'none',
 }) => {
   return (
     <Modal
@@ -232,6 +244,7 @@ export const FormModal: React.FC<{
       subtitle={subtitle}
       size={size}
       icon={icon}
+      backdrop={backdrop}
       footer={
         <div className="flex justify-end space-x-3">
           <Button

@@ -35,7 +35,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 function App() {
   const dispatch = useAppDispatch();
-  const { isAuthenticated, token, isLoading } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, token, isLoading, user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     // Initialize auth state from localStorage
@@ -68,7 +68,16 @@ function App() {
             <Route 
               path="/login" 
               element={
-                isAuthenticated ? <Navigate to="/client" replace /> : (
+                isAuthenticated ? (
+                  <Navigate
+                    to={
+                      user?.role === 'CLIENT'
+                        ? '/client'
+                        : '/admin'
+                    }
+                    replace
+                  />
+                ) : (
                   <ErrorBoundary level="page">
                     <LoginPage />
                   </ErrorBoundary>

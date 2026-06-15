@@ -32,8 +32,8 @@ const AdminLayout: React.FC = () => {
   return (
     <BaseLayout
       title="AssureMe"
-      subtitle="Admin Portal"
       navigation={navigation}
+      backgroundImage="/images/admin-bg.png"
     />
   );
 };

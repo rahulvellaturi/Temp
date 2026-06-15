@@ -18,6 +18,7 @@
     "start": "cd backend && npm start"
   },
   "devDependencies": {
+    "ajv": "^8.17.1",
     "concurrently": "^8.2.2"
   },
   "overrides": {

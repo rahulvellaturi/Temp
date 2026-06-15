@@ -10,7 +10,7 @@ async function main() {
   const adminPassword = await bcrypt.hash('admin123', 12);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@assureme.com' },
-    update: {},
+    update: { password: adminPassword, isActive: true },
     create: {
       email: 'admin@assureme.com',
       password: adminPassword,
@@ -29,7 +29,7 @@ async function main() {
   const adjusterPassword = await bcrypt.hash('adjuster123', 12);
   const adjuster = await prisma.user.upsert({
     where: { email: 'adjuster@assureme.com' },
-    update: {},
+    update: { password: adjusterPassword, isActive: true },
     create: {
       email: 'adjuster@assureme.com',
       password: adjusterPassword,
@@ -49,7 +49,7 @@ async function main() {
   
   const client1 = await prisma.user.upsert({
     where: { email: 'john.doe@example.com' },
-    update: {},
+    update: { password: clientPassword, isActive: true },
     create: {
       email: 'john.doe@example.com',
       password: clientPassword,
@@ -66,7 +66,7 @@ async function main() {
 
   const client2 = await prisma.user.upsert({
     where: { email: 'jane.smith@example.com' },
-    update: {},
+    update: { password: clientPassword, isActive: true },
     create: {
       email: 'jane.smith@example.com',
       password: clientPassword,
@@ -78,6 +78,25 @@ async function main() {
       city: 'San Francisco',
       state: 'CA',
       zipCode: '94102',
+    },
+  });
+
+  // Billing specialist (admin portal — billing workflows)
+  const billingPassword = await bcrypt.hash('billing123', 12);
+  const billing = await prisma.user.upsert({
+    where: { email: 'billing@assureme.com' },
+    update: { password: billingPassword, isActive: true },
+    create: {
+      email: 'billing@assureme.com',
+      password: billingPassword,
+      firstName: 'Billing',
+      lastName: 'Specialist',
+      phone: '+1234567892',
+      role: UserRole.BILLING_SPECIALIST,
+      address: '789 Billing Blvd',
+      city: 'Finance City',
+      state: 'CA',
+      zipCode: '90212',
     },
   });
 
@@ -277,10 +296,12 @@ async function main() {
 
   console.log('✅ Database seeding completed successfully!');
   console.log('\n📝 Sample Users Created:');
-  console.log('Admin: admin@assureme.com / admin123');
+  console.log('Super Admin: admin@assureme.com / admin123');
   console.log('Claims Adjuster: adjuster@assureme.com / adjuster123');
+  console.log('Billing Specialist: billing@assureme.com / billing123');
   console.log('Client 1: john.doe@example.com / client123');
   console.log('Client 2: jane.smith@example.com / client123');
+  void billing;
 }
 
 main()

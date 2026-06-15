@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ColDef } from 'ag-grid-community';
+import AdminModalShell from '@/components/common/AdminModalShell';
+import DataGrid from '@/components/common/DataGrid';
+import { useModalFromSearchParam } from '@/hooks/useModalFromSearchParam';
+import { formatCurrency } from '@/lib/utils';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { useApi } from '@/hooks/useApi';
 import { useGenericForm } from '@/hooks/useGenericForm';
@@ -18,7 +23,7 @@ import {
   Home,
   Heart,
   Activity,
-  DollarSign,
+  Wallet,
   Calendar,
   Users,
   CheckCircle,
@@ -80,7 +85,12 @@ const AdminPolicies: React.FC = () => {
   const [showEditPolicy, setShowEditPolicy] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const openCreateFromRoute = useCallback(() => setShowCreatePolicy(true), []);
+  useModalFromSearchParam('create', openCreateFromRoute);
+
   const { execute: fetchPolicies } = useApi();
+
+  const currencyPrefix = <span className="text-sm font-medium text-neutral-500">$</span>;
 
   const newPolicyForm = useGenericForm({
     schema: policySchemas.requestQuote,
@@ -386,8 +396,7 @@ const AdminPolicies: React.FC = () => {
     if (!selectedPolicy) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <AdminModalShell onClose={() => setShowDetails(false)} maxWidthClass="max-w-4xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -549,8 +558,7 @@ const AdminPolicies: React.FC = () => {
               </Button>
             </div>
           </div>
-        </div>
-      </div>
+      </AdminModalShell>
     );
   };
 
@@ -558,8 +566,7 @@ const AdminPolicies: React.FC = () => {
     const { register, handleSubmit, formState: { errors } } = newPolicyForm;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <AdminModalShell onClose={() => setShowCreatePolicy(false)} maxWidthClass="max-w-2xl">
           <div className="p-6 border-b">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-neutral-900">Create New Policy</h2>
@@ -613,7 +620,7 @@ const AdminPolicies: React.FC = () => {
                   min="0"
                   step="0.01"
                   placeholder="1200.00"
-                  leftIcon={<DollarSign className="h-4 w-4" />}
+                  leftIcon={currencyPrefix}
                 />
               </FormField>
 
@@ -622,7 +629,7 @@ const AdminPolicies: React.FC = () => {
                   type="number"
                   min="0"
                   placeholder="100000"
-                  leftIcon={<DollarSign className="h-4 w-4" />}
+                  leftIcon={currencyPrefix}
                 />
               </FormField>
 
@@ -631,7 +638,7 @@ const AdminPolicies: React.FC = () => {
                   type="number"
                   min="0"
                   placeholder="500"
-                  leftIcon={<DollarSign className="h-4 w-4" />}
+                  leftIcon={currencyPrefix}
                 />
               </FormField>
 
@@ -670,10 +677,64 @@ const AdminPolicies: React.FC = () => {
               </Button>
             </div>
           </form>
-        </div>
-      </div>
+      </AdminModalShell>
     );
   };
+
+  const policyColumnDefs = useMemo<ColDef<Policy>[]>(
+    () => [
+      { headerName: 'Policy #', field: 'policyNumber', minWidth: 130 },
+      { headerName: 'Client', field: 'clientName', minWidth: 140 },
+      { headerName: 'Type', field: 'type', minWidth: 100 },
+      { headerName: 'Status', field: 'status', minWidth: 110 },
+      {
+        headerName: 'Premium',
+        field: 'premium',
+        minWidth: 110,
+        valueFormatter: (p) => formatCurrency(p.value as number),
+      },
+      {
+        headerName: 'Coverage',
+        field: 'coverage',
+        minWidth: 120,
+        valueFormatter: (p) => formatCurrency(p.value as number),
+      },
+      {
+        headerName: 'Renewal',
+        field: 'renewalDate',
+        minWidth: 110,
+        valueFormatter: (p) => formatDate(p.value as string),
+      },
+      {
+        headerName: 'Actions',
+        colId: 'actions',
+        minWidth: 120,
+        maxWidth: 130,
+        sortable: false,
+        filter: false,
+        cellRenderer: (p) =>
+          p.data ? (
+            <div className="flex gap-1">
+              <button
+                type="button"
+                className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                onClick={() => handleViewDetails(p.data as Policy)}
+              >
+                View
+              </button>
+              <button
+                type="button"
+                className="rounded border border-neutral-300 px-2 py-1 text-xs"
+                onClick={() => handleEditPolicy(p.data as Policy)}
+              >
+                Edit
+              </button>
+            </div>
+          ) : null,
+      },
+    ],
+    []
+  );
 
   if (loading) {
     return (
@@ -772,7 +833,7 @@ const AdminPolicies: React.FC = () => {
                 {formatCurrency(policies.reduce((sum, p) => sum + p.premium, 0))}
               </p>
             </div>
-            <DollarSign className="h-8 w-8 text-green-500" />
+            <Wallet className="h-8 w-8 text-green-500" />
           </div>
         </Card>
       </div>
@@ -838,81 +899,15 @@ const AdminPolicies: React.FC = () => {
         </div>
       </Card>
 
-      {/* Policies Table */}
       <Card className="p-6">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-neutral-200">
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Policy</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Client</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Type</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Status</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Premium</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Coverage</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Renewal</th>
-                <th className="text-left py-3 px-4 font-medium text-neutral-900">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPolicies.map((policy) => (
-                <tr key={policy.id} className="border-b border-neutral-100 hover:bg-neutral-50">
-                  <td className="py-3 px-4">
-                    <div>
-                      <p className="font-medium text-neutral-900">{policy.policyNumber}</p>
-                      <p className="text-sm text-neutral-600 line-clamp-1">{policy.description}</p>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div>
-                      <p className="font-medium text-neutral-900">{policy.clientName}</p>
-                      <p className="text-sm text-neutral-600">{policy.clientEmail}</p>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex items-center space-x-2">
-                      {getTypeIcon(policy.type)}
-                      <span className="text-sm font-medium">{policy.type}</span>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <StatusBadge 
-                      status={policy.status} 
-                      variant={getStatusColor(policy.status) as any}
-                    />
-                  </td>
-                  <td className="py-3 px-4 font-medium">
-                    {formatCurrency(policy.premium)}
-                  </td>
-                  <td className="py-3 px-4 font-medium">
-                    {formatCurrency(policy.coverage)}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-neutral-600">
-                    {formatDate(policy.renewalDate)}
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewDetails(policy)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditPolicy(policy)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataGrid<Policy>
+          rowData={filteredPolicies}
+          columnDefs={policyColumnDefs}
+          quickFilterText={searchTerm}
+          height={480}
+          emptyMessage="No policies match your filters."
+          onRowClicked={(row) => handleViewDetails(row)}
+        />
 
         {filteredPolicies.length === 0 && (
           <div className="text-center py-12">

@@ -36,6 +36,8 @@ const ClientLayout: React.FC = () => {
       title="AssureMe"
       subtitle="Client Portal"
       navigation={navigation}
+      backgroundImage="/images/client-bg.png"
+      clientWallpaper
     />
   );
 };
