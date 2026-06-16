@@ -5,6 +5,7 @@ import { loginUser, clearError } from '@/store/slices/authSlice';
 import { useGenericForm } from '@/hooks/useGenericForm';
 import { authSchemas } from '@/lib/validations';
 import { ROUTES } from '@/lib/constants';
+import { DEMO_USER_CREDENTIALS } from '@/config/demoUsers';
 import { FormField, FormInput } from '@/components/common/Form';
 import Button from '@/components/common/Button';
 
@@ -41,10 +42,17 @@ const LoginPage: React.FC = () => {
     await dispatch(loginUser(data)).unwrap();
   };
 
+  const fillDemoLogin = (email: string, password: string) => {
+    reset({ email, password, mfaToken: '', rememberMe: false });
+  };
+
   const handleTryAgain = () => {
     dispatch(clearError());
     reset();
   };
+
+  const showDemoAccounts = process.env.REACT_APP_ENABLE_DEBUG === 'true' ||
+    process.env.NODE_ENV === 'development';
 
   if (isLoading) {
     return (
@@ -165,15 +173,30 @@ const LoginPage: React.FC = () => {
           </div>
         </form>
 
-        <div className="mt-6 text-center text-sm text-neutral-600">
-          <p>Demo Accounts:</p>
-          <p className="mt-1">
-            <strong>Client:</strong> john.doe@email.com / password123
-          </p>
-          <p>
-            <strong>Admin:</strong> admin@assureme.com / admin123
-          </p>
-        </div>
+        {showDemoAccounts && (
+          <div className="mt-6 rounded-lg border border-neutral-200 bg-white p-4 text-sm text-neutral-700">
+            <p className="font-semibold text-neutral-900">Demo accounts (click to fill)</p>
+            <p className="mt-1 text-xs text-neutral-500">
+              Roles: Client, Admin, Super Admin, Claims Adjuster, Billing Specialist
+            </p>
+            <ul className="mt-3 space-y-2">
+              {DEMO_USER_CREDENTIALS.map((account) => (
+                <li key={account.email}>
+                  <button
+                    type="button"
+                    onClick={() => fillDemoLogin(account.email, account.password)}
+                    className="w-full rounded-md border border-neutral-200 px-3 py-2 text-left hover:border-primary hover:bg-primary/5"
+                  >
+                    <span className="font-medium text-neutral-900">{account.label}</span>
+                    <span className="mt-0.5 block text-xs text-neutral-500">
+                      {account.email} / {account.password} → {account.portal} portal
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
