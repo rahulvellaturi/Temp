@@ -25,6 +25,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { claimSchemas } from '@/lib/validations';
+import { toast } from '@/components/ui/toaster';
 
 interface NewClaimData {
   policyId: string;
@@ -47,7 +48,7 @@ const Claims: React.FC = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [showNewClaimForm, setShowNewClaimForm] = useState(false);
 
-  const { data: claims, loading, refetch } = useDataLoader(loadClaims, { initialData: [] });
+  const { data: claims, loading, refetch, setData: setClaims } = useDataLoader(loadClaims, { initialData: [] });
   const claimsList = claims ?? [];
 
   const availablePolicies = getAvailablePolicies();
@@ -100,12 +101,39 @@ const Claims: React.FC = () => {
 
   const handleNewClaim = async (data: NewClaimData) => {
     try {
-      console.log('Filing new claim:', data);
+      const policy = availablePolicies.find((p) => p.id === data.policyId);
+      const newClaim: ClientClaim = {
+        id: `claim-${Date.now()}`,
+        claimNumber: `CLM-${new Date().getFullYear()}-${String(claimsList.length + 1).padStart(3, '0')}`,
+        policyId: data.policyId,
+        policyType: (policy?.type as ClientClaim['policyType']) ?? 'AUTO',
+        policyNumber: policy?.number ?? 'N/A',
+        type: data.type,
+        status: 'SUBMITTED',
+        amount: data.estimatedAmount || 0,
+        estimatedAmount: data.estimatedAmount,
+        submittedDate: new Date().toISOString(),
+        incidentDate: data.incidentDate,
+        description: data.description,
+        location: data.location,
+        documents: [],
+        timeline: [
+          {
+            id: '1',
+            date: new Date().toISOString(),
+            event: 'Claim Submitted',
+            description: 'Your claim was submitted successfully.',
+            status: 'COMPLETED',
+          },
+        ],
+      };
+      setClaims([newClaim, ...claimsList]);
       setShowNewClaimForm(false);
       newClaimForm.reset();
-      await refetch();
+      toast.success('Claim filed', `${newClaim.claimNumber} was submitted.`);
     } catch (error) {
       console.error('Failed to file claim:', error);
+      toast.error('Claim failed', 'Unable to submit claim.');
     }
   };
 

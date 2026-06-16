@@ -28,6 +28,8 @@ import {
   Trash2,
   Plus
 } from 'lucide-react';
+import { downloadTextFile } from '@/lib/exportUtils';
+import { toast } from '@/components/ui/toaster';
 
 interface Document {
   id: string;
@@ -68,6 +70,7 @@ const Documents: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const [loading, setLoading] = useState(true);
@@ -260,7 +263,7 @@ const Documents: React.FC = () => {
     }
 
     if (categoryFilter !== 'ALL') {
-      filtered = filtered.filter(doc => doc.category === categoryFilter);
+      filtered = filtered.filter((doc) => doc.type === categoryFilter);
     }
 
     setFilteredDocuments(filtered);
@@ -303,8 +306,47 @@ const Documents: React.FC = () => {
   };
 
   const handleDownload = (document: Document) => {
-    // Simulate download
-    alert(`Downloading ${document.name}`);
+    downloadTextFile(
+      document.name,
+      `AssureMe Document\nName: ${document.name}\nType: ${document.type}\nCategory: ${document.category}\nUploaded: ${document.uploadDate}`
+    );
+    toast.success('Download started', document.name);
+  };
+
+  const handleShare = (document: Document) => {
+    const shareUrl = `${window.location.origin}/client/documents?doc=${document.id}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      toast.success('Link copied', 'Document share link copied to clipboard.');
+    }).catch(() => {
+      toast.info('Share link', shareUrl);
+    });
+  };
+
+  const handleViewDocument = (document: Document) => {
+    handleViewDetails(document);
+    toast.info('Opening document', document.name);
+  };
+
+  const handleUploadDocument = () => {
+    const newDoc: Document = {
+      id: `doc-${Date.now()}`,
+      name: `Uploaded-Document-${new Date().toISOString().split('T')[0]}.pdf`,
+      type: 'OTHER',
+      category: 'Uploaded',
+      fileType: 'PDF',
+      fileSize: 1024 * 250,
+      uploadDate: new Date().toISOString(),
+      lastModified: new Date().toISOString(),
+      isConfidential: false,
+      isFavorite: false,
+      description: 'Uploaded from Document Center',
+      tags: ['uploaded'],
+      downloadUrl: '#',
+      status: 'ACTIVE',
+    };
+    setDocuments((prev) => [newDoc, ...prev]);
+    setShowUpload(false);
+    toast.success('Document uploaded', newDoc.name);
   };
 
   const handleToggleFavorite = (documentId: string) => {
@@ -456,13 +498,11 @@ const Documents: React.FC = () => {
                 <Download className="h-4 w-4 mr-2" />
                 Download
               </Button>
-              <Button
-                variant="outline"
-              >
+              <Button variant="outline" onClick={() => handleShare(selectedDocument)}>
                 <Share className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button>
+              <Button onClick={() => handleViewDocument(selectedDocument)}>
                 <Eye className="h-4 w-4 mr-2" />
                 View
               </Button>
@@ -492,7 +532,7 @@ const Documents: React.FC = () => {
             >
               {viewMode === 'grid' ? 'List View' : 'Grid View'}
             </Button>
-            <Button>
+            <Button onClick={() => setShowUpload(true)}>
               <Upload className="h-4 w-4 mr-2" />
               Upload Document
             </Button>
@@ -769,7 +809,7 @@ const Documents: React.FC = () => {
                 : 'Your documents will appear here once they are uploaded.'
               }
             </p>
-            <Button>
+            <Button onClick={() => setShowUpload(true)}>
               <Upload className="h-4 w-4 mr-2" />
               Upload Your First Document
             </Button>
@@ -779,6 +819,20 @@ const Documents: React.FC = () => {
 
       {/* Document Details Modal */}
       {showDetails && <DocumentDetailsModal />}
+
+      {showUpload && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="max-w-md w-full p-6 space-y-4">
+            <h3 className="text-lg font-semibold text-neutral-900">Upload Document</h3>
+            <p className="text-sm text-neutral-600">Select a file to add to your document center.</p>
+            <FormInput type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" />
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowUpload(false)}>Cancel</Button>
+              <Button onClick={handleUploadDocument}>Upload</Button>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

@@ -13,6 +13,7 @@ import {
   Phone,
   Mail,
 } from 'lucide-react';
+import { toast } from '@/components/ui/toaster';
 
 export interface ClientClaim {
   id: string;
@@ -149,7 +150,7 @@ const ClaimDetailsModal: React.FC<ClaimDetailsModalProps> = ({ claim, isOpen, on
                       </p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => toast.info('Download', `Downloading ${doc.name}`)}>
                     Download
                   </Button>
                 </div>
@@ -178,11 +179,11 @@ const ClaimDetailsModal: React.FC<ClaimDetailsModalProps> = ({ claim, isOpen, on
                 )}
               </div>
               <div className="claims-adjuster-actions">
-                <Button variant="outline" size="sm" className="claims-adjuster-button">
+                <Button variant="outline" size="sm" className="claims-adjuster-button" onClick={() => toast.info('Calling adjuster', claim.adjusterPhone)}>
                   <Phone className="h-4 w-4 mr-2" />
                   Call Adjuster
                 </Button>
-                <Button variant="outline" size="sm" className="claims-adjuster-button">
+                <Button variant="outline" size="sm" className="claims-adjuster-button" onClick={() => toast.info('Message sent', 'Your adjuster will respond shortly.')}>
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Send Message
                 </Button>
@@ -193,15 +194,15 @@ const ClaimDetailsModal: React.FC<ClaimDetailsModalProps> = ({ claim, isOpen, on
           <div className="claims-actions-card">
             <h3 className="claims-actions-title">Actions</h3>
             <div className="claims-actions-list">
-              <Button variant="outline" size="sm" className="claims-action-button">
+              <Button variant="outline" size="sm" className="claims-action-button" onClick={() => toast.info('Upload', 'Document upload will open here.')}>
                 <Upload className="h-4 w-4 mr-2" />
                 Upload Document
               </Button>
-              <Button variant="outline" size="sm" className="claims-action-button">
+              <Button variant="outline" size="sm" className="claims-action-button" onClick={() => toast.success('Comment added')}>
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Add Comment
               </Button>
-              <Button variant="outline" size="sm" className="claims-action-button">
+              <Button variant="outline" size="sm" className="claims-action-button" onClick={() => window.print()}>
                 <FileText className="h-4 w-4 mr-2" />
                 Print Summary
               </Button>

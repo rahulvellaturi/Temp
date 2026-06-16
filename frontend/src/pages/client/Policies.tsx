@@ -23,6 +23,8 @@ import {
   Briefcase,
   Activity
 } from 'lucide-react';
+import { downloadTextFile } from '@/lib/exportUtils';
+import { toast } from '@/components/ui/toaster';
 
 interface Policy {
   id: string;
@@ -60,6 +62,7 @@ const Policies: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [selectedPolicy, setSelectedPolicy] = useState<Policy | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
 
   const { execute: fetchPolicies, loading } = useApi();
 
@@ -153,8 +156,27 @@ const Policies: React.FC = () => {
   };
 
   const handleDownloadPolicy = (policy: Policy) => {
-    // Simulate PDF download
-    alert(`Downloading policy document for ${policy.policyNumber}`);
+    downloadTextFile(
+      `${policy.policyNumber}.txt`,
+      [
+        `AssureMe Policy`,
+        `Number: ${policy.policyNumber}`,
+        `Type: ${policy.type}`,
+        `Status: ${policy.status}`,
+        `Premium: $${policy.premium}`,
+        `Coverage: $${policy.coverage}`,
+      ].join('\n')
+    );
+    toast.success('Policy downloaded', policy.policyNumber);
+  };
+
+  const handleRequestQuote = () => {
+    setShowQuoteModal(false);
+    toast.success('Quote requested', 'An agent will contact you within 1 business day.');
+  };
+
+  const handleRequestChanges = (policy: Policy) => {
+    toast.success('Change request submitted', `We'll review changes for ${policy.policyNumber}.`);
   };
 
   const PolicyDetailsModal = () => {
@@ -320,7 +342,7 @@ const Policies: React.FC = () => {
                 <Download className="h-4 w-4 mr-2" />
                 Download Policy
               </Button>
-              <Button>
+              <Button onClick={() => handleRequestChanges(selectedPolicy)}>
                 Request Changes
               </Button>
             </div>
@@ -336,7 +358,7 @@ const Policies: React.FC = () => {
         title="My Policies"
         description="Manage your insurance policies and coverage"
         actions={
-          <Button>
+          <Button onClick={() => setShowQuoteModal(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Request Quote
           </Button>
@@ -479,11 +501,32 @@ const Policies: React.FC = () => {
               : 'You don\'t have any insurance policies yet. Get started with a quote!'
             }
           </p>
-          <Button>
+          <Button onClick={() => setShowQuoteModal(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Request Quote
           </Button>
         </Card>
+      )}
+
+      {showQuoteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="max-w-md w-full p-6 space-y-4">
+            <h3 className="text-lg font-semibold">Request a Quote</h3>
+            <p className="text-sm text-neutral-600">Tell us what coverage you need and we'll prepare a quote.</p>
+            <FormField label="Policy Type">
+              <select className="w-full px-4 py-2 border border-neutral-300 rounded-md">
+                <option>AUTO</option>
+                <option>HOME</option>
+                <option>LIFE</option>
+                <option>HEALTH</option>
+              </select>
+            </FormField>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowQuoteModal(false)}>Cancel</Button>
+              <Button onClick={handleRequestQuote}>Submit Request</Button>
+            </div>
+          </Card>
+        </div>
       )}
 
       {/* Policy Details Modal */}

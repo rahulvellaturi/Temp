@@ -28,6 +28,10 @@ import {
   Lock
 } from 'lucide-react';
 import { paymentSchemas } from '@/lib/validations';
+import { buildReceiptText, downloadTextFile } from '@/lib/exportUtils';
+import { toast } from '@/components/ui/toaster';
+
+const loadPaymentsData = () => unifiedMockDataService.fetchPaymentsAsync();
 
 interface Payment {
   id: string;
@@ -85,9 +89,11 @@ const Payments: React.FC = () => {
 
   // Load data using unified service
   const { data: payments, loading, setData: setPayments } = useDataLoader(
-    () => unifiedMockDataService.fetchPaymentsAsync(),
+    loadPaymentsData,
     { initialData: [] }
   );
+
+  const paymentsList = payments ?? [];
 
   // Available policies for payment
   const availablePolicies = unifiedMockDataService.getAvailablePolicies();
@@ -137,7 +143,7 @@ const Payments: React.FC = () => {
   };
 
   const filterPayments = () => {
-    let filtered = [...payments];
+    let filtered = [...paymentsList];
 
     if (searchTerm) {
       filtered = filtered.filter(payment => 
@@ -189,22 +195,84 @@ const Payments: React.FC = () => {
 
   const handleMakePayment = async (data: NewPaymentData) => {
     try {
-      console.log('Processing payment:', data);
+      const policy = availablePolicies.find((p) => p.id === data.policyId);
+      const method = paymentMethods.find((m) => m.id === data.paymentMethodId);
+      const newPayment: Payment = {
+        id: `pay-${Date.now()}`,
+        paymentNumber: `PAY-${Date.now()}`,
+        policyId: data.policyId,
+        policyNumber: policy?.number ?? 'N/A',
+        policyType: policy?.type ?? 'AUTO',
+        amount: data.amount,
+        dueDate: new Date().toISOString(),
+        paidDate: new Date().toISOString(),
+        status: 'COMPLETED',
+        paymentMethod: method?.nickname ?? 'Card',
+        description: `Premium payment for ${policy?.number ?? 'policy'}`,
+        lastFourDigits: method?.lastFour,
+        transactionId: `txn_${Date.now()}`,
+        isAutoPayEnabled: false,
+      };
+      setPayments([newPayment, ...paymentsList]);
       setShowMakePayment(false);
-      await loadPayments();
+      paymentForm.reset();
+      toast.success('Payment processed', 'Your payment was submitted successfully.');
     } catch (error) {
       console.error('Failed to process payment:', error);
+      toast.error('Payment failed', 'Unable to process payment. Please try again.');
     }
   };
 
   const handleAddPaymentMethod = async (data: any) => {
     try {
-      console.log('Adding payment method:', data);
+      const lastFour = String(data.cardNumber).slice(-4);
+      const newMethod: PaymentMethod = {
+        id: `pm-${Date.now()}`,
+        type: 'CREDIT_CARD',
+        lastFour,
+        expiryMonth: data.expiryMonth,
+        expiryYear: data.expiryYear,
+        cardBrand: 'Visa',
+        isDefault: data.isDefault ?? false,
+        nickname: data.nickname || `Card ending ${lastFour}`,
+      };
+      setPaymentMethods((prev) => [...prev, newMethod]);
       setShowAddPaymentMethod(false);
-      await loadPaymentMethods();
+      paymentMethodForm.reset();
+      toast.success('Payment method added', 'Your new payment method is ready to use.');
     } catch (error) {
       console.error('Failed to add payment method:', error);
+      toast.error('Could not add method', 'Please check your card details and try again.');
     }
+  };
+
+  const handleDownloadReceipt = (payment: Payment) => {
+    downloadTextFile(
+      `${payment.paymentNumber}-receipt.txt`,
+      buildReceiptText(payment)
+    );
+    toast.success('Receipt downloaded');
+  };
+
+  const handleRetryPayment = (payment: Payment) => {
+    setPayments(
+      paymentsList.map((p) =>
+        p.id === payment.id
+          ? {
+              ...p,
+              status: 'COMPLETED',
+              paidDate: new Date().toISOString(),
+              failureReason: undefined,
+            }
+          : p
+      )
+    );
+    if (selectedPayment?.id === payment.id) {
+      setSelectedPayment((prev) =>
+        prev ? { ...prev, status: 'COMPLETED', paidDate: new Date().toISOString() } : prev
+      );
+    }
+    toast.success('Payment retried', 'The payment completed successfully.');
   };
 
   const PaymentDetailsModal = () => {
@@ -315,12 +383,12 @@ const Payments: React.FC = () => {
 
             {/* Actions */}
             <div className="flex justify-end space-x-3 pt-4 border-t">
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => handleDownloadReceipt(selectedPayment)}>
                 <Download className="h-4 w-4 mr-2" />
                 Download Receipt
               </Button>
               {selectedPayment.status === 'FAILED' && (
-                <Button>
+                <Button onClick={() => handleRetryPayment(selectedPayment)}>
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Retry Payment
                 </Button>
@@ -856,7 +924,7 @@ const Payments: React.FC = () => {
                         <Eye className="h-4 w-4" />
                       </Button>
                       {payment.status === 'FAILED' && (
-                        <Button size="sm">
+                        <Button size="sm" onClick={() => handleRetryPayment(payment)}>
                           <RefreshCw className="h-4 w-4" />
                         </Button>
                       )}

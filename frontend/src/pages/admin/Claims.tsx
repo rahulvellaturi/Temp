@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Search, Filter, Eye, CheckCircle, XCircle, Clock, AlertTriangle, FileText, DollarSign, Calendar, User, Mail } from 'lucide-react';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
@@ -7,6 +6,9 @@ import PageHeader from '@/components/common/PageHeader';
 import { Claim, ClaimStatus } from '@/types';
 import unifiedMockDataService from '@/services/unifiedMockDataService';
 import { useDataLoader } from '@/hooks/useDataLoader';
+import { downloadCsvFile } from '@/lib/exportUtils';
+import { toast } from '@/components/ui/toaster';
+import { Search, Filter, Eye, CheckCircle, XCircle, Clock, AlertTriangle, FileText, DollarSign, Calendar, User, Mail } from 'lucide-react';
 
 const loadClaims = () => unifiedMockDataService.fetchClaimsAsync();
 
@@ -92,6 +94,21 @@ const AdminClaims: React.FC = () => {
     }
   };
 
+  const handleExportClaims = () => {
+    downloadCsvFile(
+      'claims-export.csv',
+      ['Claim Number', 'Status', 'Client', 'Type', 'Amount'],
+      filteredClaims.map((c) => [
+        c.claimNumber,
+        c.status,
+        `${c.user?.firstName ?? ''} ${c.user?.lastName ?? ''}`.trim(),
+        c.policy?.policyType ?? '',
+        c.payoutAmount ?? 0,
+      ])
+    );
+    toast.success('Export started', 'Claims CSV is downloading.');
+  };
+
   if (isLoading && claimsList.length === 0) {
     return (
       <div className="space-y-6">
@@ -117,7 +134,7 @@ const AdminClaims: React.FC = () => {
         title="Claims Management"
         subtitle="Manage and review insurance claims"
         action={
-          <Button variant="primary" size="sm">
+          <Button variant="primary" size="sm" onClick={handleExportClaims}>
             <FileText className="w-4 h-4 mr-2" />
             Export Claims
           </Button>
