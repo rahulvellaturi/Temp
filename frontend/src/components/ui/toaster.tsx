@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppDispatch';
-import { removeNotification } from '@/store/slices/uiSlice';
+import store from '@/store';
+import { addNotification, removeNotification } from '@/store/slices/uiSlice';
 import { X, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react';
 
 // Toast item interface
@@ -201,58 +202,31 @@ export function Toaster() {
   );
 }
 
-// Toast utility functions for easy usage
+const dispatchToast = (
+  type: 'success' | 'error' | 'warning' | 'info',
+  title: string,
+  message?: string,
+  duration?: number
+) => {
+  store.dispatch(addNotification({ type, title, message, duration }));
+};
+
+// Toast utility functions for easy usage outside React components
 export const toast = {
   success: (title: string, message?: string, duration: number = 5000) => {
-    const dispatch = useAppDispatch();
-    dispatch({
-      type: 'ui/addNotification',
-      payload: {
-        type: 'success',
-        title,
-        message,
-        duration,
-      },
-    });
+    dispatchToast('success', title, message, duration);
   },
-  
+
   error: (title: string, message?: string, duration: number = 7000) => {
-    const dispatch = useAppDispatch();
-    dispatch({
-      type: 'ui/addNotification',
-      payload: {
-        type: 'error',
-        title,
-        message,
-        duration,
-      },
-    });
+    dispatchToast('error', title, message, duration);
   },
-  
+
   warning: (title: string, message?: string, duration: number = 6000) => {
-    const dispatch = useAppDispatch();
-    dispatch({
-      type: 'ui/addNotification',
-      payload: {
-        type: 'warning',
-        title,
-        message,
-        duration,
-      },
-    });
+    dispatchToast('warning', title, message, duration);
   },
-  
+
   info: (title: string, message?: string, duration: number = 5000) => {
-    const dispatch = useAppDispatch();
-    dispatch({
-      type: 'ui/addNotification',
-      payload: {
-        type: 'info',
-        title,
-        message,
-        duration,
-      },
-    });
+    dispatchToast('info', title, message, duration);
   },
 };
 
@@ -262,51 +236,19 @@ export const useToast = () => {
 
   return {
     success: (title: string, message?: string, duration: number = 5000) => {
-      dispatch({
-        type: 'ui/addNotification',
-        payload: {
-          type: 'success',
-          title,
-          message,
-          duration,
-        },
-      });
+      dispatch(addNotification({ type: 'success', title, message, duration }));
     },
-    
+
     error: (title: string, message?: string, duration: number = 7000) => {
-      dispatch({
-        type: 'ui/addNotification',
-        payload: {
-          type: 'error',
-          title,
-          message,
-          duration,
-        },
-      });
+      dispatch(addNotification({ type: 'error', title, message, duration }));
     },
-    
+
     warning: (title: string, message?: string, duration: number = 6000) => {
-      dispatch({
-        type: 'ui/addNotification',
-        payload: {
-          type: 'warning',
-          title,
-          message,
-          duration,
-        },
-      });
+      dispatch(addNotification({ type: 'warning', title, message, duration }));
     },
-    
+
     info: (title: string, message?: string, duration: number = 5000) => {
-      dispatch({
-        type: 'ui/addNotification',
-        payload: {
-          type: 'info',
-          title,
-          message,
-          duration,
-        },
-      });
+      dispatch(addNotification({ type: 'info', title, message, duration }));
     },
     
     dismiss: (id: string) => {

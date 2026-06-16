@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { useApi } from '@/hooks/useApi';
 import PageHeader from '@/components/common/PageHeader';
@@ -27,6 +28,9 @@ import {
   Download,
   RefreshCw
 } from 'lucide-react';
+import { ROUTES } from '@/lib/constants';
+import { downloadJsonFile } from '@/lib/exportUtils';
+import { toast } from '@/components/ui/toaster';
 
 interface AdminStats {
   totalUsers: number;
@@ -63,6 +67,7 @@ interface QuickAction {
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [stats, setStats] = useState<AdminStats>({
     totalUsers: 0,
     activeUsers: 0,
@@ -210,6 +215,35 @@ const AdminDashboard: React.FC = () => {
     });
   };
 
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'CREATE_POLICY':
+        navigate(ROUTES.ADMIN.POLICIES);
+        break;
+      case 'ADD_USER':
+        navigate(ROUTES.ADMIN.USERS);
+        break;
+      case 'REVIEW_CLAIMS':
+        navigate(ROUTES.ADMIN.CLAIMS);
+        break;
+      case 'GENERATE_REPORT':
+        downloadJsonFile('admin-dashboard-report.json', { stats, recentActivity, generatedAt: new Date().toISOString() });
+        toast.success('Report generated', 'Dashboard report downloaded.');
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleExportReport = () => {
+    downloadJsonFile('admin-dashboard-report.json', { stats, recentActivity, generatedAt: new Date().toISOString() });
+    toast.success('Report exported');
+  };
+
+  const handleViewAllActivity = () => {
+    toast.info('Activity log', `Showing all ${recentActivity.length} recent events.`);
+  };
+
   const getActivityIcon = (type: string) => {
     const icons = {
       USER_REGISTERED: <Users className="h-4 w-4 text-green-500" />,
@@ -260,7 +294,7 @@ const AdminDashboard: React.FC = () => {
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
-            <Button>
+            <Button onClick={handleExportReport}>
               <Download className="h-4 w-4 mr-2" />
               Export Report
             </Button>
@@ -408,6 +442,10 @@ const AdminDashboard: React.FC = () => {
             {quickActions.map((action) => (
               <div
                 key={action.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => handleQuickAction(action.action)}
+                onKeyDown={(e) => e.key === 'Enter' && handleQuickAction(action.action)}
                 className={`p-4 border-2 border-dashed rounded-lg cursor-pointer hover:shadow-md transition-all ${getQuickActionColor(action.color)}`}
               >
                 <div className="flex items-center space-x-3">
@@ -453,7 +491,7 @@ const AdminDashboard: React.FC = () => {
             ))}
           </div>
           <div className="mt-4 pt-4 border-t">
-            <Button variant="outline" size="sm" className="w-full">
+            <Button variant="outline" size="sm" className="w-full" onClick={handleViewAllActivity}>
               <Eye className="h-4 w-4 mr-2" />
               View All Activity
             </Button>

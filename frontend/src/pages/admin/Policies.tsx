@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { z } from 'zod';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { useApi } from '@/hooks/useApi';
 import { useGenericForm } from '@/hooks/useGenericForm';
@@ -30,6 +31,27 @@ import {
   X
 } from 'lucide-react';
 import { policySchemas } from '@/lib/validations';
+import { downloadCsvFile, downloadTextFile } from '@/lib/exportUtils';
+import { toast } from '@/components/ui/toaster';
+
+const adminCreatePolicySchema = z.object({
+  type: z.enum(['AUTO', 'HOME', 'LIFE', 'HEALTH', 'BUSINESS']),
+  clientId: z.string().min(1, 'Client is required'),
+  agentId: z.string().optional(),
+  premium: z.coerce.number().min(0, 'Premium must be positive'),
+  coverage: z.coerce.number().min(1000, 'Coverage must be at least $1,000'),
+  deductible: z.coerce.number().min(0, 'Deductible must be positive'),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
+  description: z.string().min(1, 'Description is required'),
+});
+
+const adminEditPolicySchema = z.object({
+  premium: z.coerce.number().min(0),
+  coverage: z.coerce.number().min(1000),
+  deductible: z.coerce.number().min(0),
+  description: z.string().min(1),
+});
 
 interface Policy {
   id: string;
@@ -83,25 +105,32 @@ const AdminPolicies: React.FC = () => {
   const { execute: fetchPolicies } = useApi();
 
   const newPolicyForm = useGenericForm({
-    schema: policySchemas.requestQuote,
+    schema: adminCreatePolicySchema,
     defaultValues: {
       type: 'AUTO',
+      clientId: '',
+      agentId: '',
+      premium: 1200,
       coverage: 100000,
       deductible: 500,
-      personalInfo: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        dateOfBirth: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: '',
-      }
+      startDate: '',
+      endDate: '',
+      description: '',
     },
     showSuccessMessage: true,
     successMessage: 'Policy created successfully!',
+  });
+
+  const editPolicyForm = useGenericForm({
+    schema: adminEditPolicySchema,
+    defaultValues: {
+      premium: 0,
+      coverage: 0,
+      deductible: 0,
+      description: '',
+    },
+    showSuccessMessage: true,
+    successMessage: 'Policy updated successfully!',
   });
 
   // Mock clients and agents data
@@ -360,26 +389,109 @@ const AdminPolicies: React.FC = () => {
 
   const handleEditPolicy = (policy: Policy) => {
     setSelectedPolicy(policy);
+    editPolicyForm.reset({
+      premium: policy.premium,
+      coverage: policy.coverage,
+      deductible: policy.deductible,
+      description: policy.description,
+    });
     setShowEditPolicy(true);
   };
 
-  const handleCreatePolicy = async (data: any) => {
+  const handleCreatePolicy = async (data: NewPolicyData) => {
     try {
-      console.log('Creating policy:', data);
+      const client = availableClients.find((c) => c.id === data.clientId);
+      const agent = data.agentId ? availableAgents.find((a) => a.id === data.agentId) : undefined;
+      const newPolicy: Policy = {
+        id: String(Date.now()),
+        policyNumber: `${data.type}-${new Date().getFullYear()}-${String(policies.length + 1).padStart(3, '0')}`,
+        type: data.type,
+        status: 'PENDING',
+        clientId: data.clientId,
+        clientName: client?.name ?? 'Unknown Client',
+        clientEmail: client?.email ?? '',
+        agentId: data.agentId,
+        agentName: agent?.name,
+        premium: data.premium,
+        coverage: data.coverage,
+        deductible: data.deductible,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        renewalDate: data.endDate,
+        description: data.description,
+        terms: {},
+        createdDate: new Date().toISOString().split('T')[0],
+        lastModified: new Date().toISOString().split('T')[0],
+        claimsCount: 0,
+        totalClaimsAmount: 0,
+      };
+      setPolicies((prev) => [newPolicy, ...prev]);
       setShowCreatePolicy(false);
-      await loadPolicies();
+      newPolicyForm.reset();
+      toast.success('Policy created', `${newPolicy.policyNumber} was added.`);
     } catch (error) {
       console.error('Failed to create policy:', error);
+      toast.error('Create failed', 'Could not create policy.');
     }
   };
 
+  const handleUpdatePolicy = async (data: { premium: number; coverage: number; deductible: number; description: string }) => {
+    if (!selectedPolicy) return;
+    setPolicies((prev) =>
+      prev.map((policy) =>
+        policy.id === selectedPolicy.id
+          ? {
+              ...policy,
+              ...data,
+              lastModified: new Date().toISOString().split('T')[0],
+            }
+          : policy
+      )
+    );
+    setShowEditPolicy(false);
+    setShowDetails(false);
+    toast.success('Policy updated');
+  };
+
   const handleStatusChange = async (policyId: string, newStatus: string) => {
-    try {
-      console.log('Changing policy status:', policyId, newStatus);
-      await loadPolicies();
-    } catch (error) {
-      console.error('Failed to change policy status:', error);
+    setPolicies((prev) =>
+      prev.map((policy) =>
+        policy.id === policyId
+          ? { ...policy, status: newStatus as Policy['status'], lastModified: new Date().toISOString().split('T')[0] }
+          : policy
+      )
+    );
+    if (selectedPolicy?.id === policyId) {
+      setSelectedPolicy((prev) => (prev ? { ...prev, status: newStatus as Policy['status'] } : prev));
     }
+    toast.success('Policy status updated', `Status changed to ${newStatus.replace('_', ' ').toLowerCase()}.`);
+  };
+
+  const handleExportPolicies = () => {
+    downloadCsvFile(
+      'policies-export.csv',
+      ['Policy Number', 'Type', 'Status', 'Client', 'Premium', 'Coverage'],
+      policies.map((p) => [p.policyNumber, p.type, p.status, p.clientName, p.premium, p.coverage])
+    );
+    toast.success('Export started', 'Policies CSV is downloading.');
+  };
+
+  const handleDownloadPolicy = (policy: Policy) => {
+    downloadTextFile(
+      `${policy.policyNumber}.txt`,
+      [
+        `AssureMe Policy Summary`,
+        `Policy: ${policy.policyNumber}`,
+        `Type: ${policy.type}`,
+        `Status: ${policy.status}`,
+        `Client: ${policy.clientName}`,
+        `Premium: $${policy.premium}`,
+        `Coverage: $${policy.coverage}`,
+        `Deductible: $${policy.deductible}`,
+        `Description: ${policy.description}`,
+      ].join('\n')
+    );
+    toast.success('Policy downloaded');
   };
 
   const PolicyDetailsModal = () => {
@@ -543,7 +655,7 @@ const AdminPolicies: React.FC = () => {
                   Activate Policy
                 </Button>
               ) : null}
-              <Button>
+              <Button onClick={() => handleDownloadPolicy(selectedPolicy)}>
                 <Download className="h-4 w-4 mr-2" />
                 Download Policy
               </Button>
@@ -575,8 +687,11 @@ const AdminPolicies: React.FC = () => {
 
           <form onSubmit={handleSubmit(handleCreatePolicy)} className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField label="Policy Type" required>
-                <select className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              <FormField label="Policy Type" required error={errors.type?.message}>
+                <select
+                  {...register('type')}
+                  className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                >
                   <option value="AUTO">Auto Insurance</option>
                   <option value="HOME">Home Insurance</option>
                   <option value="LIFE">Life Insurance</option>
@@ -585,10 +700,13 @@ const AdminPolicies: React.FC = () => {
                 </select>
               </FormField>
 
-              <FormField label="Client" required>
-                <select className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              <FormField label="Client" required error={errors.clientId?.message}>
+                <select
+                  {...register('clientId')}
+                  className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                >
                   <option value="">Select Client</option>
-                  {availableClients.map(client => (
+                  {availableClients.map((client) => (
                     <option key={client.id} value={client.id}>
                       {client.name} - {client.email}
                     </option>
@@ -596,10 +714,13 @@ const AdminPolicies: React.FC = () => {
                 </select>
               </FormField>
 
-              <FormField label="Agent">
-                <select className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              <FormField label="Agent" error={errors.agentId?.message}>
+                <select
+                  {...register('agentId')}
+                  className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                >
                   <option value="">Select Agent (Optional)</option>
-                  {availableAgents.map(agent => (
+                  {availableAgents.map((agent) => (
                     <option key={agent.id} value={agent.id}>
                       {agent.name} - {agent.email}
                     </option>
@@ -607,50 +728,49 @@ const AdminPolicies: React.FC = () => {
                 </select>
               </FormField>
 
-              <FormField label="Annual Premium" required>
+              <FormField label="Annual Premium" required error={errors.premium?.message}>
                 <FormInput
                   type="number"
                   min="0"
                   step="0.01"
                   placeholder="1200.00"
                   leftIcon={<DollarSign className="h-4 w-4" />}
+                  {...register('premium', { valueAsNumber: true })}
                 />
               </FormField>
 
-              <FormField label="Coverage Amount" required>
+              <FormField label="Coverage Amount" required error={errors.coverage?.message}>
                 <FormInput
                   type="number"
                   min="0"
                   placeholder="100000"
                   leftIcon={<DollarSign className="h-4 w-4" />}
+                  {...register('coverage', { valueAsNumber: true })}
                 />
               </FormField>
 
-              <FormField label="Deductible" required>
+              <FormField label="Deductible" required error={errors.deductible?.message}>
                 <FormInput
                   type="number"
                   min="0"
                   placeholder="500"
                   leftIcon={<DollarSign className="h-4 w-4" />}
+                  {...register('deductible', { valueAsNumber: true })}
                 />
               </FormField>
 
-              <FormField label="Start Date" required>
-                <FormInput
-                  type="date"
-                  min={new Date().toISOString().split('T')[0]}
-                />
+              <FormField label="Start Date" required error={errors.startDate?.message}>
+                <FormInput type="date" {...register('startDate')} />
               </FormField>
 
-              <FormField label="End Date" required>
-                <FormInput
-                  type="date"
-                />
+              <FormField label="End Date" required error={errors.endDate?.message}>
+                <FormInput type="date" {...register('endDate')} />
               </FormField>
             </div>
 
-            <FormField label="Description" required>
+            <FormField label="Description" required error={errors.description?.message}>
               <textarea
+                {...register('description')}
                 rows={3}
                 className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                 placeholder="Enter policy description..."
@@ -658,16 +778,48 @@ const AdminPolicies: React.FC = () => {
             </FormField>
 
             <div className="flex justify-end space-x-3 pt-4 border-t">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowCreatePolicy(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => setShowCreatePolicy(false)}>
                 Cancel
               </Button>
               <Button type="submit" loading={loading}>
                 Create Policy
               </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
+  const EditPolicyModal = () => {
+    if (!selectedPolicy) return null;
+    const { register, handleSubmit, formState: { errors } } = editPolicyForm;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg max-w-lg w-full">
+          <div className="p-6 border-b flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-neutral-900">Edit {selectedPolicy.policyNumber}</h2>
+            <Button variant="outline" size="sm" onClick={() => setShowEditPolicy(false)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <form onSubmit={handleSubmit(handleUpdatePolicy)} className="p-6 space-y-4">
+            <FormField label="Annual Premium" error={errors.premium?.message}>
+              <FormInput type="number" {...register('premium', { valueAsNumber: true })} />
+            </FormField>
+            <FormField label="Coverage" error={errors.coverage?.message}>
+              <FormInput type="number" {...register('coverage', { valueAsNumber: true })} />
+            </FormField>
+            <FormField label="Deductible" error={errors.deductible?.message}>
+              <FormInput type="number" {...register('deductible', { valueAsNumber: true })} />
+            </FormField>
+            <FormField label="Description" error={errors.description?.message}>
+              <textarea {...register('description')} rows={3} className="w-full px-4 py-2 border border-neutral-300 rounded-md" />
+            </FormField>
+            <div className="flex justify-end gap-3 pt-2">
+              <Button type="button" variant="outline" onClick={() => setShowEditPolicy(false)}>Cancel</Button>
+              <Button type="submit">Save Changes</Button>
             </div>
           </form>
         </div>
@@ -704,7 +856,7 @@ const AdminPolicies: React.FC = () => {
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleExportPolicies}>
               <Download className="h-4 w-4 mr-2" />
               Export Policies
             </Button>
@@ -935,6 +1087,7 @@ const AdminPolicies: React.FC = () => {
       {/* Modals */}
       {showDetails && <PolicyDetailsModal />}
       {showCreatePolicy && <CreatePolicyModal />}
+      {showEditPolicy && <EditPolicyModal />}
     </div>
   );
 };

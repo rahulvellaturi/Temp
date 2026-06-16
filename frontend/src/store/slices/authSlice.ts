@@ -95,6 +95,34 @@ export const changePassword = createAsyncThunk(
   }
 );
 
+export const enableMFA = createAsyncThunk(
+  'auth/enableMFA',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/auth/mfa/setup');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.error || error.message || 'Failed to enable MFA'
+      );
+    }
+  }
+);
+
+export const disableMFA = createAsyncThunk(
+  'auth/disableMFA',
+  async (_, { rejectWithValue }) => {
+    try {
+      await api.post('/auth/mfa/disable');
+      return true;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.error || error.message || 'Failed to disable MFA'
+      );
+    }
+  }
+);
+
 // Auth state interface
 interface AuthState {
   user: User | null;

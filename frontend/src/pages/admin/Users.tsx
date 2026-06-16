@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { z } from 'zod';
 import { useAppSelector } from '@/hooks/useAppDispatch';
 import { useApi } from '@/hooks/useApi';
 import { useGenericForm } from '@/hooks/useGenericForm';
@@ -31,6 +32,13 @@ import {
   X
 } from 'lucide-react';
 import { userSchemas } from '@/lib/validations';
+import { downloadCsvFile } from '@/lib/exportUtils';
+import { toast } from '@/components/ui/toaster';
+
+const createUserSchema = userSchemas.updateProfile.extend({
+  role: z.enum(['CLIENT', 'AGENT', 'ADMIN']),
+  sendWelcomeEmail: z.boolean().optional(),
+});
 
 interface User {
   id: string;
@@ -81,7 +89,7 @@ const AdminUsers: React.FC = () => {
   const { execute: fetchUsers } = useApi();
 
   const newUserForm = useGenericForm({
-    schema: userSchemas.updateProfile,
+    schema: createUserSchema,
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -91,6 +99,8 @@ const AdminUsers: React.FC = () => {
       city: '',
       state: '',
       zipCode: '',
+      role: 'CLIENT' as const,
+      sendWelcomeEmail: true,
     },
     showSuccessMessage: true,
     successMessage: 'User created successfully!',
@@ -341,33 +351,67 @@ const AdminUsers: React.FC = () => {
     setShowEditUser(true);
   };
 
-  const handleCreateUser = async (data: any) => {
-    try {
-      console.log('Creating user:', data);
-      setShowCreateUser(false);
-      await loadUsers();
-    } catch (error) {
-      console.error('Failed to create user:', error);
+  const handleCreateUser = async (data: NewUserData) => {
+    const newUser: User = {
+      id: String(Date.now()),
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      role: data.role,
+      status: 'ACTIVE',
+      dateJoined: new Date().toISOString().split('T')[0],
+      lastLogin: undefined,
+      address: data.address,
+      city: data.city,
+      state: data.state,
+      zipCode: data.zipCode,
+      policiesCount: 0,
+      claimsCount: 0,
+      totalPremiums: 0,
+    };
+    setUsers((prev) => [newUser, ...prev]);
+    setShowCreateUser(false);
+    newUserForm.reset();
+    if (data.sendWelcomeEmail) {
+      toast.success('User created', `Welcome email sent to ${data.email}.`);
+    } else {
+      toast.success('User created', `${data.firstName} ${data.lastName} was added.`);
     }
   };
 
   const handleUpdateUser = async (data: any) => {
-    try {
-      console.log('Updating user:', selectedUser?.id, data);
-      setShowEditUser(false);
-      await loadUsers();
-    } catch (error) {
-      console.error('Failed to update user:', error);
-    }
+    if (!selectedUser) return;
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === selectedUser.id
+          ? { ...user, ...data, lastLogin: user.lastLogin }
+          : user
+      )
+    );
+    setShowEditUser(false);
+    toast.success('User updated');
   };
 
   const handleStatusChange = async (userId: string, newStatus: string) => {
-    try {
-      console.log('Changing user status:', userId, newStatus);
-      await loadUsers();
-    } catch (error) {
-      console.error('Failed to change user status:', error);
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === userId ? { ...user, status: newStatus as User['status'] } : user
+      )
+    );
+    if (selectedUser?.id === userId) {
+      setSelectedUser((prev) => (prev ? { ...prev, status: newStatus as User['status'] } : prev));
     }
+    toast.success('Status updated', `User is now ${newStatus.toLowerCase()}.`);
+  };
+
+  const handleExportUsers = () => {
+    downloadCsvFile(
+      'users-export.csv',
+      ['Name', 'Email', 'Role', 'Status', 'Policies'],
+      users.map((u) => [`${u.firstName} ${u.lastName}`, u.email, u.role, u.status, u.policiesCount])
+    );
+    toast.success('Export started', 'Users CSV is downloading.');
   };
 
   const UserDetailsModal = () => {
@@ -577,7 +621,10 @@ const AdminUsers: React.FC = () => {
                 label="Role"
                 required
               >
-                <select className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                <select
+                  {...register('role')}
+                  className="w-full px-4 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                >
                   <option value="CLIENT">Client</option>
                   <option value="AGENT">Agent</option>
                   <option value="ADMIN">Admin</option>
@@ -637,8 +684,8 @@ const AdminUsers: React.FC = () => {
               <input
                 id="sendWelcome"
                 type="checkbox"
+                {...register('sendWelcomeEmail')}
                 className="h-4 w-4 text-primary focus:ring-primary border-neutral-300 rounded"
-                defaultChecked
               />
               <label htmlFor="sendWelcome" className="ml-3 block text-sm text-neutral-900">
                 Send welcome email with login instructions
@@ -822,7 +869,7 @@ const AdminUsers: React.FC = () => {
         description="Manage client accounts, agents, and administrators"
         actions={
           <div className="flex space-x-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleExportUsers}>
               <Download className="h-4 w-4 mr-2" />
               Export Users
             </Button>

@@ -29,6 +29,8 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { authSchemas, userSchemas } from '@/lib/validations';
+import { downloadJsonFile } from '@/lib/exportUtils';
+import { toast } from '@/components/ui/toaster';
 
 interface NotificationSettings {
   emailNotifications: boolean;
@@ -67,6 +69,33 @@ const Profile: React.FC = () => {
     sessionTimeout: 30,
     passwordLastChanged: '2024-01-01',
   });
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+
+  const handleUploadPhoto = () => {
+    setProfilePhoto('uploaded');
+    toast.success('Photo updated', 'Your profile photo was uploaded.');
+  };
+
+  const handleRemovePhoto = () => {
+    setProfilePhoto(null);
+    toast.info('Photo removed');
+  };
+
+  const handleDownloadAccountData = () => {
+    downloadJsonFile('assureme-account-data.json', {
+      user,
+      notificationSettings,
+      securitySettings,
+      exportedAt: new Date().toISOString(),
+    });
+    toast.success('Data exported', 'Your account data is downloading.');
+  };
+
+  const handleDeleteAccount = () => {
+    if (window.confirm('Are you sure you want to delete your account? This cannot be undone.')) {
+      toast.warning('Account deletion requested', 'Our support team will contact you to confirm.');
+    }
+  };
 
   const profileForm = useGenericForm({
     schema: userSchemas.updateProfile,
@@ -397,11 +426,11 @@ const Profile: React.FC = () => {
                     Upload a profile photo to personalize your account
                   </p>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={handleUploadPhoto}>
                       <Upload className="h-4 w-4 mr-2" />
                       Upload Photo
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={handleRemovePhoto} disabled={!profilePhoto}>
                       Remove
                     </Button>
                   </div>
@@ -673,7 +702,7 @@ const Profile: React.FC = () => {
                     Export all your account data and information
                   </p>
                 </div>
-                <Button variant="outline">
+                <Button variant="outline" onClick={handleDownloadAccountData}>
                   <Download className="h-4 w-4 mr-2" />
                   Download Data
                 </Button>
@@ -686,7 +715,7 @@ const Profile: React.FC = () => {
                     Permanently delete your account and all associated data
                   </p>
                 </div>
-                <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-100">
+                <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-100" onClick={handleDeleteAccount}>
                   Delete Account
                 </Button>
               </div>

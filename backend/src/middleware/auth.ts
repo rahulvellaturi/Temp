@@ -1,21 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import passport from 'passport';
 import { UserRole } from '@prisma/client';
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: UserRole;
-    isActive: boolean;
-  };
-}
+export type AuthenticatedRequest = Request & {
+  user: Express.User;
+};
 
 // JWT Authentication Middleware
-export const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  passport.authenticate('jwt', { session: false }, (err: any, user: any, info: any) => {
+export const authenticate: RequestHandler = (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (err: any, user: Express.User | false, info: any) => {
     if (err) {
       return res.status(500).json({ error: 'Authentication error' });
     }
@@ -33,8 +26,8 @@ export const authenticate = (req: AuthenticatedRequest, res: Response, next: Nex
 };
 
 // Role-based Authorization Middleware
-export const authorize = (allowedRoles: UserRole[]) => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authorize = (allowedRoles: UserRole[]): RequestHandler => {
+  return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ error: 'Authentication required' });
     }
@@ -51,7 +44,7 @@ export const authorize = (allowedRoles: UserRole[]) => {
 };
 
 // Client-only access (can only access their own data)
-export const authorizeClient = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authorizeClient: RequestHandler = (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
@@ -67,12 +60,17 @@ export const authorizeClient = (req: AuthenticatedRequest, res: Response, next: 
 };
 
 // Admin roles access
-export const authorizeAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authorizeAdmin: RequestHandler = (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
 
-  const adminRoles = [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.CLAIMS_ADJUSTER, UserRole.BILLING_SPECIALIST];
+  const adminRoles: UserRole[] = [
+    UserRole.ADMIN,
+    UserRole.SUPER_ADMIN,
+    UserRole.CLAIMS_ADJUSTER,
+    UserRole.BILLING_SPECIALIST,
+  ];
   
   if (!adminRoles.includes(req.user.role)) {
     return res.status(403).json({ 
@@ -85,8 +83,8 @@ export const authorizeAdmin = (req: AuthenticatedRequest, res: Response, next: N
 };
 
 // Resource ownership check (for clients accessing their own data)
-export const authorizeResourceOwner = (resourceUserIdParam: string = 'userId') => {
-  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authorizeResourceOwner = (resourceUserIdParam: string = 'userId'): RequestHandler => {
+  return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ error: 'Authentication required' });
     }
@@ -97,7 +95,11 @@ export const authorizeResourceOwner = (resourceUserIdParam: string = 'userId') =
     }
 
     // Admins can access any resource (with some restrictions based on specific endpoints)
-    const adminRoles = [UserRole.ADMIN, UserRole.CLAIMS_ADJUSTER, UserRole.BILLING_SPECIALIST];
+    const adminRoles: UserRole[] = [
+      UserRole.ADMIN,
+      UserRole.CLAIMS_ADJUSTER,
+      UserRole.BILLING_SPECIALIST,
+    ];
     if (adminRoles.includes(req.user.role)) {
       return next();
     }

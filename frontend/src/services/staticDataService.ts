@@ -327,3 +327,8 @@ class StaticDataService {
 // Export singleton instance
 export const staticDataService = new StaticDataService();
 export default staticDataService;
+
+// Convenience named exports used by pages/components
+export const getClaimsData = () => staticDataService.getClientClaims();
+export const getAvailablePolicies = () => staticDataService.getAvailablePolicies();
+export const getClaimTypes = () => staticDataService.getClaimTypes();

@@ -329,9 +329,11 @@ const Dashboard: React.FC = () => {
                   </td>
                   <td className="py-3 px-4">
                     {payment.status === 'PENDING' && (
-                      <Button size="sm" variant="outline">
-                        Pay Now
-                      </Button>
+                      <Link to={ROUTES.CLIENT.PAYMENTS}>
+                        <Button size="sm" variant="outline">
+                          Pay Now
+                        </Button>
+                      </Link>
                     )}
                     {payment.status === 'COMPLETED' && (
                       <CheckCircle className="h-5 w-5 text-green-500" />
