@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, Eye, Edit, CheckCircle, XCircle, Clock, AlertTriangle, FileText, DollarSign, Calendar, User, Phone, Mail } from 'lucide-react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Search, Filter, Eye, CheckCircle, XCircle, Clock, AlertTriangle, FileText, DollarSign, Calendar, User, Mail } from 'lucide-react';
 import Card from '@/components/common/Card';
 import Button from '@/components/common/Button';
 import StatusBadge from '@/components/common/StatusBadge';
@@ -8,94 +8,74 @@ import { Claim, ClaimStatus } from '@/types';
 import unifiedMockDataService from '@/services/unifiedMockDataService';
 import { useDataLoader } from '@/hooks/useDataLoader';
 
+const loadClaims = () => unifiedMockDataService.fetchClaimsAsync();
+
 const AdminClaims: React.FC = () => {
-  const [filteredClaims, setFilteredClaims] = useState<Claim[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ClaimStatus | 'ALL'>('ALL');
   const [policyTypeFilter, setPolicyTypeFilter] = useState<string>('ALL');
   const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
   const [showClaimModal, setShowClaimModal] = useState(false);
 
-  // Load data using unified service
-  const { data: claims, loading: isLoading } = useDataLoader(
-    () => unifiedMockDataService.fetchClaimsAsync(),
+  const { data: claims, loading: isLoading, setData: setClaims } = useDataLoader(
+    loadClaims,
     { initialData: [] }
   );
 
-  useEffect(() => {
-    setFilteredClaims(claims);
-  }, [claims]);
+  const claimsList = claims ?? [];
 
-  useEffect(() => {
-    let filtered = claims;
+  const filteredClaims = useMemo(() => {
+    let filtered = claimsList;
 
     if (searchTerm) {
-      filtered = filtered.filter(claim =>
-        claim.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        claim.claimNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        claim.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (claim.user?.firstName + ' ' + claim.user?.lastName).toLowerCase().includes(searchTerm.toLowerCase()) ||
-        claim.user?.email.toLowerCase().includes(searchTerm.toLowerCase())
+      const query = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (claim) =>
+          claim.id.toLowerCase().includes(query) ||
+          claim.claimNumber.toLowerCase().includes(query) ||
+          claim.description.toLowerCase().includes(query) ||
+          `${claim.user?.firstName ?? ''} ${claim.user?.lastName ?? ''}`.toLowerCase().includes(query) ||
+          (claim.user?.email ?? '').toLowerCase().includes(query)
       );
     }
 
     if (statusFilter !== 'ALL') {
-      filtered = filtered.filter(claim => claim.status === statusFilter);
+      filtered = filtered.filter((claim) => claim.status === statusFilter);
     }
 
     if (policyTypeFilter !== 'ALL') {
-      filtered = filtered.filter(claim => claim.policy?.policyType === policyTypeFilter);
+      filtered = filtered.filter((claim) => claim.policy?.policyType === policyTypeFilter);
     }
 
-    setFilteredClaims(filtered);
-  }, [claims, searchTerm, statusFilter, policyTypeFilter]);
+    return filtered;
+  }, [claimsList, searchTerm, statusFilter, policyTypeFilter]);
 
-  const handleStatusChange = (claimId: string, newStatus: ClaimStatus) => {
-    setClaims(prevClaims =>
-      prevClaims.map(claim =>
-        claim.id === claimId ? { ...claim, status: newStatus } : claim
-      )
-    );
-    if (selectedClaim?.id === claimId) {
-      setSelectedClaim(prev => prev ? { ...prev, status: newStatus } : null);
-    }
-  };
+  const handleStatusChange = useCallback(
+    (claimId: string, newStatus: ClaimStatus) => {
+      setClaims(
+        claimsList.map((claim) =>
+          claim.id === claimId ? { ...claim, status: newStatus } : claim
+        )
+      );
 
-  const getStatusIcon = (status: ClaimStatus) => {
-    switch (status) {
-      case 'APPROVED':
-      case 'PAID':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'REJECTED':
-        return <XCircle className="w-4 h-4 text-red-600" />;
-      case 'UNDER_REVIEW':
-      case 'ADJUSTER_ASSIGNED':
-        return <Clock className="w-4 h-4 text-yellow-600" />;
-      case 'SUBMITTED':
-        return <AlertTriangle className="w-4 h-4 text-orange-600" />;
-      case 'CLOSED':
-        return <CheckCircle className="w-4 h-4 text-gray-600" />;
-      default:
-        return <Clock className="w-4 h-4 text-gray-600" />;
-    }
-  };
+      setSelectedClaim((prev) =>
+        prev?.id === claimId ? { ...prev, status: newStatus } : prev
+      );
+    },
+    [claimsList, setClaims]
+  );
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
-  };
 
   const getPolicyTypeColor = (policyType: string) => {
     switch (policyType) {
@@ -112,20 +92,17 @@ const AdminClaims: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && claimsList.length === 0) {
     return (
       <div className="space-y-6">
-        <PageHeader
-          title="Claims Management"
-          subtitle="Manage and review insurance claims"
-        />
+        <PageHeader title="Claims Management" subtitle="Manage and review insurance claims" />
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <Card key={i} className="p-6">
               <div className="animate-pulse space-y-3">
-                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/4" />
+                <div className="h-3 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
               </div>
             </Card>
           ))}
@@ -147,13 +124,10 @@ const AdminClaims: React.FC = () => {
         }
       />
 
-      {/* Filters */}
       <Card className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Search Claims
-            </label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Search Claims</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
               <input
@@ -167,9 +141,7 @@ const AdminClaims: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Status Filter
-            </label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Status Filter</label>
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
               <select
@@ -190,9 +162,7 @@ const AdminClaims: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              Type Filter
-            </label>
+            <label className="block text-sm font-medium text-neutral-700 mb-2">Type Filter</label>
             <select
               value={policyTypeFilter}
               onChange={(e) => setPolicyTypeFilter(e.target.value)}
@@ -208,7 +178,6 @@ const AdminClaims: React.FC = () => {
         </div>
       </Card>
 
-      {/* Claims List */}
       <div className="space-y-4">
         {filteredClaims.length === 0 ? (
           <Card className="p-8 text-center">
@@ -222,10 +191,12 @@ const AdminClaims: React.FC = () => {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-3">
-                    <h3 className="text-lg font-semibold text-neutral-900">
-                      {claim.claimNumber}
-                    </h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPolicyTypeColor(claim.policy?.policyType || '')}`}>
+                    <h3 className="text-lg font-semibold text-neutral-900">{claim.claimNumber}</h3>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getPolicyTypeColor(
+                        claim.policy?.policyType || ''
+                      )}`}
+                    >
                       {claim.policy?.policyType}
                     </span>
                     <StatusBadge status={claim.status} />
@@ -233,24 +204,26 @@ const AdminClaims: React.FC = () => {
 
                   <p className="text-neutral-700 mb-3">{claim.description}</p>
 
-                                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-neutral-600">
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4" />
-                        <span className="font-medium">{formatCurrency(claim.payoutAmount || 0)}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        <span>{claim.user?.firstName} {claim.user?.lastName}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        <span>Submitted: {formatDate(claim.submittedAt)}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4" />
-                        <span>{claim.documents?.length || 0} documents</span>
-                      </div>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-neutral-600">
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="w-4 h-4" />
+                      <span className="font-medium">{formatCurrency(claim.payoutAmount || 0)}</span>
                     </div>
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      <span>
+                        {claim.user?.firstName} {claim.user?.lastName}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>Submitted: {formatDate(claim.submittedAt)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      <span>{claim.documents?.length || 0} documents</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 ml-4">
@@ -265,7 +238,7 @@ const AdminClaims: React.FC = () => {
                     <Eye className="w-4 h-4 mr-1" />
                     View
                   </Button>
-                  
+
                   {claim.status === 'SUBMITTED' && (
                     <>
                       <Button
@@ -286,7 +259,7 @@ const AdminClaims: React.FC = () => {
                       </Button>
                     </>
                   )}
-                  
+
                   {(claim.status === 'UNDER_REVIEW' || claim.status === 'ADJUSTER_ASSIGNED') && (
                     <Button
                       variant="primary"
@@ -304,7 +277,6 @@ const AdminClaims: React.FC = () => {
         )}
       </div>
 
-      {/* Claim Detail Modal */}
       {showClaimModal && selectedClaim && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -315,24 +287,23 @@ const AdminClaims: React.FC = () => {
                     Claim Details - {selectedClaim.claimNumber}
                   </h2>
                   <div className="flex items-center gap-3 mt-2">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getPolicyTypeColor(selectedClaim.policy?.policyType || '')}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${getPolicyTypeColor(
+                        selectedClaim.policy?.policyType || ''
+                      )}`}
+                    >
                       {selectedClaim.policy?.policyType}
                     </span>
                     <StatusBadge status={selectedClaim.status} />
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowClaimModal(false)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setShowClaimModal(false)}>
                   Close
                 </Button>
               </div>
             </div>
 
             <div className="p-6 space-y-6">
-              {/* Claim Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="text-lg font-semibold text-neutral-900 mb-4">Claim Information</h3>
@@ -343,7 +314,9 @@ const AdminClaims: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-neutral-700">Claim Amount</label>
-                      <p className="text-2xl font-bold text-primary">{formatCurrency(selectedClaim.payoutAmount || 0)}</p>
+                      <p className="text-2xl font-bold text-primary">
+                        {formatCurrency(selectedClaim.payoutAmount || 0)}
+                      </p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-neutral-700">Policy Number</label>
@@ -351,7 +324,10 @@ const AdminClaims: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-neutral-700">Assigned Adjuster</label>
-                      <p className="text-neutral-900">{selectedClaim.assignedAdjuster?.firstName} {selectedClaim.assignedAdjuster?.lastName}</p>
+                      <p className="text-neutral-900">
+                        {selectedClaim.assignedAdjuster?.firstName}{' '}
+                        {selectedClaim.assignedAdjuster?.lastName}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -361,7 +337,9 @@ const AdminClaims: React.FC = () => {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4 text-neutral-500" />
-                      <span className="text-neutral-900">{selectedClaim.user?.firstName} {selectedClaim.user?.lastName}</span>
+                      <span className="text-neutral-900">
+                        {selectedClaim.user?.firstName} {selectedClaim.user?.lastName}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Mail className="w-4 h-4 text-neutral-500" />
@@ -369,7 +347,9 @@ const AdminClaims: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-neutral-500" />
-                      <span className="text-neutral-900">Incident: {formatDate(selectedClaim.incidentDate)}</span>
+                      <span className="text-neutral-900">
+                        Incident: {formatDate(selectedClaim.incidentDate)}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-neutral-500" />
@@ -379,69 +359,6 @@ const AdminClaims: React.FC = () => {
                 </div>
               </div>
 
-              {/* Timeline */}
-              <div>
-                <h3 className="text-lg font-semibold text-neutral-900 mb-4">Timeline</h3>
-                                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                      <span className="text-sm text-neutral-600">
-                        Incident occurred on {formatDate(selectedClaim.incidentDate)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm text-neutral-600">
-                        Claim submitted on {formatDate(selectedClaim.submittedAt)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      <span className="text-sm text-neutral-600">
-                        Last updated on {formatDate(selectedClaim.updatedAt)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-sm text-neutral-600">
-                        Current status: {selectedClaim.status.replace('_', ' ').toLowerCase()}
-                      </span>
-                    </div>
-                  </div>
-              </div>
-
-              {/* Documents */}
-              <div>
-                <h3 className="text-lg font-semibold text-neutral-900 mb-4">Documents</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {selectedClaim.documents?.map((doc, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 border border-neutral-200 rounded-lg">
-                      <FileText className="w-5 h-5 text-neutral-500" />
-                      <span className="text-sm text-neutral-900 flex-1">{doc.name}</span>
-                      <Button variant="outline" size="sm">
-                        View
-                      </Button>
-                    </div>
-                  )) || <p className="text-neutral-500 text-sm">No documents uploaded</p>}
-                </div>
-              </div>
-
-              {/* Notes */}
-              <div>
-                <h3 className="text-lg font-semibold text-neutral-900 mb-4">Additional Information</h3>
-                <div className="p-4 bg-neutral-50 rounded-lg">
-                  <div className="space-y-2">
-                    <p><strong>Incident Location:</strong> {selectedClaim.incidentLocation}</p>
-                    {selectedClaim.assignedAdjuster && (
-                      <p><strong>Assigned Adjuster:</strong> {selectedClaim.assignedAdjuster.firstName} {selectedClaim.assignedAdjuster.lastName} ({selectedClaim.assignedAdjuster.email})</p>
-                    )}
-                    <p><strong>Policy Number:</strong> {selectedClaim.policy?.policyNumber}</p>
-                    <p><strong>Policy Type:</strong> {selectedClaim.policy?.policyType}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
               {selectedClaim.status === 'SUBMITTED' && (
                 <div className="flex gap-3 pt-4 border-t border-neutral-200">
                   <Button
@@ -473,8 +390,9 @@ const AdminClaims: React.FC = () => {
                   </Button>
                 </div>
               )}
-              
-              {(selectedClaim.status === 'UNDER_REVIEW' || selectedClaim.status === 'ADJUSTER_ASSIGNED') && (
+
+              {(selectedClaim.status === 'UNDER_REVIEW' ||
+                selectedClaim.status === 'ADJUSTER_ASSIGNED') && (
                 <div className="flex gap-3 pt-4 border-t border-neutral-200">
                   <Button
                     variant="primary"
